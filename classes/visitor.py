@@ -8,7 +8,6 @@ from generated.StipulaVisitor import StipulaVisitor
 from generated.StipulaParser import StipulaParser
 
 from classes.exceptions.symbolexception import SymbolException
-from classes.exceptions.fieldexception import FieldException
 from classes.exceptions.expiredexception import ExpiredException
 from classes.data import visitoroutput
 from classes.data.functionvisitorentry import FunctionVisitorEntry
@@ -79,8 +78,8 @@ class Visitor(StipulaVisitor):
         try:
             value_dependency = self.visitExpression(ctx.trigger)
             self.visitor_output.add_visitor_entry(event_visitor_entry)
-            self.visitor_output.t[event_visitor_entry] = value_dependency.value
             self.visitor_output.dependency_t_dict[event_visitor_entry] = value_dependency.dependency_set
+            self.visitor_output.t[event_visitor_entry] = value_dependency.value
         except ExpiredException as exception:
             self.visitor_output.expired_code[event_visitor_entry] = exception.date_str
         return event_visitor_entry
@@ -175,7 +174,7 @@ class Visitor(StipulaVisitor):
             return ValueDependency(second_delta, set())
         # `now` si considera 0
         if ctx.NOW():
-            return ValueDependency(0, set())
+            return ValueDependency(0, {visitoroutput.NOW})
         if ctx.NUMBER():
             return ValueDependency(float(ctx.NUMBER().getText()), set())
         # Gestione dei parametri di funzione e dei field

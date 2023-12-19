@@ -9,6 +9,10 @@ from classes.data.eventvisitorentry import EventVisitorEntry
 
 
 
+NOW = 'now'
+
+
+
 class VisitorOutput:
 
 
@@ -20,7 +24,7 @@ class VisitorOutput:
         self.Gamma = {}
         self.dependency_t_dict = {}
         self.t = {}
-        self.Ts = {}
+        self.T = {}
         self.R = {}
         self.warning_code = set()
         self.expired_code = {}
@@ -36,7 +40,7 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_dict': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_dict.items()},
             't': {str(visitor_entry): time_delta for visitor_entry, time_delta in self.t.items()},
-            'Ts': {str(event_visitor_entry): stipula_time for event_visitor_entry, stipula_time in self.Ts.items()},
+            'T': {str(event_visitor_entry): stipula_time for event_visitor_entry, stipula_time in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
             'warning_code': [f"{str(visitor_entry_1)} -> {str(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
@@ -89,11 +93,11 @@ class VisitorOutput:
 
     def compute_stipula_time(self, visitor_entry, loop_visitor_entry):
         # Il valore è già calcolato
-        if visitor_entry in self.Ts:
+        if visitor_entry in self.T:
             return
         # Partenza dallo stato iniziale
         if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
-            self.Ts[visitor_entry] = 0
+            self.T[visitor_entry] = 0
             return
         # Ho trovato un loop
         if visitor_entry == loop_visitor_entry:
@@ -111,10 +115,13 @@ class VisitorOutput:
             raise LoopException(visitor_entry)
         # Calcolo lo stipula time
         if isinstance(visitor_entry, FunctionVisitorEntry):
-            self.Ts[visitor_entry] = min(self.Ts[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set)
+            self.T[visitor_entry] = min(self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set)
             return
-        if isinstance(visitor_entry, EventVisitorEntry) and not self.dependency_t_dict[visitor_entry]:
-            self.Ts[visitor_entry] = self.Ts[self.Gamma[visitor_entry]] + self.t[visitor_entry]
+        if isinstance(visitor_entry, EventVisitorEntry):
+            stipula_time = self.t[visitor_entry]
+            if NOW in self.dependency_t_dict.get(visitor_entry, set()):
+                stipula_time += self.T[self.Gamma[visitor_entry]]
+            self.T[visitor_entry] = stipula_time
 
 
 
@@ -141,7 +148,7 @@ class VisitorOutput:
                     is_uncertain = True
                     warning_code.add((previous_visitor_entry, visitor_entry, ))
                     continue
-                if self.Ts[previous_visitor_entry] <= self.Ts[visitor_entry]:
+                if self.T[previous_visitor_entry] <= self.T[visitor_entry]:
                     is_executable = True
                     continue
                 warning_code.add((previous_visitor_entry, visitor_entry, ))
