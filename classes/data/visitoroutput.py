@@ -119,6 +119,7 @@ class VisitorOutput:
             return
         if isinstance(visitor_entry, EventVisitorEntry):
             stipula_time = self.t[visitor_entry]
+            # In caso di eventi devo valutare se il calcolo parte da now o se è una data assoluta
             if NOW in self.dependency_t_dict.get(visitor_entry, set()):
                 stipula_time += self.T[self.Gamma[visitor_entry]]
             self.T[visitor_entry] = stipula_time
@@ -132,19 +133,17 @@ class VisitorOutput:
 
 
     # TODO DSE in questo passaggio devo considerare le dipendenze tra i field per poter imporre condizioni di warning sull'eseguibilità del codice
-    # TODO DSE forse è necessatio verificare anche se il field va aggiunto a now perché andrebbe a rappresentare un delta e non un valore assoluto
     def clear_time(self):
         # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
         remove_visitor_entry_set = set()
-        for visitor_entry in self.R[self.Q0]:
+        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if visitor_entry.start_state != self.Q0):
             previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
-            if not previous_visitor_entry_set:
-                continue
             is_uncertain = False
             is_executable = False
             warning_code = set()
             for previous_visitor_entry in previous_visitor_entry_set:
-                if (self.dependency_t_dict[previous_visitor_entry] if isinstance(previous_visitor_entry, EventVisitorEntry) else False) or (self.dependency_t_dict[visitor_entry] if isinstance(visitor_entry, EventVisitorEntry) else False):
+                # TODO DSE il warning non dipende dalla presenza di field ma se i field della time expression sono differenti
+                if (self.dependency_t_dict[previous_visitor_entry].difference({NOW}) if isinstance(previous_visitor_entry, EventVisitorEntry) else False) or (self.dependency_t_dict[visitor_entry].difference({NOW}) if isinstance(visitor_entry, EventVisitorEntry) else False):
                     is_uncertain = True
                     warning_code.add((previous_visitor_entry, visitor_entry, ))
                     continue
