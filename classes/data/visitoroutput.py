@@ -73,21 +73,27 @@ class VisitorOutput:
 
 
 
+    def clear_holes(self, state):
+        # Rimuovo tutte le entry scollegate all'interno dell'insieme
+        is_change = True
+        while is_change:
+            is_change = False
+            for visitor_entry in {visitor_entry for visitor_entry in self.R[state] if visitor_entry.start_state != state}:
+                if visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R[state]}:
+                    is_change = True
+                    self.R[state].remove(visitor_entry)
+
+
+
     def clear_events(self):
         # Rimuovo tutti gli eventi non raggiungibili dalla funzione che li definisce
         for visitor_entry_set in self.R.values():
             for event_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, EventVisitorEntry)}:
                 if event_visitor_entry not in self.R.get(self.Gamma[event_visitor_entry].end_state, set()):
                     visitor_entry_set.remove(event_visitor_entry)
-        # Rimuovo tutte le entry scollegate all'interno degli insiemi
-        for state, visitor_entry_set in self.R.items():
-            is_change = True
-            while is_change:
-                is_change = False
-                for visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if visitor_entry.start_state != state}:
-                    if visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in visitor_entry_set}:
-                        is_change = True
-                        visitor_entry_set.remove(visitor_entry)
+        # Ripulisco tutti gli insiemi di raggiungibilità in base ai buchi generati
+        for state in self.R:
+            self.clear_holes(state)
 
 
 
@@ -132,6 +138,7 @@ class VisitorOutput:
 
 
 
+    # TODO DSE quando si identificano elementi da rimuovere, poi bisogna anche ripulire dai buchi che si sono generati
     # TODO DSE in questo passaggio devo considerare le dipendenze tra i field per poter imporre condizioni di warning sull'eseguibilità del codice
     def clear_time(self):
         # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
