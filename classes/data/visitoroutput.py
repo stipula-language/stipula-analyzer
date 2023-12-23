@@ -163,6 +163,8 @@ class VisitorOutput:
                 continue
             remove_visitor_entry_set.add(visitor_entry)
         self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
+        # Ripulisco l'insieme di raggiugibilità dai buchi creati
+        self.clear_holes(self.Q0)
 
 
 
