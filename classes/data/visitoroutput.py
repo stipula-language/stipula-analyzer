@@ -97,7 +97,7 @@ class VisitorOutput:
 
 
 
-    def compute_stipula_time(self, visitor_entry, loop_visitor_entry):
+    def compute_stipula_time(self, visitor_entry, loop_visitor_entry_set):
         # Il valore è già calcolato
         if visitor_entry in self.T:
             return
@@ -106,13 +106,13 @@ class VisitorOutput:
             self.T[visitor_entry] = 0
             return
         # Ho trovato un loop
-        if visitor_entry == loop_visitor_entry:
+        if visitor_entry in loop_visitor_entry_set:
             raise LoopException(visitor_entry)
         # Controllo che tutte le dipendenze abbiano lo stipula time calcolato, il flag indica la presenza di una LoopException
         previous_visitor_entry_dict = {previous_visitor_entry: False for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
         for previous_visitor_entry in previous_visitor_entry_dict:
             try:
-                self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry or visitor_entry)
+                self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
             except LoopException:
                 previous_visitor_entry_dict[previous_visitor_entry] = True
         # Se sono tutti loop propago l'eccezione
@@ -134,7 +134,7 @@ class VisitorOutput:
 
     def compute_Ts(self):
         for visitor_entry in self.R[self.Q0]:
-            self.compute_stipula_time(visitor_entry, None)
+            self.compute_stipula_time(visitor_entry, set())
 
 
 
