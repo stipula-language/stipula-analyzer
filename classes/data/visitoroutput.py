@@ -145,20 +145,14 @@ class VisitorOutput:
         remove_visitor_entry_set = set()
         for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if visitor_entry.start_state != self.Q0):
             previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
-            is_uncertain = False
             is_executable = False
             warning_code = set()
             for previous_visitor_entry in previous_visitor_entry_set:
-                # TODO DSE il warning non dipende dalla presenza di field ma se i field della time expression sono differenti
-                if (self.dependency_t_dict[previous_visitor_entry].difference({NOW}) if isinstance(previous_visitor_entry, EventVisitorEntry) else False) or (self.dependency_t_dict[visitor_entry].difference({NOW}) if isinstance(visitor_entry, EventVisitorEntry) else False):
-                    is_uncertain = True
-                    warning_code.add((previous_visitor_entry, visitor_entry, ))
-                    continue
                 if self.T[previous_visitor_entry] <= self.T[visitor_entry]:
                     is_executable = True
                     continue
                 warning_code.add((previous_visitor_entry, visitor_entry, ))
-            if is_uncertain or is_executable:
+            if is_executable:
                 self.warning_code.update(warning_code)
                 continue
             remove_visitor_entry_set.add(visitor_entry)
