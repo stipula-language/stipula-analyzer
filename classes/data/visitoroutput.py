@@ -27,6 +27,7 @@ class VisitorOutput:
         self.t = {}
         self.T = {}
         self.R = {}
+        self.warning_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
         self.dead_code = set()
@@ -46,6 +47,7 @@ class VisitorOutput:
                 'dependency_set': list(value_dependency.dependency_set)
             } for event_visitor_entry, value_dependency in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
+            'warning_constraint': [f"{field_id_1} <= {field_id_2}" for field_id_1, field_id_2 in self.warning_constraint],
             'warning_code': [f"{str(visitor_entry_1)} -> {str(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
             'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
@@ -145,7 +147,6 @@ class VisitorOutput:
 
 
 
-    # TODO DSE in questo passaggio devo considerare le dipendenze tra i field per poter imporre condizioni di warning sull'eseguibilità del codice
     def clear_time(self):
         # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
         remove_visitor_entry_set = set()
@@ -154,9 +155,20 @@ class VisitorOutput:
             is_executable = False
             warning_code = set()
             for previous_visitor_entry in previous_visitor_entry_set:
-                # TODO DSE bisogna considerare sia il valore sia le dipendenze
+                # Considero lo stipula time
                 if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
                     is_executable = True
+                    # Controllo che le dipendenze siano confrontabili
+                    previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
+                    if previous_dependency_set:
+                        dependency_set = self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)
+                        for previous_field_id in previous_dependency_set:
+                            # Se il codice successivo non usa dipendenze allora quelle precedenti potrebbero dover essere azzerate
+                            if not dependency_set:
+                                self.warning_constraint.add((previous_field_id, 0, ))
+                                continue
+                            for field_id in self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set):
+                                self.warning_constraint.add((previous_field_id, field_id, ))
                     continue
                 warning_code.add((previous_visitor_entry, visitor_entry, ))
             if is_executable:

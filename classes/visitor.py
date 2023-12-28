@@ -97,7 +97,7 @@ class Visitor(StipulaVisitor):
             return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
-            second_delta = (datetime.fromisoformat(ctx.STRING().getText()) - self.now_datetime).total_seconds()
+            second_delta = (datetime.fromisoformat(ctx.STRING().getText()[1:-1]) - self.now_datetime).total_seconds()
             if second_delta < 0:
                 raise ExpiredException(ctx.STRING().getText()[1:-1])
             return ValueDependency(second_delta, set())
