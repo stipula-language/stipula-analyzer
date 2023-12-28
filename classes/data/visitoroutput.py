@@ -135,7 +135,6 @@ class VisitorOutput:
             # In caso di eventi devo valutare se il calcolo parte da now o se è una data assoluta
             if NOW in self.dependency_t_dict.get(visitor_entry, set()):
                 value_dependency.value += self.T[self.Gamma[visitor_entry]].value
-                value_dependency.dependency_set.union(self.T[self.Gamma[visitor_entry]].dependency_set)
             self.T[visitor_entry] = value_dependency
 
 
