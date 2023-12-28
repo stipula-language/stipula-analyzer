@@ -6,6 +6,7 @@ import json
 from classes.exceptions.loopexception import LoopException
 from classes.data.functionvisitorentry import FunctionVisitorEntry
 from classes.data.eventvisitorentry import EventVisitorEntry
+from classes.data.valuedependency import ValueDependency
 
 
 
@@ -40,7 +41,10 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_dict': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_dict.items()},
             't': {str(visitor_entry): time_delta for visitor_entry, time_delta in self.t.items()},
-            'T': {str(event_visitor_entry): stipula_time for event_visitor_entry, stipula_time in self.T.items()},
+            'T': {str(event_visitor_entry): {
+                'value': value_dependency.value,
+                'dependency_set': list(value_dependency.dependency_set)
+            } for event_visitor_entry, value_dependency in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
             'warning_code': [f"{str(visitor_entry_1)} -> {str(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
@@ -103,7 +107,7 @@ class VisitorOutput:
             return
         # Partenza dallo stato iniziale
         if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
-            self.T[visitor_entry] = 0
+            self.T[visitor_entry] = ValueDependency(0, set())
             return
         # Ho trovato un loop
         if visitor_entry in loop_visitor_entry_set:
@@ -121,14 +125,18 @@ class VisitorOutput:
             raise LoopException(visitor_entry)
         # Calcolo lo stipula time
         if isinstance(visitor_entry, FunctionVisitorEntry):
-            self.T[visitor_entry] = min(self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set)
+            dependency_set = set()
+            for previous_visitor_entry in previous_visitor_entry_set:
+                dependency_set.union(self.T[previous_visitor_entry].dependency_set)
+            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), dependency_set)
             return
         if isinstance(visitor_entry, EventVisitorEntry):
-            stipula_time = self.t[visitor_entry]
+            value_dependency = ValueDependency(self.t[visitor_entry], self.dependency_t_dict.get(visitor_entry, set()).difference({NOW}))
             # In caso di eventi devo valutare se il calcolo parte da now o se è una data assoluta
             if NOW in self.dependency_t_dict.get(visitor_entry, set()):
-                stipula_time += self.T[self.Gamma[visitor_entry]]
-            self.T[visitor_entry] = stipula_time
+                value_dependency.value += self.T[self.Gamma[visitor_entry]].value
+                value_dependency.dependency_set.union(self.T[self.Gamma[visitor_entry]].dependency_set)
+            self.T[visitor_entry] = value_dependency
 
 
 
@@ -147,7 +155,8 @@ class VisitorOutput:
             is_executable = False
             warning_code = set()
             for previous_visitor_entry in previous_visitor_entry_set:
-                if self.T[previous_visitor_entry] <= self.T[visitor_entry]:
+                # TODO DSE bisogna considerare sia il valore sia le dipendenze
+                if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
                     is_executable = True
                     continue
                 warning_code.add((previous_visitor_entry, visitor_entry, ))

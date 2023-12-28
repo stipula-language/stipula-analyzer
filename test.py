@@ -6,7 +6,9 @@ import os
 
 
 if __name__ == '__main__':
-    for entry in os.listdir('test'):
+    entry_list = os.listdir('test')
+    entry_list.sort()
+    for entry in entry_list:
         print()
         print('================================================================================')
         print(f"test/{entry}")
