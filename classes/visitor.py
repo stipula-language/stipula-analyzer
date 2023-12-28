@@ -23,6 +23,7 @@ class Visitor(StipulaVisitor):
 
     def __init__(self):
         StipulaVisitor.__init__(self)
+        self.now_datetime = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         self.visitor_output = VisitorOutput()
 
 
@@ -76,7 +77,7 @@ class Visitor(StipulaVisitor):
         # Le time expression devono essere nella forma `now + t`
         event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text)
         try:
-            value_dependency = self.visitExpression(ctx.trigger)
+            value_dependency = self.visitTimeExpression(ctx.trigger)
             self.visitor_output.add_visitor_entry(event_visitor_entry)
             self.visitor_output.dependency_t_dict[event_visitor_entry] = value_dependency.dependency_set
             self.visitor_output.t[event_visitor_entry] = value_dependency.value
@@ -86,101 +87,39 @@ class Visitor(StipulaVisitor):
 
 
 
-    # Visit a parse tree produced by StipulaParser#expression.
-    def visitExpression(self, ctx:StipulaParser.ExpressionContext):
-        # Nelle time expression non sono ammessi `&&` e `||`
-        if ctx.operator:
-            raise SymbolException(ctx.operator.text)
-        # Nelle time expression non è ammesso questo livello
-        if ctx.right:
-            raise SymbolException(ctx.right.getText())
-        return self.visitExpression1(ctx.left)
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression1.
-    def visitExpression1(self, ctx:StipulaParser.Expression1Context):
-        # Nelle time expression non è ammesso `!`
-        if ctx.NOT():
-            raise SymbolException(ctx.NOT().getText())
-        return self.visitExpression2(ctx.expression2())
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression2.
-    def visitExpression2(self, ctx:StipulaParser.Expression2Context):
-        # Nelle time expression non sono ammessi `==`, `!=`, `>`, `<`, `>=` e `<=`
-        if ctx.operator:
-            raise SymbolException(ctx.operator.text)
-        # Nelle time expression non è ammesso questo livello
-        if ctx.right:
-            raise SymbolException(ctx.right.getText())
-        return self.visitExpression3(ctx.left)
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression3.
-    def visitExpression3(self, ctx:StipulaParser.Expression3Context):
-        left_value_dependency = self.visitExpression4(ctx.left)
-        right_value_dependency = ValueDependency(0, set())
-        if ctx.operator:
+    # Visit a parse tree produced by StipulaParser#timeExpression.
+    def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext):
+        if ctx.left:
+            # Time expressione nella forma `now + t`
+            right_value_dependency = ValueDependency(0, set())
             if ctx.right:
-                right_value_dependency = self.visitExpression3(ctx.right)
-            match ctx.operator.type:
-                case StipulaParser.PLUS:
-                    left_value_dependency.value += right_value_dependency.value
-                case StipulaParser.MINUS:
-                    left_value_dependency.value -= right_value_dependency.value
-        return ValueDependency(left_value_dependency.value, left_value_dependency.dependency_set.union(right_value_dependency.dependency_set))
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression4.
-    def visitExpression4(self, ctx:StipulaParser.Expression4Context):
-        left_value_dependency = self.visitExpression5(ctx.left)
-        right_value_dependency = ValueDependency(1, set())
-        if ctx.operator:
-            if ctx.right:
-                right_value_dependency = self.visitExpression4(ctx.right)
-            match ctx.operator.type:
-                case StipulaParser.TIMES:
-                    left_value_dependency.value *= right_value_dependency.value
-                case StipulaParser.DIVISION:
-                    left_value_dependency.value /= right_value_dependency.value
-        return ValueDependency(left_value_dependency.value, left_value_dependency.dependency_set.union(right_value_dependency.dependency_set))
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression5.
-    def visitExpression5(self, ctx:StipulaParser.Expression5Context):
-        value_dependency = self.visitExpression6(ctx.expression6())
-        return ValueDependency((-1 if ctx.MINUS() else 1) * value_dependency.value, value_dependency.dependency_set)
-
-
-
-    # Visit a parse tree produced by StipulaParser#expression6.
-    def visitExpression6(self, ctx:StipulaParser.Expression6Context):
-        # Nelle time expression non sono ammessi valori booleani
-        if ctx.BOOL():
-            raise SymbolException(ctx.BOOL().getText())
-        # Nelle time expression non sono ammesse stringhe
-        if ctx.STRING():
-            if not re.match(r'\"\d{2}\/\d{2}\/\d{4}\"$', ctx.STRING().getText()):
-                raise SymbolException(ctx.STRING().getText())
+                right_value_dependency = self.visitTimeExpression1(ctx.right)
+            return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
+        if ctx.DATESTRING():
             # Il delta è calcolato in secondi
-            second_delta = (datetime.strptime(ctx.STRING().getText(), '"%d/%m/%Y"') - datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
+            second_delta = (datetime.fromisoformat(ctx.STRING().getText()) - self.now_datetime).total_seconds()
             if second_delta < 0:
                 raise ExpiredException(ctx.STRING().getText()[1:-1])
             return ValueDependency(second_delta, set())
-        # `now` si considera 0
-        if ctx.NOW():
-            return ValueDependency(0, {visitoroutput.NOW})
-        if ctx.NUMBER():
-            return ValueDependency(float(ctx.NUMBER().getText()), set())
-        # Gestione dei parametri di funzione e dei field
         if ctx.ID():
+            # Gli id devono essere di field del contratto
             if ctx.ID().getText() not in self.visitor_output.field_id_set:
                 raise SymbolException(ctx.ID().getText())
             return ValueDependency(0, {ctx.ID().getText()})
-        if ctx.expression():
-            return self.visitExpression(ctx.expression())
+
+
+
+    # Visit a parse tree produced by StipulaParser#timeExpression1.
+    def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context):
+        match ctx.left.type:
+            case StipulaParser.NUMBER:
+                left_value_dependency = ValueDependency(float(ctx.left.text), set())
+            case StipulaParser.ID:
+                # Gli id devono essere i field del contratto
+                if ctx.left.text not in self.visitor_output.field_id_set:
+                    raise SymbolException(ctx.left.text)
+                left_value_dependency = ValueDependency(0, {ctx.left.text})
+        right_value_dependency = ValueDependency(0, set())
+        if ctx.right:
+            right_value_dependency = self.visitTimeExpression1(ctx.right)
+        return ValueDependency(left_value_dependency.value + right_value_dependency.value, left_value_dependency.dependency_set.union(right_value_dependency.dependency_set))

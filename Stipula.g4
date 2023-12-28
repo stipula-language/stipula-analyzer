@@ -26,7 +26,15 @@ assetOperation : left=expression '-o' (right=ID ',')? destination=ID ;
 
 fieldOperation : left=expression '->' right=ID ;
 
-eventDecl : trigger=expression '>>' '@' startStateId=ID '{' statement* '}' '=>' '@' endStateId=ID ;
+eventDecl : trigger=timeExpression '>>' '@' startStateId=ID '{' statement* '}' '=>' '@' endStateId=ID ;
+
+
+
+// Espressioni temporali
+
+timeExpression : left=NOW (operator=PLUS right=timeExpression1)? | DATESTRING | ID ;
+
+timeExpression1 : left=(NUMBER | ID) (operator=PLUS right=timeExpression1)? ;
 
 
 
@@ -44,7 +52,7 @@ expression4 : left=expression5 (operator=(TIMES | DIVISION) right=expression4)? 
 
 expression5 : MINUS? expression6 ;
 
-expression6 : NOW | BOOL | NUMBER | STRING | ID | '(' expression ')' ;
+expression6 : NOW | BOOL | NUMBER | DATESTRING | STRING | ID | '(' expression ')' ;
 
 
 
@@ -72,6 +80,7 @@ BOOL : TRUE | FALSE ;
 TRUE : 'true' ;
 FALSE : 'false' ;
 NUMBER : '0' | [1-9] [0-9]* | ('0' | [1-9] [0-9]*) '.' [0-9]* ;
+DATESTRING : '"' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '"' | '\'' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '\'' ;
 STRING : '\'' ~('\'')+ '\'' | '"' ~('"')+ '"' ;
 
 ID : [a-zA-Z] ([a-zA-Z] | [0-9] | '_')* ;

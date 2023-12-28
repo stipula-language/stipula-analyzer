@@ -138,7 +138,6 @@ class VisitorOutput:
 
 
 
-    # TODO DSE quando si identificano elementi da rimuovere, poi bisogna anche ripulire dai buchi che si sono generati
     # TODO DSE in questo passaggio devo considerare le dipendenze tra i field per poter imporre condizioni di warning sull'eseguibilità del codice
     def clear_time(self):
         # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile

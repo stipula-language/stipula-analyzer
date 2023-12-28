@@ -74,6 +74,16 @@ class StipulaVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by StipulaParser#timeExpression.
+    def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by StipulaParser#timeExpression1.
+    def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by StipulaParser#expression.
     def visitExpression(self, ctx:StipulaParser.ExpressionContext):
         return self.visitChildren(ctx)
