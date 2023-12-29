@@ -2,7 +2,6 @@
 visitor.py
 '''
 from datetime import datetime
-import re
 
 from generated.StipulaVisitor import StipulaVisitor
 from generated.StipulaParser import StipulaParser
