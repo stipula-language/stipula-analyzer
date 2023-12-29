@@ -29,4 +29,4 @@ On Mac os you probably need to specify the python version, so you need to use `p
 
 ## Run
 
-To run an example, open a terminal in the repository directory and run `python analyzer.py test/bet.stipula`
+To run an example, open a terminal in the repository directory and run `python analyzer.py test/bet.stipula`.
