@@ -2,6 +2,7 @@
 visitor.py
 '''
 from datetime import datetime
+from datetime import timedelta
 
 from generated.StipulaVisitor import StipulaVisitor
 from generated.StipulaParser import StipulaParser
@@ -90,21 +91,21 @@ class Visitor(StipulaVisitor):
     def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext):
         if ctx.left:
             # Time expressione nella forma `now + t`
-            right_value_dependency = ValueDependency(0, set())
+            right_value_dependency = ValueDependency(timedelta(seconds=0), set())
             if ctx.right:
                 right_value_dependency = self.visitTimeExpression1(ctx.right)
             return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
-            second_delta = (datetime.fromisoformat(ctx.STRING().getText()[1:-1]) - self.now_datetime).total_seconds()
-            if second_delta < 0:
-                raise ExpiredException(ctx.STRING().getText()[1:-1])
-            return ValueDependency(second_delta, set())
+            time_delta = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_datetime
+            if time_delta < timedelta(seconds=0):
+                raise ExpiredException(ctx.DATESTRING().getText()[1:-1])
+            return ValueDependency(time_delta, set())
         if ctx.ID():
             # Gli id devono essere di field del contratto
             if ctx.ID().getText() not in self.visitor_output.field_id_set:
                 raise SymbolException(ctx.ID().getText())
-            return ValueDependency(0, {ctx.ID().getText()})
+            return ValueDependency(timedelta(seconds=0), {ctx.ID().getText()})
 
 
 
@@ -112,13 +113,13 @@ class Visitor(StipulaVisitor):
     def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context):
         match ctx.left.type:
             case StipulaParser.NUMBER:
-                left_value_dependency = ValueDependency(float(ctx.left.text), set())
+                left_value_dependency = ValueDependency(timedelta(seconds=float(ctx.left.text)), set())
             case StipulaParser.ID:
                 # Gli id devono essere i field del contratto
                 if ctx.left.text not in self.visitor_output.field_id_set:
                     raise SymbolException(ctx.left.text)
-                left_value_dependency = ValueDependency(0, {ctx.left.text})
-        right_value_dependency = ValueDependency(0, set())
+                left_value_dependency = ValueDependency(timedelta(seconds=0), {ctx.left.text})
+        right_value_dependency = ValueDependency(timedelta(seconds=0), set())
         if ctx.right:
             right_value_dependency = self.visitTimeExpression1(ctx.right)
         return ValueDependency(left_value_dependency.value + right_value_dependency.value, left_value_dependency.dependency_set.union(right_value_dependency.dependency_set))

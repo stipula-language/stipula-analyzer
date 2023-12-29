@@ -1,6 +1,7 @@
 '''
 visitoroutput.py
 '''
+from datetime import timedelta
 import json
 
 from classes.exceptions.loopexception import LoopException
@@ -41,9 +42,9 @@ class VisitorOutput:
             'C': [str(visitor_entry) for visitor_entry in self.C],
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_dict': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_dict.items()},
-            't': {str(visitor_entry): time_delta for visitor_entry, time_delta in self.t.items()},
+            't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
             'T': {str(event_visitor_entry): {
-                'value': value_dependency.value,
+                'value': str(value_dependency.value),
                 'dependency_set': list(value_dependency.dependency_set)
             } for event_visitor_entry, value_dependency in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
@@ -109,7 +110,7 @@ class VisitorOutput:
             return
         # Partenza dallo stato iniziale
         if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
-            self.T[visitor_entry] = ValueDependency(0, set())
+            self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), set())
             return
         # Ho trovato un loop
         if visitor_entry in loop_visitor_entry_set:
