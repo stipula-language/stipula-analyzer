@@ -3,6 +3,7 @@ visitor.py
 '''
 from datetime import datetime
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 
 from generated.StipulaVisitor import StipulaVisitor
 from generated.StipulaParser import StipulaParser
@@ -23,7 +24,7 @@ class Visitor(StipulaVisitor):
 
     def __init__(self):
         StipulaVisitor.__init__(self)
-        self.now_datetime = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        self.now_date_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         self.visitor_output = VisitorOutput()
 
 
@@ -89,7 +90,7 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#timeExpression.
     def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext):
-        if ctx.left:
+        if ctx.NOW():
             # Time expressione nella forma `now + t`
             right_value_dependency = ValueDependency(timedelta(seconds=0), set())
             if ctx.right:
@@ -97,7 +98,7 @@ class Visitor(StipulaVisitor):
             return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
-            time_delta = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_datetime
+            time_delta = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time
             if time_delta < timedelta(seconds=0):
                 raise ExpiredException(ctx.DATESTRING().getText()[1:-1])
             return ValueDependency(time_delta, set())
@@ -112,8 +113,21 @@ class Visitor(StipulaVisitor):
     # Visit a parse tree produced by StipulaParser#timeExpression1.
     def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context):
         match ctx.left.type:
-            case StipulaParser.NUMBER:
-                left_value_dependency = ValueDependency(timedelta(seconds=float(ctx.left.text)), set())
+            case StipulaParser.TIMEDELTA:
+                # Bisogna leggere correttamente l'ordine di grandezza
+                match ctx.left.text[-1]:
+                    case 'Y':
+                        left_value_dependency = ValueDependency((self.now_date_time + relativedelta(years=int(ctx.left.text[:-1]))) - self.now_date_time, set())
+                    case 'M':
+                        left_value_dependency = ValueDependency((self.now_date_time + relativedelta(months=int(ctx.left.text[:-1]))) - self.now_date_time, set())
+                    case 'D':
+                        left_value_dependency = ValueDependency(timedelta(days=int(ctx.left.text[:-1])), set())
+                    case 'h':
+                        left_value_dependency = ValueDependency(timedelta(hours=int(ctx.left.text[:-1])), set())
+                    case 'm':
+                        left_value_dependency = ValueDependency(timedelta(minutes=int(ctx.left.text[:-1])), set())
+                    case 's':
+                        left_value_dependency = ValueDependency(timedelta(seconds=float(ctx.left.text[:-1])), set())
             case StipulaParser.ID:
                 # Gli id devono essere i field del contratto
                 if ctx.left.text not in self.visitor_output.field_id_set:

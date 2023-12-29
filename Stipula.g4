@@ -32,9 +32,9 @@ eventDecl : trigger=timeExpression '>>' '@' startStateId=ID '{' statement* '}' '
 
 // Espressioni temporali
 
-timeExpression : left=NOW (operator=PLUS right=timeExpression1)? | DATESTRING | ID ;
+timeExpression : NOW (PLUS right=timeExpression1)? | DATESTRING | ID ;
 
-timeExpression1 : left=(NUMBER | ID) (operator=PLUS right=timeExpression1)? ;
+timeExpression1 : left=(TIMEDELTA | ID) (PLUS right=timeExpression1)? ;
 
 
 
@@ -79,7 +79,9 @@ NOW : 'now' ;
 BOOL : TRUE | FALSE ;
 TRUE : 'true' ;
 FALSE : 'false' ;
-NUMBER : '0' | [1-9] [0-9]* | ('0' | [1-9] [0-9]*) '.' [0-9]* ;
+TIMEDELTA : INTEGER [YMDhm] | NUMBER 's' ;
+NUMBER : INTEGER ('.' [0-9]*)? ;
+INTEGER : '0' | [1-9] [0-9]* ;
 DATESTRING : '"' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '"' | '\'' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '\'' ;
 STRING : '\'' ~('\'')+ '\'' | '"' ~('"')+ '"' ;
 
