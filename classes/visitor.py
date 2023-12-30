@@ -15,6 +15,7 @@ from classes.data.functionvisitorentry import FunctionVisitorEntry
 from classes.data.eventvisitorentry import EventVisitorEntry
 from classes.data.visitoroutput import VisitorOutput
 from classes.data.valuedependency import ValueDependency
+from classes.data.codereference import CodeReference
 
 
 
@@ -65,7 +66,7 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#functionDecl.
     def visitFunctionDecl(self, ctx:StipulaParser.FunctionDeclContext):
-        function_visitor_entry = FunctionVisitorEntry(ctx.startStateId.text, ctx.partyId.text, ctx.functionId.text, ctx.endStateId.text)
+        function_visitor_entry = FunctionVisitorEntry(ctx.startStateId.text, ctx.partyId.text, ctx.functionId.text, ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
         self.visitor_output.add_visitor_entry(function_visitor_entry)
         # Analizzo gli eventi
         for event_decl_context in ctx.functionBody().eventDecl():
@@ -76,7 +77,7 @@ class Visitor(StipulaVisitor):
     # Visit a parse tree produced by StipulaParser#eventDecl.
     def visitEventDecl(self, ctx:StipulaParser.EventDeclContext):
         # Le time expression devono essere nella forma `now + t`
-        event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text)
+        event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
         try:
             value_dependency = self.visitTimeExpression(ctx.trigger)
             self.visitor_output.add_visitor_entry(event_visitor_entry)
