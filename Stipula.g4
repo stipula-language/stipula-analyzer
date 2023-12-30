@@ -52,7 +52,7 @@ expression4 : left=expression5 (operator=(TIMES | DIVISION) right=expression4)? 
 
 expression5 : MINUS? expression6 ;
 
-expression6 : NOW | BOOL | NUMBER | DATESTRING | STRING | ID | '(' expression ')' ;
+expression6 : NOW | BOOL | TIMEDELTA | NUMBER | DATESTRING | STRING | ID | '(' expression ')' ;
 
 
 
