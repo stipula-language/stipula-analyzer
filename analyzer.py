@@ -1,5 +1,5 @@
 '''
-analizer.py
+analyzer.py
 '''
 import sys
 import re
@@ -51,12 +51,12 @@ if __name__ == '__main__':
     if parser.getNumberOfSyntaxErrors() > 0:
         print('Syntax errors')
         sys.exit(1)
+    visitor = Visitor()
+    visitor_output = visitor.visit(tree)
     print('+-------------+')
     print('|   Results   |')
     print('+-------------+')
     print()
-    visitor = Visitor()
-    visitor_output = visitor.visit(tree)
     print(visitor_output)
     if visitor_output.warning_code:
         print()

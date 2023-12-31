@@ -60,7 +60,6 @@ class Visitor(StipulaVisitor):
     # Visit a parse tree produced by StipulaParser#initStateDecl.
     def visitInitStateDecl(self, ctx:StipulaParser.InitStateDeclContext):
         self.visitor_output.Q0 = ctx.stateId.text
-        self.visitor_output.R[self.visitor_output.Q0] = set()
 
 
 

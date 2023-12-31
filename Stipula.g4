@@ -87,7 +87,7 @@ STRING : '\'' ~('\'')+ '\'' | '"' ~('"')+ '"' ;
 
 ID : [a-zA-Z] ([a-zA-Z] | [0-9] | '_')* ;
 
-WS : [ \t\r\n] -> channel(1);
+WS : [ \t\r\n] -> skip;
 
 LINECOMMENT : '//' ~[\r\n]* -> skip ;
 BLOCKCOMMENT : '/*' ('*' ~'/' | ~'*')* '*/' -> skip ;
