@@ -130,7 +130,7 @@ class VisitorOutput:
         if isinstance(visitor_entry, FunctionVisitorEntry):
             dependency_set = set()
             for previous_visitor_entry in previous_visitor_entry_set:
-                dependency_set.union(self.T[previous_visitor_entry].dependency_set)
+                dependency_set.update(self.T[previous_visitor_entry].dependency_set)
             self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), dependency_set)
             return
         if isinstance(visitor_entry, EventVisitorEntry):
