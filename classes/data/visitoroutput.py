@@ -64,16 +64,19 @@ class VisitorOutput:
     def add_visitor_entry(self, visitor_entry):
         # Aggiungo la entry al codice
         self.C.add(visitor_entry)
+        # Controllo l'esistenza dell'insieme
+        if not visitor_entry.start_state in self.R:
+            self.R[visitor_entry.start_state] = set()
         # Aggiungo la entry all'insieme dello stato di partenza e inserisco anche l'insieme dello stato di arrivo
-        self.R[visitor_entry.start_state] = self.R.get(visitor_entry.start_state, set()).union({visitor_entry}).union(self.R.get(visitor_entry.end_state, set()))
+        self.R[visitor_entry.start_state].update({visitor_entry}, self.R.get(visitor_entry.end_state, set()))
         # Aggiungo la entry in tutti gli insiemi che può raggiungere inserendo l'insieme di raggiungibilità dello stato di partenza
-        for state, visitor_entry_set in self.R.items():
+        for visitor_entry_set in self.R.values():
             is_add = False
             for previous_visitor_entry in visitor_entry_set:
                 if previous_visitor_entry.end_state == visitor_entry.start_state:
                     is_add = True
             if is_add:
-                self.R[state] = visitor_entry_set.union(self.R[visitor_entry.start_state])
+                visitor_entry_set.update(self.R[visitor_entry.start_state])
 
 
 
