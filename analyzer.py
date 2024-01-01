@@ -61,9 +61,10 @@ if __name__ == '__main__':
     if visitor_output.warning_code:
         print()
         print('========== BEGIN WARNING CODE ==========')
-        for visitor_entry in visitor_output.warning_code:
+        for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
             print()
-            _print_code(line_list, visitor_entry)
+            _print_code(line_list, visitor_entry_1)
+            _print_code(line_list, visitor_entry_2)
         print()
         print('========== END WARNING CODE ==========')
     if visitor_output.expired_code:
