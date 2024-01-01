@@ -61,10 +61,15 @@ class VisitorOutput:
 
 
 
-    def add_dependency_t(self, event_visitor_entry, dependency_set):
+    def add_dependency_t(self, event_visitor_entry, field_id_set):
         if event_visitor_entry not in self.dependency_t_dict:
             self.dependency_t_dict[event_visitor_entry] = set()
-        self.dependency_t_dict[event_visitor_entry].update(dependency_set)
+        self.dependency_t_dict[event_visitor_entry].update(field_id_set)
+
+
+
+    def set_t(self, event_visitor_entry, time_delta):
+        self.t[event_visitor_entry] = time_delta
 
 
 
@@ -186,6 +191,12 @@ class VisitorOutput:
         self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
         # Ripulisco l'insieme di raggiugibilità dai buchi creati
         self.clear_holes(self.Q0)
+
+
+
+    def set_expired_code(self, event_visitor_entry, date_str):
+        # Identifico un evento come expired
+        self.expired_code[event_visitor_entry] = date_str
 
 
 

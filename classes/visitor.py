@@ -81,9 +81,9 @@ class Visitor(StipulaVisitor):
             value_dependency = self.visitTimeExpression(ctx.trigger)
             self.visitor_output.add_visitor_entry(event_visitor_entry)
             self.visitor_output.add_dependency_t(event_visitor_entry, value_dependency.dependency_set)
-            self.visitor_output.t[event_visitor_entry] = value_dependency.value
+            self.visitor_output.set_t(event_visitor_entry, value_dependency.value)
         except ExpiredException as exception:
-            self.visitor_output.expired_code[event_visitor_entry] = exception.date_str
+            self.visitor_output.set_expired_code(event_visitor_entry, exception.date_str)
         return event_visitor_entry
 
 
