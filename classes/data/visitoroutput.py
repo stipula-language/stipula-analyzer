@@ -61,6 +61,13 @@ class VisitorOutput:
 
 
 
+    def add_dependency_t(self, event_visitor_entry, dependency_set):
+        if event_visitor_entry not in self.dependency_t_dict:
+            self.dependency_t_dict[event_visitor_entry] = set()
+        self.dependency_t_dict[event_visitor_entry].update(dependency_set)
+
+
+
     def add_visitor_entry(self, visitor_entry):
         # Aggiungo la entry al codice
         self.C.add(visitor_entry)
