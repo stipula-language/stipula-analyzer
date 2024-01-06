@@ -12,13 +12,13 @@ from classes.visitor import Visitor
 
 
 
-def _clear_code(code_line_list):
+def _clear_code(line_list):
     space_before = 0
     index = 0
     is_break = False
-    while code_line_list[0][index] in (' ', '\t', ):
-        for code_line in code_line_list[1:]:
-            if re.sub(r'^[\r\n]+', '', code_line) and code_line[index] != code_line_list[0][index]:
+    while line_list[0][index] in (' ', '\t', ):
+        for code_line in line_list[1:]:
+            if re.sub(r'^[\r\n]+', '', code_line) and code_line[index] != line_list[0][index]:
                 is_break = True
                 break
         if is_break:
@@ -26,14 +26,14 @@ def _clear_code(code_line_list):
         space_before += 1
         index += 1
     return_list = [
-        *[(code_line[space_before:] if re.sub(r'^[\r\n]+', '', code_line) else code_line) for code_line in code_line_list[:-1]],
-        code_line_list[-1][space_before:].rstrip()
+        *[(code_line[space_before:] if re.sub(r'^[\r\n]+', '', code_line) else code_line) for code_line in line_list[:-1]],
+        line_list[-1][space_before:].rstrip()
     ]
     return return_list
 
 
 
-def _print_code(code_line_list, visitor_entry):
+def _print_code(line_list, visitor_entry):
     line_str = f"line {visitor_entry.code_reference.start_line}:   "
     print(f"=== {visitor_entry} ===")
     print(f"{line_str}{(' ' * len(line_str)).join(_clear_code(line_list[visitor_entry.code_reference.start_line - 1:visitor_entry.code_reference.end_line]))}")

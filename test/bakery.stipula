@@ -3,19 +3,13 @@ stipula SPA {
 	field price, prop, pretzelMissed
 	init Sign1
 
-
-
 	agreement(Chris, Eva)(price) {
 		Chris, Eva: price, prop
 	} => @Sign1
 
-
-
 	@Sign1 Eva: sign(x)[] (true) {
 		x -> Chris
 	} => @Sign2
-
-
 
 	@Sign2 Chris: sign(x)[] (true) {
 		x -> Eva
@@ -26,19 +20,13 @@ stipula SPA {
 		} => @Fail
 	} => @Init
 
-
-
 	@Init Chris : pay()[w] (property < prop && w == price) {
 		m -o wallet
 	} => @Init
 
-
-
 	@Init Eva : transfer()[p] (wallet < price && p == property) {
 		p -o property
 	} => @Init
-
-
 
 	@Init Chris : pay()[w] (property == prop && w == price) {
 		m -o wallet
@@ -50,8 +38,6 @@ stipula SPA {
 		now + 42D >> @Refund {} => @End
 	} => @Closing
 
-
-
 	@Init Eva : transfer()[p] (wallet == price && p == property) {
 		p -o property
 		property -o Chris
@@ -62,8 +48,6 @@ stipula SPA {
 		now + 42D >> @Refund {} => @End
 	} => @Closing
 
-
-
 	@Closing Chris: pretzel_warranty_breach(x)[] (true) {
 		"Assert_Breach!" -> Eva
 		x -> pretzelMissed
@@ -73,13 +57,9 @@ stipula SPA {
 		now + 42D >> @Refund {} => @PROBLEM
 	} => @Breach
 
-
-
 	@Breach Eva: repair(x)[] (true) {
 		x -> Chris
 	} => @End
-
-
 
 	@Refund Eva: refund(x)[w] (w == 10) {
 		w -o Chris
