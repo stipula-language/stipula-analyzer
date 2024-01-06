@@ -42,7 +42,7 @@ class Visitor(StipulaVisitor):
         # Rimozione di eventi non raggiungibili e pulizia degli stati
         self.visitor_output.clear_events()
         # Calcolo dei tempi stipula
-        self.visitor_output.compute_Ts()
+        self.visitor_output.compute_T()
         # Controllo della sequenza temporale
         self.visitor_output.clear_time()
         # Calcolo il dead-code

@@ -43,10 +43,10 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_dict': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_dict.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
-            'T': {str(event_visitor_entry): {
+            'T': {str(visitor_entry): {
                 'value': str(value_dependency.value),
                 'dependency_set': list(value_dependency.dependency_set)
-            } for event_visitor_entry, value_dependency in self.T.items()},
+            } for visitor_entry, value_dependency in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
             'warning_constraint': [f"{field_id_1} <= {field_id_2}" for field_id_1, field_id_2 in self.warning_constraint],
             'warning_code': [f"{str(visitor_entry_1)} -> {str(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in self.warning_code],
@@ -154,7 +154,7 @@ class VisitorOutput:
 
 
 
-    def compute_Ts(self):
+    def compute_T(self):
         for visitor_entry in self.R[self.Q0]:
             self.compute_stipula_time(visitor_entry, set())
 
