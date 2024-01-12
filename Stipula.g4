@@ -2,11 +2,13 @@ grammar Stipula;
 
 // Struttura del linguaggio
 
-stipula :  'stipula' contractId=ID '{' assetDecl? fieldDecl initStateDecl agreement functionDecl* '}' EOF ; 
+stipula :  'stipula' contractId=ID '{' assetDecl? fieldDecl initStateDecl agreement? functionDecl* '}' EOF ; 
 
 assetDecl : 'asset' assetId+=ID (',' assetId+=ID)* ;
 
-fieldDecl : 'field' fieldId+=ID (',' fieldId+=ID)* ;
+fieldDecl : 'field' fieldInit (',' fieldInit)* ;
+
+fieldInit : fieldId=ID ('=' value=(BOOL | TIMEDELTA | NUMBER | DATESTRING | STRING))? ;
 
 initStateDecl : 'init' stateId=ID ;
 
@@ -79,7 +81,7 @@ NOW : 'now' ;
 BOOL : TRUE | FALSE ;
 TRUE : 'true' ;
 FALSE : 'false' ;
-TIMEDELTA : INTEGER [YMDhm] | NUMBER 's' ;
+TIMEDELTA : INTEGER [YMDhm]? | NUMBER 's' ;
 NUMBER : INTEGER ('.' [0-9]*)? ;
 INTEGER : '0' | [1-9] [0-9]* ;
 DATESTRING : '"' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '"' | '\'' [0-9] [0-9] [0-9] [0-9] '-' ('0' [1-9] | '1' [0-2]) '-' ('0' [1-9] | [1-2] [0-9] | '3' [0-1]) '\'' ;

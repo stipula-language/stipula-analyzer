@@ -53,6 +53,11 @@ class VisitorOutput:
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
             'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
         }, indent=2)
+    
+
+
+    def add_field_id(self, field_id):
+        self.field_id_set.add(field_id)
 
 
 

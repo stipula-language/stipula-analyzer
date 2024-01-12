@@ -1,0 +1,8 @@
+=== AGGIUNTE FULL COMPATIBILITY NELLA GRAMMATICA ===
+- Nella grammatica gli agreement vanno messi opzionali [OK]
+- Nella grammatica mettere l'inizializzazione dei field [OK]
+- Ammettere nelle time expression gli interi senza niente in modo che possano essere considerati minuti [OK]
+- Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
+
+=== PARTI MANCANTI NELL'ANALIZZATORE ===
+- Quando rimuovo una funzione devo anche rimuovere tutti gli eventi che quella funzione definisce

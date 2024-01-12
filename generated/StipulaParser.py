@@ -10,106 +10,111 @@ else:
 
 def serializedATN():
     return [
-        4,1,46,289,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,47,298,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,
         2,14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,
-        7,20,2,21,7,21,1,0,1,0,1,0,1,0,3,0,49,8,0,1,0,1,0,1,0,1,0,5,0,55,
-        8,0,10,0,12,0,58,9,0,1,0,1,0,1,0,1,1,1,1,1,1,1,1,5,1,67,8,1,10,1,
-        12,1,70,9,1,1,2,1,2,1,2,1,2,5,2,76,8,2,10,2,12,2,79,9,2,1,3,1,3,
-        1,3,1,4,1,4,1,4,1,4,1,4,5,4,89,8,4,10,4,12,4,92,9,4,1,4,1,4,1,4,
-        1,4,1,4,5,4,99,8,4,10,4,12,4,102,9,4,1,4,1,4,1,4,4,4,107,8,4,11,
-        4,12,4,108,1,4,1,4,1,4,1,4,1,4,1,5,1,5,1,5,5,5,119,8,5,10,5,12,5,
-        122,9,5,1,5,1,5,1,5,1,5,5,5,128,8,5,10,5,12,5,131,9,5,1,6,1,6,1,
-        6,1,6,1,6,1,6,1,6,1,6,1,6,5,6,142,8,6,10,6,12,6,145,9,6,3,6,147,
-        8,6,1,6,1,6,1,6,1,6,1,6,5,6,154,8,6,10,6,12,6,157,9,6,3,6,159,8,
-        6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,7,5,7,173,8,7,10,
-        7,12,7,176,9,7,1,7,5,7,179,8,7,10,7,12,7,182,9,7,1,8,1,8,1,8,3,8,
-        187,8,8,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,3,9,
-        202,8,9,1,10,1,10,1,10,1,10,3,10,208,8,10,1,10,1,10,1,11,1,11,1,
-        11,1,11,1,12,1,12,1,12,1,12,1,12,1,12,5,12,222,8,12,10,12,12,12,
-        225,9,12,1,12,1,12,1,12,1,12,1,12,1,13,1,13,1,13,3,13,235,8,13,1,
-        13,1,13,3,13,239,8,13,1,14,1,14,1,14,3,14,244,8,14,1,15,1,15,1,15,
-        3,15,249,8,15,1,16,3,16,252,8,16,1,16,1,16,1,17,1,17,1,17,3,17,259,
-        8,17,1,18,1,18,1,18,3,18,264,8,18,1,19,1,19,1,19,3,19,269,8,19,1,
-        20,3,20,272,8,20,1,20,1,20,1,21,1,21,1,21,1,21,1,21,1,21,1,21,1,
-        21,1,21,1,21,1,21,3,21,287,8,21,1,21,0,0,22,0,2,4,6,8,10,12,14,16,
-        18,20,22,24,26,28,30,32,34,36,38,40,42,0,5,2,0,38,38,43,43,1,0,22,
-        23,1,0,24,29,1,0,30,31,1,0,32,33,303,0,44,1,0,0,0,2,62,1,0,0,0,4,
-        71,1,0,0,0,6,80,1,0,0,0,8,83,1,0,0,0,10,115,1,0,0,0,12,132,1,0,0,
-        0,14,174,1,0,0,0,16,186,1,0,0,0,18,188,1,0,0,0,20,203,1,0,0,0,22,
-        211,1,0,0,0,24,215,1,0,0,0,26,238,1,0,0,0,28,240,1,0,0,0,30,245,
-        1,0,0,0,32,251,1,0,0,0,34,255,1,0,0,0,36,260,1,0,0,0,38,265,1,0,
-        0,0,40,271,1,0,0,0,42,286,1,0,0,0,44,45,5,1,0,0,45,46,5,43,0,0,46,
-        48,5,2,0,0,47,49,3,2,1,0,48,47,1,0,0,0,48,49,1,0,0,0,49,50,1,0,0,
-        0,50,51,3,4,2,0,51,52,3,6,3,0,52,56,3,8,4,0,53,55,3,12,6,0,54,53,
-        1,0,0,0,55,58,1,0,0,0,56,54,1,0,0,0,56,57,1,0,0,0,57,59,1,0,0,0,
-        58,56,1,0,0,0,59,60,5,3,0,0,60,61,5,0,0,1,61,1,1,0,0,0,62,63,5,4,
-        0,0,63,68,5,43,0,0,64,65,5,5,0,0,65,67,5,43,0,0,66,64,1,0,0,0,67,
-        70,1,0,0,0,68,66,1,0,0,0,68,69,1,0,0,0,69,3,1,0,0,0,70,68,1,0,0,
-        0,71,72,5,6,0,0,72,77,5,43,0,0,73,74,5,5,0,0,74,76,5,43,0,0,75,73,
-        1,0,0,0,76,79,1,0,0,0,77,75,1,0,0,0,77,78,1,0,0,0,78,5,1,0,0,0,79,
-        77,1,0,0,0,80,81,5,7,0,0,81,82,5,43,0,0,82,7,1,0,0,0,83,84,5,8,0,
-        0,84,85,5,9,0,0,85,90,5,43,0,0,86,87,5,5,0,0,87,89,5,43,0,0,88,86,
-        1,0,0,0,89,92,1,0,0,0,90,88,1,0,0,0,90,91,1,0,0,0,91,93,1,0,0,0,
-        92,90,1,0,0,0,93,94,5,10,0,0,94,95,5,9,0,0,95,100,5,43,0,0,96,97,
-        5,5,0,0,97,99,5,43,0,0,98,96,1,0,0,0,99,102,1,0,0,0,100,98,1,0,0,
-        0,100,101,1,0,0,0,101,103,1,0,0,0,102,100,1,0,0,0,103,104,5,10,0,
-        0,104,106,5,2,0,0,105,107,3,10,5,0,106,105,1,0,0,0,107,108,1,0,0,
-        0,108,106,1,0,0,0,108,109,1,0,0,0,109,110,1,0,0,0,110,111,5,3,0,
-        0,111,112,5,11,0,0,112,113,5,12,0,0,113,114,5,43,0,0,114,9,1,0,0,
-        0,115,120,5,43,0,0,116,117,5,5,0,0,117,119,5,43,0,0,118,116,1,0,
-        0,0,119,122,1,0,0,0,120,118,1,0,0,0,120,121,1,0,0,0,121,123,1,0,
-        0,0,122,120,1,0,0,0,123,124,5,13,0,0,124,129,5,43,0,0,125,126,5,
-        5,0,0,126,128,5,43,0,0,127,125,1,0,0,0,128,131,1,0,0,0,129,127,1,
-        0,0,0,129,130,1,0,0,0,130,11,1,0,0,0,131,129,1,0,0,0,132,133,5,12,
-        0,0,133,134,5,43,0,0,134,135,5,43,0,0,135,136,5,13,0,0,136,137,5,
-        43,0,0,137,146,5,9,0,0,138,143,5,43,0,0,139,140,5,5,0,0,140,142,
-        5,43,0,0,141,139,1,0,0,0,142,145,1,0,0,0,143,141,1,0,0,0,143,144,
-        1,0,0,0,144,147,1,0,0,0,145,143,1,0,0,0,146,138,1,0,0,0,146,147,
-        1,0,0,0,147,148,1,0,0,0,148,149,5,10,0,0,149,158,5,14,0,0,150,155,
-        5,43,0,0,151,152,5,5,0,0,152,154,5,43,0,0,153,151,1,0,0,0,154,157,
-        1,0,0,0,155,153,1,0,0,0,155,156,1,0,0,0,156,159,1,0,0,0,157,155,
-        1,0,0,0,158,150,1,0,0,0,158,159,1,0,0,0,159,160,1,0,0,0,160,161,
-        5,15,0,0,161,162,5,9,0,0,162,163,3,30,15,0,163,164,5,10,0,0,164,
-        165,5,2,0,0,165,166,3,14,7,0,166,167,5,3,0,0,167,168,5,11,0,0,168,
-        169,5,12,0,0,169,170,5,43,0,0,170,13,1,0,0,0,171,173,3,16,8,0,172,
-        171,1,0,0,0,173,176,1,0,0,0,174,172,1,0,0,0,174,175,1,0,0,0,175,
-        180,1,0,0,0,176,174,1,0,0,0,177,179,3,24,12,0,178,177,1,0,0,0,179,
-        182,1,0,0,0,180,178,1,0,0,0,180,181,1,0,0,0,181,15,1,0,0,0,182,180,
-        1,0,0,0,183,187,3,18,9,0,184,187,3,20,10,0,185,187,3,22,11,0,186,
-        183,1,0,0,0,186,184,1,0,0,0,186,185,1,0,0,0,187,17,1,0,0,0,188,189,
-        5,16,0,0,189,190,5,9,0,0,190,191,3,30,15,0,191,192,5,10,0,0,192,
-        193,5,2,0,0,193,194,3,14,7,0,194,195,5,3,0,0,195,201,5,17,0,0,196,
-        197,5,2,0,0,197,198,3,14,7,0,198,199,5,3,0,0,199,202,1,0,0,0,200,
-        202,3,18,9,0,201,196,1,0,0,0,201,200,1,0,0,0,202,19,1,0,0,0,203,
-        204,3,30,15,0,204,207,5,18,0,0,205,206,5,43,0,0,206,208,5,5,0,0,
-        207,205,1,0,0,0,207,208,1,0,0,0,208,209,1,0,0,0,209,210,5,43,0,0,
-        210,21,1,0,0,0,211,212,3,30,15,0,212,213,5,19,0,0,213,214,5,43,0,
-        0,214,23,1,0,0,0,215,216,3,26,13,0,216,217,5,20,0,0,217,218,5,12,
-        0,0,218,219,5,43,0,0,219,223,5,2,0,0,220,222,3,16,8,0,221,220,1,
-        0,0,0,222,225,1,0,0,0,223,221,1,0,0,0,223,224,1,0,0,0,224,226,1,
-        0,0,0,225,223,1,0,0,0,226,227,5,3,0,0,227,228,5,11,0,0,228,229,5,
-        12,0,0,229,230,5,43,0,0,230,25,1,0,0,0,231,234,5,34,0,0,232,233,
-        5,30,0,0,233,235,3,28,14,0,234,232,1,0,0,0,234,235,1,0,0,0,235,239,
-        1,0,0,0,236,239,5,41,0,0,237,239,5,43,0,0,238,231,1,0,0,0,238,236,
-        1,0,0,0,238,237,1,0,0,0,239,27,1,0,0,0,240,243,7,0,0,0,241,242,5,
-        30,0,0,242,244,3,28,14,0,243,241,1,0,0,0,243,244,1,0,0,0,244,29,
-        1,0,0,0,245,248,3,32,16,0,246,247,7,1,0,0,247,249,3,30,15,0,248,
-        246,1,0,0,0,248,249,1,0,0,0,249,31,1,0,0,0,250,252,5,21,0,0,251,
-        250,1,0,0,0,251,252,1,0,0,0,252,253,1,0,0,0,253,254,3,34,17,0,254,
-        33,1,0,0,0,255,258,3,36,18,0,256,257,7,2,0,0,257,259,3,34,17,0,258,
-        256,1,0,0,0,258,259,1,0,0,0,259,35,1,0,0,0,260,263,3,38,19,0,261,
-        262,7,3,0,0,262,264,3,36,18,0,263,261,1,0,0,0,263,264,1,0,0,0,264,
-        37,1,0,0,0,265,268,3,40,20,0,266,267,7,4,0,0,267,269,3,38,19,0,268,
-        266,1,0,0,0,268,269,1,0,0,0,269,39,1,0,0,0,270,272,5,31,0,0,271,
-        270,1,0,0,0,271,272,1,0,0,0,272,273,1,0,0,0,273,274,3,42,21,0,274,
-        41,1,0,0,0,275,287,5,34,0,0,276,287,5,35,0,0,277,287,5,38,0,0,278,
-        287,5,39,0,0,279,287,5,41,0,0,280,287,5,42,0,0,281,287,5,43,0,0,
-        282,283,5,9,0,0,283,284,3,30,15,0,284,285,5,10,0,0,285,287,1,0,0,
-        0,286,275,1,0,0,0,286,276,1,0,0,0,286,277,1,0,0,0,286,278,1,0,0,
-        0,286,279,1,0,0,0,286,280,1,0,0,0,286,281,1,0,0,0,286,282,1,0,0,
-        0,287,43,1,0,0,0,29,48,56,68,77,90,100,108,120,129,143,146,155,158,
-        174,180,186,201,207,223,234,238,243,248,251,258,263,268,271,286
+        7,20,2,21,7,21,2,22,7,22,1,0,1,0,1,0,1,0,3,0,51,8,0,1,0,1,0,1,0,
+        3,0,56,8,0,1,0,5,0,59,8,0,10,0,12,0,62,9,0,1,0,1,0,1,0,1,1,1,1,1,
+        1,1,1,5,1,71,8,1,10,1,12,1,74,9,1,1,2,1,2,1,2,1,2,5,2,80,8,2,10,
+        2,12,2,83,9,2,1,3,1,3,1,3,3,3,88,8,3,1,4,1,4,1,4,1,5,1,5,1,5,1,5,
+        1,5,5,5,98,8,5,10,5,12,5,101,9,5,1,5,1,5,1,5,1,5,1,5,5,5,108,8,5,
+        10,5,12,5,111,9,5,1,5,1,5,1,5,4,5,116,8,5,11,5,12,5,117,1,5,1,5,
+        1,5,1,5,1,5,1,6,1,6,1,6,5,6,128,8,6,10,6,12,6,131,9,6,1,6,1,6,1,
+        6,1,6,5,6,137,8,6,10,6,12,6,140,9,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+        1,7,1,7,5,7,151,8,7,10,7,12,7,154,9,7,3,7,156,8,7,1,7,1,7,1,7,1,
+        7,1,7,5,7,163,8,7,10,7,12,7,166,9,7,3,7,168,8,7,1,7,1,7,1,7,1,7,
+        1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,8,5,8,182,8,8,10,8,12,8,185,9,8,1,
+        8,5,8,188,8,8,10,8,12,8,191,9,8,1,9,1,9,1,9,3,9,196,8,9,1,10,1,10,
+        1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,1,10,3,10,211,
+        8,10,1,11,1,11,1,11,1,11,3,11,217,8,11,1,11,1,11,1,12,1,12,1,12,
+        1,12,1,13,1,13,1,13,1,13,1,13,1,13,5,13,231,8,13,10,13,12,13,234,
+        9,13,1,13,1,13,1,13,1,13,1,13,1,14,1,14,1,14,3,14,244,8,14,1,14,
+        1,14,3,14,248,8,14,1,15,1,15,1,15,3,15,253,8,15,1,16,1,16,1,16,3,
+        16,258,8,16,1,17,3,17,261,8,17,1,17,1,17,1,18,1,18,1,18,3,18,268,
+        8,18,1,19,1,19,1,19,3,19,273,8,19,1,20,1,20,1,20,3,20,278,8,20,1,
+        21,3,21,281,8,21,1,21,1,21,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,
+        22,1,22,1,22,1,22,3,22,296,8,22,1,22,0,0,23,0,2,4,6,8,10,12,14,16,
+        18,20,22,24,26,28,30,32,34,36,38,40,42,44,0,6,3,0,36,36,39,40,42,
+        43,2,0,39,39,44,44,1,0,23,24,1,0,25,30,1,0,31,32,1,0,33,34,313,0,
+        46,1,0,0,0,2,66,1,0,0,0,4,75,1,0,0,0,6,84,1,0,0,0,8,89,1,0,0,0,10,
+        92,1,0,0,0,12,124,1,0,0,0,14,141,1,0,0,0,16,183,1,0,0,0,18,195,1,
+        0,0,0,20,197,1,0,0,0,22,212,1,0,0,0,24,220,1,0,0,0,26,224,1,0,0,
+        0,28,247,1,0,0,0,30,249,1,0,0,0,32,254,1,0,0,0,34,260,1,0,0,0,36,
+        264,1,0,0,0,38,269,1,0,0,0,40,274,1,0,0,0,42,280,1,0,0,0,44,295,
+        1,0,0,0,46,47,5,1,0,0,47,48,5,44,0,0,48,50,5,2,0,0,49,51,3,2,1,0,
+        50,49,1,0,0,0,50,51,1,0,0,0,51,52,1,0,0,0,52,53,3,4,2,0,53,55,3,
+        8,4,0,54,56,3,10,5,0,55,54,1,0,0,0,55,56,1,0,0,0,56,60,1,0,0,0,57,
+        59,3,14,7,0,58,57,1,0,0,0,59,62,1,0,0,0,60,58,1,0,0,0,60,61,1,0,
+        0,0,61,63,1,0,0,0,62,60,1,0,0,0,63,64,5,3,0,0,64,65,5,0,0,1,65,1,
+        1,0,0,0,66,67,5,4,0,0,67,72,5,44,0,0,68,69,5,5,0,0,69,71,5,44,0,
+        0,70,68,1,0,0,0,71,74,1,0,0,0,72,70,1,0,0,0,72,73,1,0,0,0,73,3,1,
+        0,0,0,74,72,1,0,0,0,75,76,5,6,0,0,76,81,3,6,3,0,77,78,5,5,0,0,78,
+        80,3,6,3,0,79,77,1,0,0,0,80,83,1,0,0,0,81,79,1,0,0,0,81,82,1,0,0,
+        0,82,5,1,0,0,0,83,81,1,0,0,0,84,87,5,44,0,0,85,86,5,7,0,0,86,88,
+        7,0,0,0,87,85,1,0,0,0,87,88,1,0,0,0,88,7,1,0,0,0,89,90,5,8,0,0,90,
+        91,5,44,0,0,91,9,1,0,0,0,92,93,5,9,0,0,93,94,5,10,0,0,94,99,5,44,
+        0,0,95,96,5,5,0,0,96,98,5,44,0,0,97,95,1,0,0,0,98,101,1,0,0,0,99,
+        97,1,0,0,0,99,100,1,0,0,0,100,102,1,0,0,0,101,99,1,0,0,0,102,103,
+        5,11,0,0,103,104,5,10,0,0,104,109,5,44,0,0,105,106,5,5,0,0,106,108,
+        5,44,0,0,107,105,1,0,0,0,108,111,1,0,0,0,109,107,1,0,0,0,109,110,
+        1,0,0,0,110,112,1,0,0,0,111,109,1,0,0,0,112,113,5,11,0,0,113,115,
+        5,2,0,0,114,116,3,12,6,0,115,114,1,0,0,0,116,117,1,0,0,0,117,115,
+        1,0,0,0,117,118,1,0,0,0,118,119,1,0,0,0,119,120,5,3,0,0,120,121,
+        5,12,0,0,121,122,5,13,0,0,122,123,5,44,0,0,123,11,1,0,0,0,124,129,
+        5,44,0,0,125,126,5,5,0,0,126,128,5,44,0,0,127,125,1,0,0,0,128,131,
+        1,0,0,0,129,127,1,0,0,0,129,130,1,0,0,0,130,132,1,0,0,0,131,129,
+        1,0,0,0,132,133,5,14,0,0,133,138,5,44,0,0,134,135,5,5,0,0,135,137,
+        5,44,0,0,136,134,1,0,0,0,137,140,1,0,0,0,138,136,1,0,0,0,138,139,
+        1,0,0,0,139,13,1,0,0,0,140,138,1,0,0,0,141,142,5,13,0,0,142,143,
+        5,44,0,0,143,144,5,44,0,0,144,145,5,14,0,0,145,146,5,44,0,0,146,
+        155,5,10,0,0,147,152,5,44,0,0,148,149,5,5,0,0,149,151,5,44,0,0,150,
+        148,1,0,0,0,151,154,1,0,0,0,152,150,1,0,0,0,152,153,1,0,0,0,153,
+        156,1,0,0,0,154,152,1,0,0,0,155,147,1,0,0,0,155,156,1,0,0,0,156,
+        157,1,0,0,0,157,158,5,11,0,0,158,167,5,15,0,0,159,164,5,44,0,0,160,
+        161,5,5,0,0,161,163,5,44,0,0,162,160,1,0,0,0,163,166,1,0,0,0,164,
+        162,1,0,0,0,164,165,1,0,0,0,165,168,1,0,0,0,166,164,1,0,0,0,167,
+        159,1,0,0,0,167,168,1,0,0,0,168,169,1,0,0,0,169,170,5,16,0,0,170,
+        171,5,10,0,0,171,172,3,32,16,0,172,173,5,11,0,0,173,174,5,2,0,0,
+        174,175,3,16,8,0,175,176,5,3,0,0,176,177,5,12,0,0,177,178,5,13,0,
+        0,178,179,5,44,0,0,179,15,1,0,0,0,180,182,3,18,9,0,181,180,1,0,0,
+        0,182,185,1,0,0,0,183,181,1,0,0,0,183,184,1,0,0,0,184,189,1,0,0,
+        0,185,183,1,0,0,0,186,188,3,26,13,0,187,186,1,0,0,0,188,191,1,0,
+        0,0,189,187,1,0,0,0,189,190,1,0,0,0,190,17,1,0,0,0,191,189,1,0,0,
+        0,192,196,3,20,10,0,193,196,3,22,11,0,194,196,3,24,12,0,195,192,
+        1,0,0,0,195,193,1,0,0,0,195,194,1,0,0,0,196,19,1,0,0,0,197,198,5,
+        17,0,0,198,199,5,10,0,0,199,200,3,32,16,0,200,201,5,11,0,0,201,202,
+        5,2,0,0,202,203,3,16,8,0,203,204,5,3,0,0,204,210,5,18,0,0,205,206,
+        5,2,0,0,206,207,3,16,8,0,207,208,5,3,0,0,208,211,1,0,0,0,209,211,
+        3,20,10,0,210,205,1,0,0,0,210,209,1,0,0,0,211,21,1,0,0,0,212,213,
+        3,32,16,0,213,216,5,19,0,0,214,215,5,44,0,0,215,217,5,5,0,0,216,
+        214,1,0,0,0,216,217,1,0,0,0,217,218,1,0,0,0,218,219,5,44,0,0,219,
+        23,1,0,0,0,220,221,3,32,16,0,221,222,5,20,0,0,222,223,5,44,0,0,223,
+        25,1,0,0,0,224,225,3,28,14,0,225,226,5,21,0,0,226,227,5,13,0,0,227,
+        228,5,44,0,0,228,232,5,2,0,0,229,231,3,18,9,0,230,229,1,0,0,0,231,
+        234,1,0,0,0,232,230,1,0,0,0,232,233,1,0,0,0,233,235,1,0,0,0,234,
+        232,1,0,0,0,235,236,5,3,0,0,236,237,5,12,0,0,237,238,5,13,0,0,238,
+        239,5,44,0,0,239,27,1,0,0,0,240,243,5,35,0,0,241,242,5,31,0,0,242,
+        244,3,30,15,0,243,241,1,0,0,0,243,244,1,0,0,0,244,248,1,0,0,0,245,
+        248,5,42,0,0,246,248,5,44,0,0,247,240,1,0,0,0,247,245,1,0,0,0,247,
+        246,1,0,0,0,248,29,1,0,0,0,249,252,7,1,0,0,250,251,5,31,0,0,251,
+        253,3,30,15,0,252,250,1,0,0,0,252,253,1,0,0,0,253,31,1,0,0,0,254,
+        257,3,34,17,0,255,256,7,2,0,0,256,258,3,32,16,0,257,255,1,0,0,0,
+        257,258,1,0,0,0,258,33,1,0,0,0,259,261,5,22,0,0,260,259,1,0,0,0,
+        260,261,1,0,0,0,261,262,1,0,0,0,262,263,3,36,18,0,263,35,1,0,0,0,
+        264,267,3,38,19,0,265,266,7,3,0,0,266,268,3,36,18,0,267,265,1,0,
+        0,0,267,268,1,0,0,0,268,37,1,0,0,0,269,272,3,40,20,0,270,271,7,4,
+        0,0,271,273,3,38,19,0,272,270,1,0,0,0,272,273,1,0,0,0,273,39,1,0,
+        0,0,274,277,3,42,21,0,275,276,7,5,0,0,276,278,3,40,20,0,277,275,
+        1,0,0,0,277,278,1,0,0,0,278,41,1,0,0,0,279,281,5,32,0,0,280,279,
+        1,0,0,0,280,281,1,0,0,0,281,282,1,0,0,0,282,283,3,44,22,0,283,43,
+        1,0,0,0,284,296,5,35,0,0,285,296,5,36,0,0,286,296,5,39,0,0,287,296,
+        5,40,0,0,288,296,5,42,0,0,289,296,5,43,0,0,290,296,5,44,0,0,291,
+        292,5,10,0,0,292,293,3,32,16,0,293,294,5,11,0,0,294,296,1,0,0,0,
+        295,284,1,0,0,0,295,285,1,0,0,0,295,286,1,0,0,0,295,287,1,0,0,0,
+        295,288,1,0,0,0,295,289,1,0,0,0,295,290,1,0,0,0,295,291,1,0,0,0,
+        296,45,1,0,0,0,31,50,55,60,72,81,87,99,109,117,129,138,152,155,164,
+        167,183,189,195,210,216,232,243,247,252,257,260,267,272,277,280,
+        295
     ]
 
 class StipulaParser ( Parser ):
@@ -123,47 +128,49 @@ class StipulaParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ "<INVALID>", "'stipula'", "'{'", "'}'", "'asset'", 
-                     "','", "'field'", "'init'", "'agreement'", "'('", "')'", 
-                     "'=>'", "'@'", "':'", "'['", "']'", "'if'", "'else'", 
-                     "'-o'", "'->'", "'>>'", "'!'", "'&&'", "'||'", "'=='", 
-                     "'!='", "'<'", "'>'", "'<='", "'>='", "'+'", "'-'", 
-                     "'*'", "'/'", "'now'", "<INVALID>", "'true'", "'false'" ]
+                     "','", "'field'", "'='", "'init'", "'agreement'", "'('", 
+                     "')'", "'=>'", "'@'", "':'", "'['", "']'", "'if'", 
+                     "'else'", "'-o'", "'->'", "'>>'", "'!'", "'&&'", "'||'", 
+                     "'=='", "'!='", "'<'", "'>'", "'<='", "'>='", "'+'", 
+                     "'-'", "'*'", "'/'", "'now'", "<INVALID>", "'true'", 
+                     "'false'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "NOT", "AND", "OR", "EQ", "NEQ", "LE", 
-                      "GE", "LEQ", "GEQ", "PLUS", "MINUS", "TIMES", "DIVISION", 
-                      "NOW", "BOOL", "TRUE", "FALSE", "TIMEDELTA", "NUMBER", 
-                      "INTEGER", "DATESTRING", "STRING", "ID", "WS", "LINECOMMENT", 
-                      "BLOCKCOMMENT" ]
+                      "<INVALID>", "<INVALID>", "NOT", "AND", "OR", "EQ", 
+                      "NEQ", "LE", "GE", "LEQ", "GEQ", "PLUS", "MINUS", 
+                      "TIMES", "DIVISION", "NOW", "BOOL", "TRUE", "FALSE", 
+                      "TIMEDELTA", "NUMBER", "INTEGER", "DATESTRING", "STRING", 
+                      "ID", "WS", "LINECOMMENT", "BLOCKCOMMENT" ]
 
     RULE_stipula = 0
     RULE_assetDecl = 1
     RULE_fieldDecl = 2
-    RULE_initStateDecl = 3
-    RULE_agreement = 4
-    RULE_agree = 5
-    RULE_functionDecl = 6
-    RULE_functionBody = 7
-    RULE_statement = 8
-    RULE_ifThenElse = 9
-    RULE_assetOperation = 10
-    RULE_fieldOperation = 11
-    RULE_eventDecl = 12
-    RULE_timeExpression = 13
-    RULE_timeExpression1 = 14
-    RULE_expression = 15
-    RULE_expression1 = 16
-    RULE_expression2 = 17
-    RULE_expression3 = 18
-    RULE_expression4 = 19
-    RULE_expression5 = 20
-    RULE_expression6 = 21
+    RULE_fieldInit = 3
+    RULE_initStateDecl = 4
+    RULE_agreement = 5
+    RULE_agree = 6
+    RULE_functionDecl = 7
+    RULE_functionBody = 8
+    RULE_statement = 9
+    RULE_ifThenElse = 10
+    RULE_assetOperation = 11
+    RULE_fieldOperation = 12
+    RULE_eventDecl = 13
+    RULE_timeExpression = 14
+    RULE_timeExpression1 = 15
+    RULE_expression = 16
+    RULE_expression1 = 17
+    RULE_expression2 = 18
+    RULE_expression3 = 19
+    RULE_expression4 = 20
+    RULE_expression5 = 21
+    RULE_expression6 = 22
 
-    ruleNames =  [ "stipula", "assetDecl", "fieldDecl", "initStateDecl", 
+    ruleNames =  [ "stipula", "assetDecl", "fieldDecl", "fieldInit", "initStateDecl", 
                    "agreement", "agree", "functionDecl", "functionBody", 
                    "statement", "ifThenElse", "assetOperation", "fieldOperation", 
                    "eventDecl", "timeExpression", "timeExpression1", "expression", 
@@ -191,32 +198,33 @@ class StipulaParser ( Parser ):
     T__17=18
     T__18=19
     T__19=20
-    NOT=21
-    AND=22
-    OR=23
-    EQ=24
-    NEQ=25
-    LE=26
-    GE=27
-    LEQ=28
-    GEQ=29
-    PLUS=30
-    MINUS=31
-    TIMES=32
-    DIVISION=33
-    NOW=34
-    BOOL=35
-    TRUE=36
-    FALSE=37
-    TIMEDELTA=38
-    NUMBER=39
-    INTEGER=40
-    DATESTRING=41
-    STRING=42
-    ID=43
-    WS=44
-    LINECOMMENT=45
-    BLOCKCOMMENT=46
+    T__20=21
+    NOT=22
+    AND=23
+    OR=24
+    EQ=25
+    NEQ=26
+    LE=27
+    GE=28
+    LEQ=29
+    GEQ=30
+    PLUS=31
+    MINUS=32
+    TIMES=33
+    DIVISION=34
+    NOW=35
+    BOOL=36
+    TRUE=37
+    FALSE=38
+    TIMEDELTA=39
+    NUMBER=40
+    INTEGER=41
+    DATESTRING=42
+    STRING=43
+    ID=44
+    WS=45
+    LINECOMMENT=46
+    BLOCKCOMMENT=47
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -243,10 +251,6 @@ class StipulaParser ( Parser ):
             return self.getTypedRuleContext(StipulaParser.InitStateDeclContext,0)
 
 
-        def agreement(self):
-            return self.getTypedRuleContext(StipulaParser.AgreementContext,0)
-
-
         def EOF(self):
             return self.getToken(StipulaParser.EOF, 0)
 
@@ -255,6 +259,10 @@ class StipulaParser ( Parser ):
 
         def assetDecl(self):
             return self.getTypedRuleContext(StipulaParser.AssetDeclContext,0)
+
+
+        def agreement(self):
+            return self.getTypedRuleContext(StipulaParser.AgreementContext,0)
 
 
         def functionDecl(self, i:int=None):
@@ -283,39 +291,45 @@ class StipulaParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 44
-            self.match(StipulaParser.T__0)
-            self.state = 45
-            localctx.contractId = self.match(StipulaParser.ID)
             self.state = 46
-            self.match(StipulaParser.T__1)
+            self.match(StipulaParser.T__0)
+            self.state = 47
+            localctx.contractId = self.match(StipulaParser.ID)
             self.state = 48
+            self.match(StipulaParser.T__1)
+            self.state = 50
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==4:
-                self.state = 47
+                self.state = 49
                 self.assetDecl()
 
 
-            self.state = 50
-            self.fieldDecl()
-            self.state = 51
-            self.initStateDecl()
             self.state = 52
-            self.agreement()
-            self.state = 56
+            self.fieldDecl()
+            self.state = 53
+            self.initStateDecl()
+            self.state = 55
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==12:
-                self.state = 53
+            if _la==9:
+                self.state = 54
+                self.agreement()
+
+
+            self.state = 60
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==13:
+                self.state = 57
                 self.functionDecl()
-                self.state = 58
+                self.state = 62
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 59
+            self.state = 63
             self.match(StipulaParser.T__2)
-            self.state = 60
+            self.state = 64
             self.match(StipulaParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
@@ -360,21 +374,21 @@ class StipulaParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 62
+            self.state = 66
             self.match(StipulaParser.T__3)
-            self.state = 63
+            self.state = 67
             localctx._ID = self.match(StipulaParser.ID)
             localctx.assetId.append(localctx._ID)
-            self.state = 68
+            self.state = 72
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==5:
-                self.state = 64
+                self.state = 68
                 self.match(StipulaParser.T__4)
-                self.state = 65
+                self.state = 69
                 localctx._ID = self.match(StipulaParser.ID)
                 localctx.assetId.append(localctx._ID)
-                self.state = 70
+                self.state = 74
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -393,14 +407,13 @@ class StipulaParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
-            self._ID = None # Token
-            self.fieldId = list() # of Tokens
 
-        def ID(self, i:int=None):
+        def fieldInit(self, i:int=None):
             if i is None:
-                return self.getTokens(StipulaParser.ID)
+                return self.getTypedRuleContexts(StipulaParser.FieldInitContext)
             else:
-                return self.getToken(StipulaParser.ID, i)
+                return self.getTypedRuleContext(StipulaParser.FieldInitContext,i)
+
 
         def getRuleIndex(self):
             return StipulaParser.RULE_fieldDecl
@@ -421,23 +434,94 @@ class StipulaParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 71
+            self.state = 75
             self.match(StipulaParser.T__5)
-            self.state = 72
-            localctx._ID = self.match(StipulaParser.ID)
-            localctx.fieldId.append(localctx._ID)
-            self.state = 77
+            self.state = 76
+            self.fieldInit()
+            self.state = 81
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==5:
-                self.state = 73
+                self.state = 77
                 self.match(StipulaParser.T__4)
-                self.state = 74
-                localctx._ID = self.match(StipulaParser.ID)
-                localctx.fieldId.append(localctx._ID)
-                self.state = 79
+                self.state = 78
+                self.fieldInit()
+                self.state = 83
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
+
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class FieldInitContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+            self.fieldId = None # Token
+            self.value = None # Token
+
+        def ID(self):
+            return self.getToken(StipulaParser.ID, 0)
+
+        def BOOL(self):
+            return self.getToken(StipulaParser.BOOL, 0)
+
+        def TIMEDELTA(self):
+            return self.getToken(StipulaParser.TIMEDELTA, 0)
+
+        def NUMBER(self):
+            return self.getToken(StipulaParser.NUMBER, 0)
+
+        def DATESTRING(self):
+            return self.getToken(StipulaParser.DATESTRING, 0)
+
+        def STRING(self):
+            return self.getToken(StipulaParser.STRING, 0)
+
+        def getRuleIndex(self):
+            return StipulaParser.RULE_fieldInit
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFieldInit" ):
+                return visitor.visitFieldInit(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+
+    def fieldInit(self):
+
+        localctx = StipulaParser.FieldInitContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 6, self.RULE_fieldInit)
+        self._la = 0 # Token type
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 84
+            localctx.fieldId = self.match(StipulaParser.ID)
+            self.state = 87
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==7:
+                self.state = 85
+                self.match(StipulaParser.T__6)
+                self.state = 86
+                localctx.value = self._input.LT(1)
+                _la = self._input.LA(1)
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 14912126451712) != 0)):
+                    localctx.value = self._errHandler.recoverInline(self)
+                else:
+                    self._errHandler.reportMatch(self)
+                    self.consume()
+
 
         except RecognitionException as re:
             localctx.exception = re
@@ -474,12 +558,12 @@ class StipulaParser ( Parser ):
     def initStateDecl(self):
 
         localctx = StipulaParser.InitStateDeclContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 6, self.RULE_initStateDecl)
+        self.enterRule(localctx, 8, self.RULE_initStateDecl)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 80
-            self.match(StipulaParser.T__6)
-            self.state = 81
+            self.state = 89
+            self.match(StipulaParser.T__7)
+            self.state = 90
             localctx.stateId = self.match(StipulaParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -529,73 +613,73 @@ class StipulaParser ( Parser ):
     def agreement(self):
 
         localctx = StipulaParser.AgreementContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 8, self.RULE_agreement)
+        self.enterRule(localctx, 10, self.RULE_agreement)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 83
-            self.match(StipulaParser.T__7)
-            self.state = 84
+            self.state = 92
             self.match(StipulaParser.T__8)
-            self.state = 85
-            localctx._ID = self.match(StipulaParser.ID)
-            localctx.partyId.append(localctx._ID)
-            self.state = 90
-            self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            while _la==5:
-                self.state = 86
-                self.match(StipulaParser.T__4)
-                self.state = 87
-                localctx._ID = self.match(StipulaParser.ID)
-                localctx.partyId.append(localctx._ID)
-                self.state = 92
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-
             self.state = 93
             self.match(StipulaParser.T__9)
             self.state = 94
-            self.match(StipulaParser.T__8)
-            self.state = 95
             localctx._ID = self.match(StipulaParser.ID)
-            localctx.fieldId.append(localctx._ID)
-            self.state = 100
+            localctx.partyId.append(localctx._ID)
+            self.state = 99
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==5:
-                self.state = 96
+                self.state = 95
                 self.match(StipulaParser.T__4)
-                self.state = 97
+                self.state = 96
                 localctx._ID = self.match(StipulaParser.ID)
-                localctx.fieldId.append(localctx._ID)
-                self.state = 102
+                localctx.partyId.append(localctx._ID)
+                self.state = 101
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
+            self.state = 102
+            self.match(StipulaParser.T__10)
             self.state = 103
             self.match(StipulaParser.T__9)
             self.state = 104
+            localctx._ID = self.match(StipulaParser.ID)
+            localctx.fieldId.append(localctx._ID)
+            self.state = 109
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==5:
+                self.state = 105
+                self.match(StipulaParser.T__4)
+                self.state = 106
+                localctx._ID = self.match(StipulaParser.ID)
+                localctx.fieldId.append(localctx._ID)
+                self.state = 111
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+
+            self.state = 112
+            self.match(StipulaParser.T__10)
+            self.state = 113
             self.match(StipulaParser.T__1)
-            self.state = 106 
+            self.state = 115 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 105
+                self.state = 114
                 self.agree()
-                self.state = 108 
+                self.state = 117 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (_la==43):
+                if not (_la==44):
                     break
 
-            self.state = 110
+            self.state = 119
             self.match(StipulaParser.T__2)
-            self.state = 111
-            self.match(StipulaParser.T__10)
-            self.state = 112
+            self.state = 120
             self.match(StipulaParser.T__11)
-            self.state = 113
+            self.state = 121
+            self.match(StipulaParser.T__12)
+            self.state = 122
             localctx._ID = self.match(StipulaParser.ID)
             localctx.stateId.append(localctx._ID)
         except RecognitionException as re:
@@ -638,31 +722,13 @@ class StipulaParser ( Parser ):
     def agree(self):
 
         localctx = StipulaParser.AgreeContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 10, self.RULE_agree)
+        self.enterRule(localctx, 12, self.RULE_agree)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 115
-            localctx._ID = self.match(StipulaParser.ID)
-            localctx.partyId.append(localctx._ID)
-            self.state = 120
-            self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            while _la==5:
-                self.state = 116
-                self.match(StipulaParser.T__4)
-                self.state = 117
-                localctx._ID = self.match(StipulaParser.ID)
-                localctx.partyId.append(localctx._ID)
-                self.state = 122
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-
-            self.state = 123
-            self.match(StipulaParser.T__12)
             self.state = 124
             localctx._ID = self.match(StipulaParser.ID)
-            localctx.fieldId.append(localctx._ID)
+            localctx.partyId.append(localctx._ID)
             self.state = 129
             self._errHandler.sync(self)
             _la = self._input.LA(1)
@@ -671,8 +737,26 @@ class StipulaParser ( Parser ):
                 self.match(StipulaParser.T__4)
                 self.state = 126
                 localctx._ID = self.match(StipulaParser.ID)
-                localctx.fieldId.append(localctx._ID)
+                localctx.partyId.append(localctx._ID)
                 self.state = 131
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+
+            self.state = 132
+            self.match(StipulaParser.T__13)
+            self.state = 133
+            localctx._ID = self.match(StipulaParser.ID)
+            localctx.fieldId.append(localctx._ID)
+            self.state = 138
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while _la==5:
+                self.state = 134
+                self.match(StipulaParser.T__4)
+                self.state = 135
+                localctx._ID = self.match(StipulaParser.ID)
+                localctx.fieldId.append(localctx._ID)
+                self.state = 140
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -729,89 +813,89 @@ class StipulaParser ( Parser ):
     def functionDecl(self):
 
         localctx = StipulaParser.FunctionDeclContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 12, self.RULE_functionDecl)
+        self.enterRule(localctx, 14, self.RULE_functionDecl)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 132
-            self.match(StipulaParser.T__11)
-            self.state = 133
-            localctx.startStateId = self.match(StipulaParser.ID)
-            self.state = 134
-            localctx.partyId = self.match(StipulaParser.ID)
-            self.state = 135
+            self.state = 141
             self.match(StipulaParser.T__12)
-            self.state = 136
+            self.state = 142
+            localctx.startStateId = self.match(StipulaParser.ID)
+            self.state = 143
+            localctx.partyId = self.match(StipulaParser.ID)
+            self.state = 144
+            self.match(StipulaParser.T__13)
+            self.state = 145
             localctx.functionId = self.match(StipulaParser.ID)
-            self.state = 137
-            self.match(StipulaParser.T__8)
             self.state = 146
+            self.match(StipulaParser.T__9)
+            self.state = 155
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==43:
-                self.state = 138
+            if _la==44:
+                self.state = 147
                 localctx._ID = self.match(StipulaParser.ID)
                 localctx.fieldId.append(localctx._ID)
-                self.state = 143
+                self.state = 152
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==5:
-                    self.state = 139
+                    self.state = 148
                     self.match(StipulaParser.T__4)
-                    self.state = 140
+                    self.state = 149
                     localctx._ID = self.match(StipulaParser.ID)
                     localctx.fieldId.append(localctx._ID)
-                    self.state = 145
+                    self.state = 154
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
 
 
-            self.state = 148
-            self.match(StipulaParser.T__9)
-            self.state = 149
-            self.match(StipulaParser.T__13)
+            self.state = 157
+            self.match(StipulaParser.T__10)
             self.state = 158
+            self.match(StipulaParser.T__14)
+            self.state = 167
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==43:
-                self.state = 150
+            if _la==44:
+                self.state = 159
                 localctx._ID = self.match(StipulaParser.ID)
                 localctx.assetId.append(localctx._ID)
-                self.state = 155
+                self.state = 164
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==5:
-                    self.state = 151
+                    self.state = 160
                     self.match(StipulaParser.T__4)
-                    self.state = 152
+                    self.state = 161
                     localctx._ID = self.match(StipulaParser.ID)
                     localctx.assetId.append(localctx._ID)
-                    self.state = 157
+                    self.state = 166
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
 
 
-            self.state = 160
-            self.match(StipulaParser.T__14)
-            self.state = 161
-            self.match(StipulaParser.T__8)
-            self.state = 162
-            localctx.precondition = self.expression()
-            self.state = 163
-            self.match(StipulaParser.T__9)
-            self.state = 164
-            self.match(StipulaParser.T__1)
-            self.state = 165
-            self.functionBody()
-            self.state = 166
-            self.match(StipulaParser.T__2)
-            self.state = 167
-            self.match(StipulaParser.T__10)
-            self.state = 168
-            self.match(StipulaParser.T__11)
             self.state = 169
+            self.match(StipulaParser.T__15)
+            self.state = 170
+            self.match(StipulaParser.T__9)
+            self.state = 171
+            localctx.precondition = self.expression()
+            self.state = 172
+            self.match(StipulaParser.T__10)
+            self.state = 173
+            self.match(StipulaParser.T__1)
+            self.state = 174
+            self.functionBody()
+            self.state = 175
+            self.match(StipulaParser.T__2)
+            self.state = 176
+            self.match(StipulaParser.T__11)
+            self.state = 177
+            self.match(StipulaParser.T__12)
+            self.state = 178
             localctx.endStateId = self.match(StipulaParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -858,28 +942,28 @@ class StipulaParser ( Parser ):
     def functionBody(self):
 
         localctx = StipulaParser.FunctionBodyContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 14, self.RULE_functionBody)
+        self.enterRule(localctx, 16, self.RULE_functionBody)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 174
+            self.state = 183
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
+            _alt = self._interp.adaptivePredict(self._input,15,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
-                    self.state = 171
+                    self.state = 180
                     self.statement() 
-                self.state = 176
+                self.state = 185
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,15,self._ctx)
 
-            self.state = 180
+            self.state = 189
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 11012296146944) != 0):
-                self.state = 177
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 22024592293888) != 0):
+                self.state = 186
                 self.eventDecl()
-                self.state = 182
+                self.state = 191
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -926,26 +1010,26 @@ class StipulaParser ( Parser ):
     def statement(self):
 
         localctx = StipulaParser.StatementContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 16, self.RULE_statement)
+        self.enterRule(localctx, 18, self.RULE_statement)
         try:
-            self.state = 186
+            self.state = 195
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 183
+                self.state = 192
                 self.ifThenElse()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 184
+                self.state = 193
                 self.assetOperation()
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 185
+                self.state = 194
                 self.fieldOperation()
                 pass
 
@@ -999,38 +1083,38 @@ class StipulaParser ( Parser ):
     def ifThenElse(self):
 
         localctx = StipulaParser.IfThenElseContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 18, self.RULE_ifThenElse)
+        self.enterRule(localctx, 20, self.RULE_ifThenElse)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 188
-            self.match(StipulaParser.T__15)
-            self.state = 189
-            self.match(StipulaParser.T__8)
-            self.state = 190
-            localctx.condition = self.expression()
-            self.state = 191
-            self.match(StipulaParser.T__9)
-            self.state = 192
-            self.match(StipulaParser.T__1)
-            self.state = 193
-            localctx.ifBody = self.functionBody()
-            self.state = 194
-            self.match(StipulaParser.T__2)
-            self.state = 195
+            self.state = 197
             self.match(StipulaParser.T__16)
+            self.state = 198
+            self.match(StipulaParser.T__9)
+            self.state = 199
+            localctx.condition = self.expression()
+            self.state = 200
+            self.match(StipulaParser.T__10)
             self.state = 201
+            self.match(StipulaParser.T__1)
+            self.state = 202
+            localctx.ifBody = self.functionBody()
+            self.state = 203
+            self.match(StipulaParser.T__2)
+            self.state = 204
+            self.match(StipulaParser.T__17)
+            self.state = 210
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [2]:
-                self.state = 196
+                self.state = 205
                 self.match(StipulaParser.T__1)
-                self.state = 197
+                self.state = 206
                 localctx.elseBody = self.functionBody()
-                self.state = 198
+                self.state = 207
                 self.match(StipulaParser.T__2)
                 pass
-            elif token in [16]:
-                self.state = 200
+            elif token in [17]:
+                self.state = 209
                 self.ifThenElse()
                 pass
             else:
@@ -1080,24 +1164,24 @@ class StipulaParser ( Parser ):
     def assetOperation(self):
 
         localctx = StipulaParser.AssetOperationContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 20, self.RULE_assetOperation)
+        self.enterRule(localctx, 22, self.RULE_assetOperation)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 203
+            self.state = 212
             localctx.left = self.expression()
-            self.state = 204
-            self.match(StipulaParser.T__17)
-            self.state = 207
+            self.state = 213
+            self.match(StipulaParser.T__18)
+            self.state = 216
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
             if la_ == 1:
-                self.state = 205
+                self.state = 214
                 localctx.right = self.match(StipulaParser.ID)
-                self.state = 206
+                self.state = 215
                 self.match(StipulaParser.T__4)
 
 
-            self.state = 209
+            self.state = 218
             localctx.destination = self.match(StipulaParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1139,14 +1223,14 @@ class StipulaParser ( Parser ):
     def fieldOperation(self):
 
         localctx = StipulaParser.FieldOperationContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 22, self.RULE_fieldOperation)
+        self.enterRule(localctx, 24, self.RULE_fieldOperation)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 211
+            self.state = 220
             localctx.left = self.expression()
-            self.state = 212
-            self.match(StipulaParser.T__18)
-            self.state = 213
+            self.state = 221
+            self.match(StipulaParser.T__19)
+            self.state = 222
             localctx.right = self.match(StipulaParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1199,37 +1283,37 @@ class StipulaParser ( Parser ):
     def eventDecl(self):
 
         localctx = StipulaParser.EventDeclContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 24, self.RULE_eventDecl)
+        self.enterRule(localctx, 26, self.RULE_eventDecl)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 215
+            self.state = 224
             localctx.trigger = self.timeExpression()
-            self.state = 216
-            self.match(StipulaParser.T__19)
-            self.state = 217
-            self.match(StipulaParser.T__11)
-            self.state = 218
+            self.state = 225
+            self.match(StipulaParser.T__20)
+            self.state = 226
+            self.match(StipulaParser.T__12)
+            self.state = 227
             localctx.startStateId = self.match(StipulaParser.ID)
-            self.state = 219
+            self.state = 228
             self.match(StipulaParser.T__1)
-            self.state = 223
+            self.state = 232
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 16271485764096) != 0):
-                self.state = 220
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 32542971528192) != 0):
+                self.state = 229
                 self.statement()
-                self.state = 225
+                self.state = 234
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 226
+            self.state = 235
             self.match(StipulaParser.T__2)
-            self.state = 227
-            self.match(StipulaParser.T__10)
-            self.state = 228
+            self.state = 236
             self.match(StipulaParser.T__11)
-            self.state = 229
+            self.state = 237
+            self.match(StipulaParser.T__12)
+            self.state = 238
             localctx.endStateId = self.match(StipulaParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1279,35 +1363,35 @@ class StipulaParser ( Parser ):
     def timeExpression(self):
 
         localctx = StipulaParser.TimeExpressionContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 26, self.RULE_timeExpression)
+        self.enterRule(localctx, 28, self.RULE_timeExpression)
         self._la = 0 # Token type
         try:
-            self.state = 238
+            self.state = 247
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [34]:
+            if token in [35]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 231
+                self.state = 240
                 self.match(StipulaParser.NOW)
-                self.state = 234
+                self.state = 243
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==30:
-                    self.state = 232
+                if _la==31:
+                    self.state = 241
                     self.match(StipulaParser.PLUS)
-                    self.state = 233
+                    self.state = 242
                     localctx.right = self.timeExpression1()
 
 
                 pass
-            elif token in [41]:
+            elif token in [42]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 236
+                self.state = 245
                 self.match(StipulaParser.DATESTRING)
                 pass
-            elif token in [43]:
+            elif token in [44]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 237
+                self.state = 246
                 self.match(StipulaParser.ID)
                 pass
             else:
@@ -1359,25 +1443,25 @@ class StipulaParser ( Parser ):
     def timeExpression1(self):
 
         localctx = StipulaParser.TimeExpression1Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 28, self.RULE_timeExpression1)
+        self.enterRule(localctx, 30, self.RULE_timeExpression1)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 240
+            self.state = 249
             localctx.left = self._input.LT(1)
             _la = self._input.LA(1)
-            if not(_la==38 or _la==43):
+            if not(_la==39 or _la==44):
                 localctx.left = self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 243
+            self.state = 252
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==30:
-                self.state = 241
+            if _la==31:
+                self.state = 250
                 self.match(StipulaParser.PLUS)
-                self.state = 242
+                self.state = 251
                 localctx.right = self.timeExpression1()
 
 
@@ -1429,25 +1513,25 @@ class StipulaParser ( Parser ):
     def expression(self):
 
         localctx = StipulaParser.ExpressionContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 30, self.RULE_expression)
+        self.enterRule(localctx, 32, self.RULE_expression)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 245
+            self.state = 254
             localctx.left = self.expression1()
-            self.state = 248
+            self.state = 257
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==22 or _la==23:
-                self.state = 246
+            if _la==23 or _la==24:
+                self.state = 255
                 localctx.operator = self._input.LT(1)
                 _la = self._input.LA(1)
-                if not(_la==22 or _la==23):
+                if not(_la==23 or _la==24):
                     localctx.operator = self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 247
+                self.state = 256
                 localctx.right = self.expression()
 
 
@@ -1489,19 +1573,19 @@ class StipulaParser ( Parser ):
     def expression1(self):
 
         localctx = StipulaParser.Expression1Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 32, self.RULE_expression1)
+        self.enterRule(localctx, 34, self.RULE_expression1)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 251
+            self.state = 260
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==21:
-                self.state = 250
+            if _la==22:
+                self.state = 259
                 self.match(StipulaParser.NOT)
 
 
-            self.state = 253
+            self.state = 262
             self.expression2()
         except RecognitionException as re:
             localctx.exception = re
@@ -1563,25 +1647,25 @@ class StipulaParser ( Parser ):
     def expression2(self):
 
         localctx = StipulaParser.Expression2Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 34, self.RULE_expression2)
+        self.enterRule(localctx, 36, self.RULE_expression2)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 255
+            self.state = 264
             localctx.left = self.expression3()
-            self.state = 258
+            self.state = 267
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & 1056964608) != 0):
-                self.state = 256
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & 2113929216) != 0):
+                self.state = 265
                 localctx.operator = self._input.LT(1)
                 _la = self._input.LA(1)
-                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 1056964608) != 0)):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 2113929216) != 0)):
                     localctx.operator = self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 257
+                self.state = 266
                 localctx.right = self.expression2()
 
 
@@ -1633,25 +1717,25 @@ class StipulaParser ( Parser ):
     def expression3(self):
 
         localctx = StipulaParser.Expression3Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 36, self.RULE_expression3)
+        self.enterRule(localctx, 38, self.RULE_expression3)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 260
+            self.state = 269
             localctx.left = self.expression4()
-            self.state = 263
+            self.state = 272
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==30 or _la==31:
-                self.state = 261
+            if _la==31 or _la==32:
+                self.state = 270
                 localctx.operator = self._input.LT(1)
                 _la = self._input.LA(1)
-                if not(_la==30 or _la==31):
+                if not(_la==31 or _la==32):
                     localctx.operator = self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 262
+                self.state = 271
                 localctx.right = self.expression3()
 
 
@@ -1703,25 +1787,25 @@ class StipulaParser ( Parser ):
     def expression4(self):
 
         localctx = StipulaParser.Expression4Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 38, self.RULE_expression4)
+        self.enterRule(localctx, 40, self.RULE_expression4)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 265
+            self.state = 274
             localctx.left = self.expression5()
-            self.state = 268
+            self.state = 277
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==32 or _la==33:
-                self.state = 266
+            if _la==33 or _la==34:
+                self.state = 275
                 localctx.operator = self._input.LT(1)
                 _la = self._input.LA(1)
-                if not(_la==32 or _la==33):
+                if not(_la==33 or _la==34):
                     localctx.operator = self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 267
+                self.state = 276
                 localctx.right = self.expression4()
 
 
@@ -1763,19 +1847,19 @@ class StipulaParser ( Parser ):
     def expression5(self):
 
         localctx = StipulaParser.Expression5Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 40, self.RULE_expression5)
+        self.enterRule(localctx, 42, self.RULE_expression5)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 271
+            self.state = 280
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==31:
-                self.state = 270
+            if _la==32:
+                self.state = 279
                 self.match(StipulaParser.MINUS)
 
 
-            self.state = 273
+            self.state = 282
             self.expression6()
         except RecognitionException as re:
             localctx.exception = re
@@ -1833,54 +1917,54 @@ class StipulaParser ( Parser ):
     def expression6(self):
 
         localctx = StipulaParser.Expression6Context(self, self._ctx, self.state)
-        self.enterRule(localctx, 42, self.RULE_expression6)
+        self.enterRule(localctx, 44, self.RULE_expression6)
         try:
-            self.state = 286
+            self.state = 295
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [34]:
+            if token in [35]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 275
+                self.state = 284
                 self.match(StipulaParser.NOW)
                 pass
-            elif token in [35]:
+            elif token in [36]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 276
+                self.state = 285
                 self.match(StipulaParser.BOOL)
                 pass
-            elif token in [38]:
+            elif token in [39]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 277
+                self.state = 286
                 self.match(StipulaParser.TIMEDELTA)
                 pass
-            elif token in [39]:
+            elif token in [40]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 278
+                self.state = 287
                 self.match(StipulaParser.NUMBER)
                 pass
-            elif token in [41]:
+            elif token in [42]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 279
+                self.state = 288
                 self.match(StipulaParser.DATESTRING)
                 pass
-            elif token in [42]:
+            elif token in [43]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 280
+                self.state = 289
                 self.match(StipulaParser.STRING)
                 pass
-            elif token in [43]:
+            elif token in [44]:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 281
+                self.state = 290
                 self.match(StipulaParser.ID)
                 pass
-            elif token in [9]:
+            elif token in [10]:
                 self.enterOuterAlt(localctx, 8)
-                self.state = 282
-                self.match(StipulaParser.T__8)
-                self.state = 283
-                self.expression()
-                self.state = 284
+                self.state = 291
                 self.match(StipulaParser.T__9)
+                self.state = 292
+                self.expression()
+                self.state = 293
+                self.match(StipulaParser.T__10)
                 pass
             else:
                 raise NoViableAltException(self)

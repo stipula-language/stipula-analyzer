@@ -24,6 +24,11 @@ class StipulaVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by StipulaParser#fieldInit.
+    def visitFieldInit(self, ctx:StipulaParser.FieldInitContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by StipulaParser#initStateDecl.
     def visitInitStateDecl(self, ctx:StipulaParser.InitStateDeclContext):
         return self.visitChildren(ctx)

@@ -53,7 +53,15 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#fieldDecl.
     def visitFieldDecl(self, ctx:StipulaParser.FieldDeclContext):
-        self.visitor_output.field_id_set.update({field_id.text for field_id in ctx.fieldId})
+        # self.visitor_output.field_id_set.update({field_id.text for field_id in ctx.fieldId})
+        for field_init_context in ctx.fieldInit():
+            self.visitFieldInit(field_init_context)
+
+
+
+    # Visit a parse tree produced by StipulaParser#fieldInit.
+    def visitFieldInit(self, ctx:StipulaParser.FieldInitContext):
+        self.visitor_output.add_field_id(ctx.fieldId.text)
 
 
 
@@ -128,6 +136,8 @@ class Visitor(StipulaVisitor):
                         left_value_dependency = ValueDependency(timedelta(minutes=int(ctx.left.text[:-1])), set())
                     case 's':
                         left_value_dependency = ValueDependency(timedelta(seconds=float(ctx.left.text[:-1])), set())
+                    case _:
+                        left_value_dependency = ValueDependency(timedelta(minutes=int(ctx.left.text)), set())
             case StipulaParser.ID:
                 # Gli id devono essere i field del contratto
                 if ctx.left.text not in self.visitor_output.field_id_set:
