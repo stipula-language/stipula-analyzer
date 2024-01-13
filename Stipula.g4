@@ -16,7 +16,7 @@ agreement : 'agreement' '(' partyId+=ID (',' partyId+=ID)* ')' '(' fieldId+=ID (
 
 agree : partyId+=ID (',' partyId+=ID)* ':' fieldId+=ID (',' fieldId+=ID)* ;
 
-functionDecl : '@' startStateId=ID partyId=ID ':' functionId=ID '(' (fieldId+=ID (',' fieldId+=ID)*)? ')' '['(assetId+=ID (',' assetId+=ID)*)? ']' '(' precondition=expression ')' '{' functionBody '}' '=>' '@' endStateId=ID ;
+functionDecl : '@' startStateId=ID partyId=ID ':' functionId=ID '(' (fieldId+=ID (',' fieldId+=ID)*)? ')' '['(assetId+=ID (',' assetId+=ID)*)? ']' ('(' precondition=expression ')')? '{' functionBody '}' '=>' '@' endStateId=ID ;
 
 functionBody : statement* eventDecl* ;
 

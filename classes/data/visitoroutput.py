@@ -97,15 +97,24 @@ class VisitorOutput:
 
 
 
+    def clear_visitor_entry_set(self, state, visitor_entry_set):
+        # Rimuovo i visitor entry e se sono funzioni anche gli eventi definiti dalle funzioni
+        self.R[state] = self.R[state].difference(visitor_entry_set.union({event_visitor_entry for event_visitor_entry, function_visitor_entry in self.Gamma.items() if function_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, FunctionVisitorEntry)}}))
+        
+
+
     def clear_holes(self, state):
         # Rimuovo tutte le entry scollegate all'interno dell'insieme
         is_change = True
         while is_change:
             is_change = False
+            remove_visitor_entry_set = set()
             for visitor_entry in {visitor_entry for visitor_entry in self.R[state] if visitor_entry.start_state != state}:
                 if visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R[state]}:
-                    is_change = True
-                    self.R[state].remove(visitor_entry)
+                    remove_visitor_entry_set.add(visitor_entry)
+            if remove_visitor_entry_set:
+                is_change = True
+                self.clear_visitor_entry_set(state, remove_visitor_entry_set)
 
 
 
@@ -193,7 +202,7 @@ class VisitorOutput:
                 self.warning_code.update(warning_code)
                 continue
             remove_visitor_entry_set.add(visitor_entry)
-        self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
+        self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
         # Ripulisco l'insieme di raggiugibilità dai buchi creati
         self.clear_holes(self.Q0)
 
