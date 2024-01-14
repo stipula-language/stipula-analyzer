@@ -5,12 +5,18 @@
 [OK] - Rendere opzionale la guardia delle funzioni
 
 === PARTI MANCANTI NELL'ANALIZZATORE ===
-- Quando rimuovo una funzione devo anche rimuovere tutti gli eventi che quella funzione definisce
+- [OK] Quando rimuovo una funzione devo anche rimuovere tutti gli eventi che quella funzione definisce
   - [OK] implementare nell'analizzatore
-  - implementare nella tesi
+  - [OK] implementare nella tesi
 
 === TESI ===
 - Riportare nella tesi le diff del codice quando lo si inserisce in master
+- Nella tesi le formule che operano sui tempi potrebbero generare non determinismo. Bisogna controllarle meglio
+
+=== RILASCIO ===
+- Caricare il codice nel repo
+- Caricare la tesi nella dropbox condivisa
+- Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
 
 === TEST ===
 - Fornire test per verificare il funzionamento di warning code e warning consraint
