@@ -1,34 +1,10 @@
-=== AGGIUNTE FULL COMPATIBILITY NELLA GRAMMATICA ===
-[OK] - Nella grammatica gli agreement vanno messi opzionali
-[OK] - Nella grammatica mettere l'inizializzazione dei field
-[OK] - Ammettere nelle time expression gli interi senza niente in modo che possano essere considerati minuti
-[OK] - Rendere opzionale la guardia delle funzioni
-
-=== PARTI MANCANTI NELL'ANALIZZATORE ===
-- [OK] Quando rimuovo una funzione devo anche rimuovere tutti gli eventi che quella funzione definisce
-  - [OK] implementare nell'analizzatore
-  - [OK] implementare nella tesi
-
-=== TESI ===
-- [OK] Nella tesi le formule che operano sui tempi potrebbero generare non determinismo. Bisogna controllarle meglio
-- [OK] Riportare nella tesi le diff del codice quando lo si inserisce in master
-
-=== RILASCIO ===
-- [OK] Caricare il codice nel repo
-- [OK] Caricare la tesi nella dropbox condivisa
-- [OK] Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
-
-=== GRAFICA ANALIZZATORE ===
-- [OK] Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
-- [OK] Ricreare correttamente le dipendenze
-- Apportare le modifiche del codice nella tesi
-
 === TEST ===
-- Fornire test per verificare il funzionamento di warning code e warning consraint
+- Fornire test per verificare il funzionamento di warning code e warning constraint
   - warning_code
   - warning_constraint
 
 === TESI ===
+- Nel codice è possibile usare il carattere `\` per andare a capo e colorare correttamente il codice
 - Controllare che i punti della tesi che parlano di codice e grammatica siano concordi con quanto implementato
 
 === PARTI DA AGGIUNGERE ===
