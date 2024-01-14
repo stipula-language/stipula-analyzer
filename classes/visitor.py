@@ -53,7 +53,6 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#fieldDecl.
     def visitFieldDecl(self, ctx:StipulaParser.FieldDeclContext):
-        # self.visitor_output.field_id_set.update({field_id.text for field_id in ctx.fieldId})
         for field_init_context in ctx.fieldInit():
             self.visitFieldInit(field_init_context)
 
