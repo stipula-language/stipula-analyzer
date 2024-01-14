@@ -14,9 +14,9 @@
 - [OK] Riportare nella tesi le diff del codice quando lo si inserisce in master
 
 === RILASCIO ===
-- Caricare il codice nel repo
-- Caricare la tesi nella dropbox condivisa
-- Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
+- [OK] Caricare il codice nel repo
+- [OK] Caricare la tesi nella dropbox condivisa
+- [OK] Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
 
 === GRAFICA ANALIZZATORE ===
 - Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
