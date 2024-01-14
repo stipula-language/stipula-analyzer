@@ -19,7 +19,9 @@
 - [OK] Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
 
 === GRAFICA ANALIZZATORE ===
-- Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
+- [OK] Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
+- [OK] Ricreare correttamente le dipendenze
+- Apportare le modifiche del codice nella tesi
 
 === TEST ===
 - Fornire test per verificare il funzionamento di warning code e warning consraint
