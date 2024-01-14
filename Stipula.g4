@@ -2,7 +2,7 @@ grammar Stipula;
 
 // Struttura del linguaggio
 
-stipula :  'stipula' contractId=ID '{' assetDecl? fieldDecl initStateDecl agreement? functionDecl* '}' EOF ; 
+stipula :  'stipula' contractId=ID '{' assetDecl? fieldDecl initStateDecl agreement? functionDecl* '}' EOF ;
 
 assetDecl : 'asset' assetId+=ID (',' assetId+=ID)* ;
 
