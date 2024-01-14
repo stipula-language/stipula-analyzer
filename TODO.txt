@@ -11,20 +11,23 @@
 
 === TESI ===
 - [OK] Nella tesi le formule che operano sui tempi potrebbero generare non determinismo. Bisogna controllarle meglio
-- Riportare nella tesi le diff del codice quando lo si inserisce in master
+- [OK] Riportare nella tesi le diff del codice quando lo si inserisce in master
 
 === RILASCIO ===
 - Caricare il codice nel repo
 - Caricare la tesi nella dropbox condivisa
 - Inviare mail al professore (specificare che ancora non sono disponibili i test e il calcolo dei tempi logici)
 
+=== GRAFICA ANALIZZATORE ===
+- Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
+
 === TEST ===
 - Fornire test per verificare il funzionamento di warning code e warning consraint
   - warning_code
   - warning_constraint
 
-=== GRAFICA ANALIZZATORE ===
-- Riscrivere il dump della memoria interna per semplificare l'output e stamparlo come sta scritto nel paper del professore
+=== TESI ===
+- Controllare che i punti della tesi che parlano di codice e grammatica siano concordi con quanto implementato
 
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni
