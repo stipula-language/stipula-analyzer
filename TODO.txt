@@ -10,8 +10,8 @@
   - [OK] implementare nella tesi
 
 === TESI ===
+- [OK] Nella tesi le formule che operano sui tempi potrebbero generare non determinismo. Bisogna controllarle meglio
 - Riportare nella tesi le diff del codice quando lo si inserisce in master
-- Nella tesi le formule che operano sui tempi potrebbero generare non determinismo. Bisogna controllarle meglio
 
 === RILASCIO ===
 - Caricare il codice nel repo
