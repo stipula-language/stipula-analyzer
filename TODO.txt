@@ -9,6 +9,9 @@
   - [OK] implementare nell'analizzatore
   - implementare nella tesi
 
+=== TESI ===
+- Riportare nella tesi le diff del codice quando lo si inserisce in master
+
 === TEST ===
 - Fornire test per verificare il funzionamento di warning code e warning consraint
   - warning_code
