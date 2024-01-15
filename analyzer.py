@@ -71,7 +71,10 @@ def _main(is_readable, file_path):
         print('========== BEGIN WARNING CODE ==========')
         for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
             print()
+            print(f"=== {(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} -> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))} ===")
+            print()
             _print_code(line_list, visitor_entry_1, is_readable)
+            print()
             _print_code(line_list, visitor_entry_2, is_readable)
         print()
         print('========== END WARNING CODE ==========')
