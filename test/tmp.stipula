@@ -1,0 +1,16 @@
+stipula Tmp {
+    field x
+    init Q0
+
+    agreement(A)(x) {
+        A: x
+    } => @Q0
+
+    @Q0 A: f(x)[h] (true) {
+        now + 1D >> @Q1 {} => @Q2
+    } => @Q1
+
+    @Q1 A: f(x)[h] (true) {} => @Q2
+
+    @Q2 A: f(x)[h] (true) {} => @Q3
+}
