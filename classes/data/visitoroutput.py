@@ -177,11 +177,10 @@ class VisitorOutput:
     def clear_time(self):
         # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
         remove_visitor_entry_set = set()
-        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if visitor_entry.start_state != self.Q0):
-            previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
+        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
             is_executable = False
             warning_code = set()
-            for previous_visitor_entry in previous_visitor_entry_set:
+            for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
                 # Considero lo stipula time
                 if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
                     is_executable = True
