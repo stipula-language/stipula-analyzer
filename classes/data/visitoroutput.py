@@ -48,8 +48,8 @@ class VisitorOutput:
                 'dependency_set': list(value_dependency.dependency_set)
             } for visitor_entry, value_dependency in self.T.items()},
             'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
-            'warning_constraint': [f"{field_id_1} <= {field_id_2}" for field_id_1, field_id_2 in self.warning_constraint],
-            'warning_code': [f"{str(visitor_entry_1)} -> {str(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in self.warning_code],
+            'warning_constraint': [[list(dependency_tuple_1), list(dependency_tuple_2)] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
+            'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
             'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
         }, indent=2)
@@ -188,14 +188,7 @@ class VisitorOutput:
                     # Controllo che le dipendenze siano confrontabili
                     previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
                     if previous_dependency_set:
-                        dependency_set = self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)
-                        for previous_field_id in previous_dependency_set:
-                            # Se il codice successivo non usa dipendenze allora quelle precedenti potrebbero dover essere azzerate
-                            if not dependency_set:
-                                self.warning_constraint.add((previous_field_id, 0, ))
-                                continue
-                            for field_id in self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set):
-                                self.warning_constraint.add((previous_field_id, field_id, ))
+                        self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
                     continue
                 warning_code.add((previous_visitor_entry, visitor_entry, ))
             if is_executable:

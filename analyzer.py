@@ -66,6 +66,15 @@ def _main(is_readable, file_path):
         visitoroutputprints.print_visitor_output(visitor_output)
     else:
         print(visitor_output)
+
+    if visitor_output.warning_constraint:
+        print()
+        print('========== BEGIN WARNING CONSTRAINT ==========')
+        print()
+        for dependency_tuple_1, dependency_tuple_2 in visitor_output.warning_constraint:
+            print(f"{' + '.join(dependency_tuple_1)} <= {(' + '.join(dependency_tuple_2) if dependency_tuple_2 else '0')}")
+        print()
+        print('========== END WARNING CONSTRAINT ==========')
     if visitor_output.warning_code:
         print()
         print('========== BEGIN WARNING CODE ==========')

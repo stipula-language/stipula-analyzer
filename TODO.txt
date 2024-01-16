@@ -1,6 +1,6 @@
 === CORREZIONI ===
-- Gli warning constraint non hanno una sezione human readable
-- In caso di warning constraint forse è il caso di creare relazioni utilizzando la somma e non i singoli field
+- [OK] Gli warning constraint non hanno una sezione human readable
+- [OK] In caso di warning constraint forse è il caso di creare relazioni utilizzando la somma e non i singoli field
 
 === TEST ===
 - [OK] Fornire test per verificare il funzionamento di warning code e warning constraint
@@ -8,14 +8,17 @@
   - [OK] warning_constraint
 - Inviare una mail al professore con il nuovo codice
 
+=== PARTI DA AGGIUNGERE ===
+- Cercare di implementare il controllo sul tempo logico dell'esecuzioni
+
 === COMMIT IN MASTER ===
 - Riportare nella tesi le modifiche fatte al codice
 
 === TESI ===
-- Aggiungere i nuovi test sul warning constraint nella tesi e trattare i risultati
-- Ci sarà una variazione tra gli warning constraint fino ad ora e l'implementazione che considera tutta la somma algebrica
-- Nel codice è possibile usare il carattere `\` per andare a capo e colorare correttamente il codice
-- Controllare che i punti della tesi che parlano di codice e grammatica siano concordi con quanto implementato
-
-=== PARTI DA AGGIUNGERE ===
-- Cercare di implementare il controllo sul tempo logico dell'esecuzioni
+- Ricontrollare tutto il codice scritto in appendice
+- Aggiungere esempiowcd e esempiowcon
+  - codice in appendice
+  - test
+- Aggiornare tutti i test
+- Aggiungere la regola per la corretta gestione degli stipula time
+- Verificare i passaggi della tesi per vedere se sono conformi con il nuovo codice
