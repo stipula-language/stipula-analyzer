@@ -102,30 +102,14 @@ class VisitorOutput:
 
 
 
-    # TODO DSE questa funzione non è corretta in questo modo, bisogna rivedere tutto il codice
-    def add_visitor_entry_old(self, visitor_entry):
-        # Controllo l'esistenza dell'insieme
-        if not visitor_entry.start_state in self.R:
-            self.R[visitor_entry.start_state] = set()
-        # Aggiungo la entry all'insieme dello stato di partenza e inserisco anche l'insieme dello stato di arrivo
-        self.R[visitor_entry.start_state].update({visitor_entry}, self.R.get(visitor_entry.end_state, set()))
-        # Aggiungo la entry in tutti gli insiemi che può raggiungere inserendo l'insieme di raggiungibilità dello stato di partenza
-        for visitor_entry_set in self.R.values():
-            is_add = False
-            for previous_visitor_entry in visitor_entry_set:
-                if previous_visitor_entry.end_state == visitor_entry.start_state:
-                    is_add = True
-            if is_add:
-                visitor_entry_set.update(self.R[visitor_entry.start_state])
-
-
-
+    # TODO DSE questa funzione non so se serve
     def clear_visitor_entry_set(self, state, visitor_entry_set):
         # Rimuovo i visitor entry e se sono funzioni anche gli eventi definiti dalle funzioni
         self.R[state] = self.R[state].difference(visitor_entry_set.union({event_visitor_entry for event_visitor_entry, function_visitor_entry in self.Gamma.items() if function_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, FunctionVisitorEntry)}}))
         
 
 
+    # TODO DSE questsa funzione non so se serve
     def clear_holes(self, state):
         # Rimuovo tutte le entry scollegate all'interno dell'insieme
         is_change = True
@@ -141,7 +125,8 @@ class VisitorOutput:
 
 
 
-    def clear_events(self):
+    # TODO DSE forse questa è da rimuovere
+    def clear_events_old(self):
         # Rimuovo tutti gli eventi non raggiungibili dalla funzione che li definisce
         for visitor_entry_set in self.R.values():
             for event_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, EventVisitorEntry)}:
@@ -150,6 +135,30 @@ class VisitorOutput:
         # Ripulisco tutti gli insiemi di raggiungibilità in base ai buchi generati
         for state in self.R:
             self.clear_holes(state)
+
+
+
+    def clear_events(self):
+        is_change = True
+        while is_change:
+            is_change = False
+            for state, visitor_entry_set in self.R.items():
+                remove_visitor_entry_set = set()
+                for visitor_entry in visitor_entry_set:
+                    if isinstance(visitor_entry, EventVisitorEntry):
+                        # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                        if visitor_entry not in self.R.get(self.Gamma[visitor_entry].end_state, set()):
+                            is_change = True
+                            remove_visitor_entry_set.add(visitor_entry)
+                        # Seconda regola: rimuovo quando la funzione che definisce l'evento non è presente nell'insieme di raggiungibilità
+                        if self.Gamma[visitor_entry] not in visitor_entry_set:
+                            is_change = True
+                            remove_visitor_entry_set.add(visitor_entry)
+                    # Terza regola: rimuovo quando non c'è niente che precede l'evento
+                    if visitor_entry.start_state != state and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in visitor_entry_set}:
+                        is_change = True
+                        remove_visitor_entry_set.add(visitor_entry)
+                self.R[state] = self.R[state].difference(remove_visitor_entry_set)
 
 
 

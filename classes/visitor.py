@@ -41,8 +41,9 @@ class Visitor(StipulaVisitor):
             self.visitFunctionDecl(function_decl_context)
         # Costruzione di R a partire da C
         self.visitor_output.compute_R()
-        # TODO DSE Rimozione di eventi non raggiungibili e pulizia degli stati
-        # self.visitor_output.clear_events()
+        # Rimozione di eventi non raggiungibili e pulizia degli stati
+        self.visitor_output.clear_events()
+        # TODO DSE queste altre parti bisogna sistemarle
         # # Calcolo dei tempi stipula
         # self.visitor_output.compute_T()
         # # Controllo della sequenza temporale
