@@ -8,11 +8,9 @@
   - [OK] warning_constraint
 - Inviare una mail al professore con il nuovo codice
 
-=== PARTI DA AGGIUNGERE ===
-- Cercare di implementare il controllo sul tempo logico dell'esecuzioni
-
-=== COMMIT IN MASTER ===
-- Riportare nella tesi le modifiche fatte al codice
+=== BUG CONOSCIUTI ===
+- Quando si rimuove del codice bisogna considerare di rimuoverlo anche dal warning_code
+- Gli warning_constraint devono tracciare gli eventi da cui dipendono per poter rimuovere le relazioni quando si rimuovono i visitor entry correlati
 
 === TESI ===
 - Ricontrollare tutto il codice scritto in appendice
@@ -22,3 +20,6 @@
 - Aggiornare tutti i test
 - Aggiungere la regola per la corretta gestione degli stipula time
 - Verificare i passaggi della tesi per vedere se sono conformi con il nuovo codice
+
+=== PARTI DA AGGIUNGERE ===
+- Cercare di implementare il controllo sul tempo logico dell'esecuzioni
