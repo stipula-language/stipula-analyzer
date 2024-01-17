@@ -90,11 +90,11 @@ class VisitorOutput:
             for visitor_entry in self.C:
                 if visitor_entry.start_state not in self.R:
                     self.R[visitor_entry.start_state] = set()
-                # Prima regola
+                # Prima regola: aggiungo all'insieme dello stato di partenza
                 if visitor_entry not in self.R[visitor_entry.start_state]:
                     is_change = True
                     self.R[visitor_entry.start_state].add(visitor_entry)
-                # Seconda regola
+                # Seconda regola: aggiungo agli insiemi che hanno un visitor entry collegabile
                 for visitor_entry_set in self.R.values():
                     if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in visitor_entry_set} and visitor_entry not in visitor_entry_set:
                         is_change = True
