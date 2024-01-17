@@ -39,14 +39,16 @@ class Visitor(StipulaVisitor):
         # Analizzo le funzioni
         for function_decl_context in ctx.functionDecl():
             self.visitFunctionDecl(function_decl_context)
-        # Rimozione di eventi non raggiungibili e pulizia degli stati
-        self.visitor_output.clear_events()
-        # Calcolo dei tempi stipula
-        self.visitor_output.compute_T()
-        # Controllo della sequenza temporale
-        self.visitor_output.clear_time()
-        # Calcolo il dead-code
-        self.visitor_output.compute_dead_code()
+        # Costruzione di R a partire da C
+        self.visitor_output.compute_R()
+        # TODO DSE Rimozione di eventi non raggiungibili e pulizia degli stati
+        # self.visitor_output.clear_events()
+        # # Calcolo dei tempi stipula
+        # self.visitor_output.compute_T()
+        # # Controllo della sequenza temporale
+        # self.visitor_output.clear_time()
+        # # Calcolo il dead-code
+        # self.visitor_output.compute_dead_code()
         return self.visitor_output
 
 

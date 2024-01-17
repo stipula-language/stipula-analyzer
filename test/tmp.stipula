@@ -1,16 +1,26 @@
-stipula Tmp {
-    field x
-    init Q0
+stipula Esempio221 {
 
-    agreement(A)(x) {
-        A: x
-    } => @Q0
+	field x
 
-    @Q0 A: f(x)[h] (true) {
-        now + 1D >> @Q1 {} => @Q2
-    } => @Q1
+	init Q0
+ 
+	agreement(A)(x) {
 
-    @Q1 A: f(x)[h] (true) {} => @Q2
+		A: x
 
-    @Q2 A: f(x)[h] (true) {} => @Q3
+	} => @Q0
+ 
+	@Q0 A: f(y)[k] (true) {
+
+		now >> @Q0 {} => @Q2  // ev.1
+
+        //now >> @Q3 {} => @Q1  // ev.3
+
+	} => @Q1
+ 
+	@Q1 B: g(y)[k] (true) {
+
+		now >> @Q1 {} => @Q0  // ev.2 (escluso per (1))
+
+	} => @Q3
 }

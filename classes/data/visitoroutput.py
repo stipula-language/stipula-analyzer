@@ -61,6 +61,11 @@ class VisitorOutput:
 
 
 
+    def add_visitor_entry(self, visitor_entry):
+        self.C.add(visitor_entry)
+
+
+
     def add_event_definition(self, event_visitor_entry, function_visitor_entry):
         self.Gamma[event_visitor_entry] = function_visitor_entry
 
@@ -78,9 +83,27 @@ class VisitorOutput:
 
 
 
-    def add_visitor_entry(self, visitor_entry):
-        # Aggiungo la entry al codice
-        self.C.add(visitor_entry)
+    def compute_R(self):
+        is_change = True
+        while is_change:
+            is_change = False
+            for visitor_entry in self.C:
+                if visitor_entry.start_state not in self.R:
+                    self.R[visitor_entry.start_state] = set()
+                # Prima regola
+                if visitor_entry not in self.R[visitor_entry.start_state]:
+                    is_change = True
+                    self.R[visitor_entry.start_state].add(visitor_entry)
+                # Seconda regola
+                for visitor_entry_set in self.R.values():
+                    if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in visitor_entry_set} and visitor_entry not in visitor_entry_set:
+                        is_change = True
+                        visitor_entry_set.add(visitor_entry)
+
+
+
+    # TODO DSE questa funzione non è corretta in questo modo, bisogna rivedere tutto il codice
+    def add_visitor_entry_old(self, visitor_entry):
         # Controllo l'esistenza dell'insieme
         if not visitor_entry.start_state in self.R:
             self.R[visitor_entry.start_state] = set()
@@ -141,6 +164,7 @@ class VisitorOutput:
         # Ho trovato un loop
         if visitor_entry in loop_visitor_entry_set:
             raise LoopException(visitor_entry)
+        # XXX TODO DSE questa cosa va fatta ben bene come definito nella teoria, se fatto per gli eventi può andare in loop
         # Controllo che tutte le dipendenze abbiano lo stipula time calcolato, il flag indica la presenza di una LoopException
         previous_visitor_entry_dict = {previous_visitor_entry: False for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
         for previous_visitor_entry in previous_visitor_entry_dict:
