@@ -2,6 +2,7 @@
 visitoroutput.py
 '''
 from datetime import timedelta
+import functools
 import json
 
 from classes.exceptions.loopexception import LoopException
@@ -83,58 +84,42 @@ class VisitorOutput:
 
 
 
+    # TODO DSE le regole sono diventate molto diverse da quanto definito all'interno della tesi
     def compute_R(self):
+        self.R[self.Q0] = set()
         is_change = True
         while is_change:
             is_change = False
             for visitor_entry in self.C:
-                if visitor_entry.start_state not in self.R:
-                    self.R[visitor_entry.start_state] = set()
-                # Prima regola: aggiungo all'insieme dello stato di partenza
-                if visitor_entry not in self.R[visitor_entry.start_state]:
+                # X regola: funzioni che partono dallo stato iniziale
+                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 and visitor_entry not in self.R[self.Q0]:
                     is_change = True
-                    self.R[visitor_entry.start_state].add(visitor_entry)
-                # Seconda regola: aggiungo agli insiemi che hanno un visitor entry collegabile
-                for visitor_entry_set in self.R.values():
-                    if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in visitor_entry_set} and visitor_entry not in visitor_entry_set:
-                        is_change = True
-                        visitor_entry_set.add(visitor_entry)
+                    self.R[self.Q0].add(visitor_entry)
+                # X regola: visitor entry raggiungibili da visitor entry già inseriti
+                if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in self.R[self.Q0]} and visitor_entry not in self.R[self.Q0]:
+                    is_change = True
+                    self.R[self.Q0].add(visitor_entry)
 
 
 
-    # TODO DSE questa funzione non so se serve
-    def clear_visitor_entry_set(self, state, visitor_entry_set):
-        # Rimuovo i visitor entry e se sono funzioni anche gli eventi definiti dalle funzioni
-        self.R[state] = self.R[state].difference(visitor_entry_set.union({event_visitor_entry for event_visitor_entry, function_visitor_entry in self.Gamma.items() if function_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, FunctionVisitorEntry)}}))
-        
-
-
-    # TODO DSE questsa funzione non so se serve
-    def clear_holes(self, state):
-        # Rimuovo tutte le entry scollegate all'interno dell'insieme
-        is_change = True
-        while is_change:
-            is_change = False
-            remove_visitor_entry_set = set()
-            for visitor_entry in {visitor_entry for visitor_entry in self.R[state] if visitor_entry.start_state != state}:
-                if visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R[state]}:
-                    remove_visitor_entry_set.add(visitor_entry)
-            if remove_visitor_entry_set:
-                is_change = True
-                self.clear_visitor_entry_set(state, remove_visitor_entry_set)
-
-
-
-    # TODO DSE forse questa è da rimuovere
-    def clear_events_old(self):
-        # Rimuovo tutti gli eventi non raggiungibili dalla funzione che li definisce
-        for visitor_entry_set in self.R.values():
-            for event_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, EventVisitorEntry)}:
-                if event_visitor_entry not in self.R.get(self.Gamma[event_visitor_entry].end_state, set()):
-                    visitor_entry_set.remove(event_visitor_entry)
-        # Ripulisco tutti gli insiemi di raggiungibilità in base ai buchi generati
-        for state in self.R:
-            self.clear_holes(state)
+    def is_path_to_function(self, visitor_entry, function_visitor_entry, loop_visitor_entry_set):
+        # Se trovo un loop interrompo
+        if visitor_entry in loop_visitor_entry_set:
+            return False
+        # Imposto la funzione da cercare
+        if not function_visitor_entry:
+            function_visitor_entry = self.Gamma[visitor_entry]
+        # Calcolo tutti i visitor entry che lo raggiungono
+        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
+        for previous_visitor_entry in previous_visitor_entry_set:
+            # Verifico se ho trovato la funzione
+            if previous_visitor_entry == function_visitor_entry:
+                return True
+        for previous_visitor_entry in previous_visitor_entry_set:
+            # Passo successivo della ricerca
+            if self.is_path_to_function(previous_visitor_entry, function_visitor_entry, loop_visitor_entry_set.union({visitor_entry})):
+                return True
+        return False
 
 
 
@@ -142,62 +127,54 @@ class VisitorOutput:
         is_change = True
         while is_change:
             is_change = False
-            for state, visitor_entry_set in self.R.items():
-                remove_visitor_entry_set = set()
-                for visitor_entry in visitor_entry_set:
-                    if isinstance(visitor_entry, EventVisitorEntry):
-                        # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                        if visitor_entry not in self.R.get(self.Gamma[visitor_entry].end_state, set()):
-                            is_change = True
-                            remove_visitor_entry_set.add(visitor_entry)
-                        # Seconda regola: rimuovo quando la funzione che definisce l'evento non è presente nell'insieme di raggiungibilità
-                        if self.Gamma[visitor_entry] not in visitor_entry_set:
-                            is_change = True
-                            remove_visitor_entry_set.add(visitor_entry)
-                    # Terza regola: rimuovo quando non c'è niente che precede l'evento
-                    if visitor_entry.start_state != state and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in visitor_entry_set}:
-                        is_change = True
+            remove_visitor_entry_set = set()
+            for visitor_entry in self.R[self.Q0]:
+                if isinstance(visitor_entry, EventVisitorEntry):
+                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                    if not self.is_path_to_function(visitor_entry, None, set()):
                         remove_visitor_entry_set.add(visitor_entry)
-                self.R[state] = self.R[state].difference(remove_visitor_entry_set)
+                    # Seconda regola: rimuovo quando la funzione non fa parte dell'insieme
+                    if self.Gamma[visitor_entry] not in self.R[self.Q0]:
+                        remove_visitor_entry_set.add(visitor_entry)
+                # Terza regola: rimuovo quando non c'è niente che precede il visitor entry
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R[self.Q0]}:
+                    remove_visitor_entry_set.add(visitor_entry)
+            is_change = bool(remove_visitor_entry_set)
+            self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
 
 
 
     def compute_stipula_time(self, visitor_entry, loop_visitor_entry_set):
-        # Il valore è già calcolato
+        #Il valore è già calcolato
         if visitor_entry in self.T:
             return
-        # Partenza dallo stato iniziale
-        if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
-            self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), set())
-            return
-        # Ho trovato un loop
-        if visitor_entry in loop_visitor_entry_set:
-            raise LoopException(visitor_entry)
-        # XXX TODO DSE questa cosa va fatta ben bene come definito nella teoria, se fatto per gli eventi può andare in loop
-        # Controllo che tutte le dipendenze abbiano lo stipula time calcolato, il flag indica la presenza di una LoopException
-        previous_visitor_entry_dict = {previous_visitor_entry: False for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
-        for previous_visitor_entry in previous_visitor_entry_dict:
-            try:
-                self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
-            except LoopException:
-                previous_visitor_entry_dict[previous_visitor_entry] = True
-        # Se sono tutti loop propago l'eccezione
-        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry, is_loop_exception in previous_visitor_entry_dict.items() if not is_loop_exception}
-        if not previous_visitor_entry_set:
-            raise LoopException(visitor_entry)
-        # Calcolo lo stipula time
         if isinstance(visitor_entry, FunctionVisitorEntry):
-            dependency_set = set()
-            for previous_visitor_entry in previous_visitor_entry_set:
-                dependency_set.update(self.T[previous_visitor_entry].dependency_set)
-            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), dependency_set)
+            # Prima regola: funzione che parte dallo stato iniziale
+            if visitor_entry.start_state == self.Q0:
+                self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), set())
+                return
+            # Seconda regola: funzione che fa parte del suo stesso loop
+            if visitor_entry in loop_visitor_entry_set:
+                raise LoopException(visitor_entry)
+            # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
+            previous_visitor_entry_set = set()
+            for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
+                try:
+                    self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
+                    previous_visitor_entry_set.add(previous_visitor_entry)
+                except LoopException:
+                    pass
+            # Se tutte i visitor entry sono loop propago l'eccezione
+            if not previous_visitor_entry_set:
+                raise LoopException(visitor_entry)
+            # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
+            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry].dependency_set for previous_visitor_entry in previous_visitor_entry_set), set()))
             return
-        if isinstance(visitor_entry, EventVisitorEntry):
-            value_dependency = ValueDependency(self.t[visitor_entry], self.dependency_t_dict.get(visitor_entry, set()).difference({NOW}))
-            # In caso di eventi devo valutare se il calcolo parte da now o se è una data assoluta
-            if NOW in self.dependency_t_dict.get(visitor_entry, set()):
-                value_dependency.value += self.T[self.Gamma[visitor_entry]].value
-            self.T[visitor_entry] = value_dependency
+        # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
+        self.compute_stipula_time(self.Gamma[visitor_entry], set())
+        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], self.dependency_t_dict.get(visitor_entry, set()).difference({NOW}))
+        if NOW in self.dependency_t_dict.get(visitor_entry, set()):
+            self.T[visitor_entry].value += self.T[self.Gamma[visitor_entry]].value
 
 
 
@@ -207,29 +184,30 @@ class VisitorOutput:
 
 
 
-    def clear_time(self):
-        # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
-        remove_visitor_entry_set = set()
-        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
-            is_executable = False
-            warning_code = set()
-            for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
-                # Considero lo stipula time
-                if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
-                    is_executable = True
-                    # Controllo che le dipendenze siano confrontabili
-                    previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
-                    if previous_dependency_set:
-                        self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
-                    continue
-                warning_code.add((previous_visitor_entry, visitor_entry, ))
-            if is_executable:
-                self.warning_code.update(warning_code)
-                continue
-            remove_visitor_entry_set.add(visitor_entry)
-        self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
-        # Ripulisco l'insieme di raggiugibilità dai buchi creati
-        self.clear_holes(self.Q0)
+    # TODO DSE questa funzione è da rivedere ben bene
+    # def clear_time(self):
+    #     # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
+    #     remove_visitor_entry_set = set()
+    #     for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
+    #         is_executable = False
+    #         warning_code = set()
+    #         for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
+    #             # Considero lo stipula time
+    #             if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
+    #                 is_executable = True
+    #                 # Controllo che le dipendenze siano confrontabili
+    #                 previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
+    #                 if previous_dependency_set:
+    #                     self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
+    #                 continue
+    #             warning_code.add((previous_visitor_entry, visitor_entry, ))
+    #         if is_executable:
+    #             self.warning_code.update(warning_code)
+    #             continue
+    #         remove_visitor_entry_set.add(visitor_entry)
+    #     self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
+    #     # Ripulisco l'insieme di raggiugibilità dai buchi creati
+    #     self.clear_holes(self.Q0)
 
 
 
