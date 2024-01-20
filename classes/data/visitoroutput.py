@@ -28,7 +28,7 @@ class VisitorOutput:
         self.dependency_t_dict = {}
         self.t = {}
         self.T = {}
-        self.R = {}
+        self.R = set()
         self.warning_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
@@ -48,7 +48,7 @@ class VisitorOutput:
                 'value': str(value_dependency.value),
                 'dependency_set': list(value_dependency.dependency_set)
             } for visitor_entry, value_dependency in self.T.items()},
-            'R': {state: [str(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in self.R.items()},
+            'R': [str(visitor_entry) for visitor_entry in self.R],
             'warning_constraint': [[list(dependency_tuple_1), list(dependency_tuple_2)] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
@@ -86,7 +86,6 @@ class VisitorOutput:
 
     # TODO DSE le regole sono diventate molto diverse da quanto definito all'interno della tesi
     def compute_R(self):
-        self.R[self.Q0] = set()
         is_change = True
         while is_change:
             is_change = False
@@ -97,10 +96,10 @@ class VisitorOutput:
                     add_visitor_entry_set.add(visitor_entry)
                     continue
                 # Seconda regola: visitor entry raggiungibili da visitor entry già inseriti
-                if visitor_entry.start_state in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
+                if visitor_entry.start_state in (visitor_entry.end_state for visitor_entry in self.R):
                     add_visitor_entry_set.add(visitor_entry)
-            is_change = bool(add_visitor_entry_set.difference(self.R[self.Q0]))
-            self.R[self.Q0].update(add_visitor_entry_set)
+            is_change = bool(add_visitor_entry_set.difference(self.R))
+            self.R.update(add_visitor_entry_set)
 
 
 
@@ -109,7 +108,7 @@ class VisitorOutput:
         if visitor_entry in loop_visitor_entry_set:
             return False
         # Calcolo tutti i visitor entry che lo raggiungono
-        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
+        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state}
         # Verifico se ho trovato la funzione
         if function_visitor_entry in previous_visitor_entry_set:
             return True
@@ -125,11 +124,11 @@ class VisitorOutput:
         is_change = True
         while is_change:
             remove_visitor_entry_set = set()
-            for visitor_entry in self.R[self.Q0]:
+            for visitor_entry in self.R:
                 if isinstance(visitor_entry, EventVisitorEntry):
                     # TODO DSE nella teoria questa regola non serve però ottimizza il codice
                     # X regola: rimuovo quando la funzione non fa parte dell'insieme
-                    if self.Gamma[visitor_entry] not in self.R[self.Q0]:
+                    if self.Gamma[visitor_entry] not in self.R:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                     # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
@@ -137,10 +136,10 @@ class VisitorOutput:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                 # Terza regola: rimuovo quando non c'è niente che precede il visitor entry
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R):
                     remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
-            self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
+            self.R = self.R.difference(remove_visitor_entry_set)
 
 
 
@@ -158,7 +157,7 @@ class VisitorOutput:
                 raise LoopException(visitor_entry)
             # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
             previous_visitor_entry_set = set()
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state):
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                 try:
                     self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
                     previous_visitor_entry_set.add(previous_visitor_entry)
@@ -179,7 +178,7 @@ class VisitorOutput:
 
 
     def compute_T(self):
-        for visitor_entry in self.R[self.Q0]:
+        for visitor_entry in self.R:
             self.compute_stipula_time(visitor_entry, set())
 
 
@@ -188,15 +187,15 @@ class VisitorOutput:
         is_change = True
         while is_change:
             remove_visitor_entry_set = set()
-            for visitor_entry in self.R[self.Q0]:
+            for visitor_entry in self.R:
                 # X regola: rimuovo il visitor entry se non c'è niente che lo precede
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R):
                     remove_visitor_entry_set.add(visitor_entry)
                     continue
                 if isinstance(visitor_entry, EventVisitorEntry):
                     # TODO DSE questa regola non serve nella teoria però ottimizza il codice
                     # X regola: rimuovo quando la funzione non fa parte dell'insieme
-                    if self.Gamma[visitor_entry] not in self.R[self.Q0]:
+                    if self.Gamma[visitor_entry] not in self.R:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                     # X regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
@@ -204,16 +203,16 @@ class VisitorOutput:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                     # X regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
-                    if not {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value}:
+                    if not {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value}:
                         remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
-            self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
+            self.R = self.R.difference(remove_visitor_entry_set)
 
 
 
     def compute_warning_constraint(self):
-        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if visitor_entry.start_state != self.Q0):
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value):
+        for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value):
                 previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
                 if previous_dependency_diff_set:
                     self.warning_constraint.add((tuple(previous_dependency_diff_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
@@ -221,8 +220,8 @@ class VisitorOutput:
 
 
     def compute_warning_code(self):
-        for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R[self.Q0] if isinstance(event_visitor_entry, EventVisitorEntry)):
-            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == event_visitor_entry.start_state and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
+        for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R if isinstance(event_visitor_entry, EventVisitorEntry)):
+            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R if previous_visitor_entry.end_state == event_visitor_entry.start_state and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
 
 
 
@@ -234,4 +233,4 @@ class VisitorOutput:
 
     def compute_dead_code(self):
         # Calcolo il dead code
-        self.dead_code = self.C.difference(self.R[self.Q0])
+        self.dead_code = self.C.difference(self.R)

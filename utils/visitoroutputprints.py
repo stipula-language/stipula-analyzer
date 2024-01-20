@@ -36,7 +36,7 @@ def print_visitor_output(visitor_output):
             'value': str(value_dependency.value),
             'dependency_set': list(value_dependency.dependency_set)
         } for visitor_entry, value_dependency in visitor_output.T.items()},
-        'R': {state: [str_visitor_entry(visitor_entry) for visitor_entry in visitor_entry_set] for state, visitor_entry_set in visitor_output.R.items()},
+        'R': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.R],
         'warning_constraint': [f"{field_id_1} <= {field_id_2}" for field_id_1, field_id_2 in visitor_output.warning_constraint],
         'warning_code': [f"{str_visitor_entry(visitor_entry_1)} -> {str_visitor_entry(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code],
         'expired_code': {str_visitor_entry(visitor_entry): date_str for visitor_entry, date_str in visitor_output.expired_code.items()},
