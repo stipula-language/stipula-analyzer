@@ -12,7 +12,7 @@ stipula Esempio221 {
  
 	@Q0 A: f(y)[k] (true) {
 
-		now >> @Q0 {} => @Q2  // ev.1
+		now >> @Q0 {} => @Q2  // ev.1 (escluso perche' non raggiungibile)
 
         //now >> @Q3 {} => @Q1  // ev.3
 
@@ -20,7 +20,7 @@ stipula Esempio221 {
  
 	@Q1 B: g(y)[k] (true) {
 
-		now >> @Q1 {} => @Q0  // ev.2 (escluso per (1))
+		now >> @Q1 {} => @Q0  // ev.2 (escluso perche' non raggiungibile dalla funzione che lo definisce)
 
 	} => @Q3
 }
