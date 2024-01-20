@@ -90,25 +90,24 @@ class VisitorOutput:
         is_change = True
         while is_change:
             is_change = False
+            add_visitor_entry_set = set()
             for visitor_entry in self.C:
-                # X regola: funzioni che partono dallo stato iniziale
-                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 and visitor_entry not in self.R[self.Q0]:
-                    is_change = True
-                    self.R[self.Q0].add(visitor_entry)
-                # X regola: visitor entry raggiungibili da visitor entry già inseriti
-                if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in self.R[self.Q0]} and visitor_entry not in self.R[self.Q0]:
-                    is_change = True
-                    self.R[self.Q0].add(visitor_entry)
+                # Prima regola: funzioni che partono dallo stato iniziale
+                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
+                    add_visitor_entry_set.add(visitor_entry)
+                    continue
+                # Seconda regola: visitor entry raggiungibili da visitor entry già inseriti
+                if visitor_entry.start_state in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
+                    add_visitor_entry_set.add(visitor_entry)
+            is_change = bool(add_visitor_entry_set.difference(self.R[self.Q0]))
+            self.R[self.Q0].update(add_visitor_entry_set)
 
 
 
-    def is_path_to_function(self, visitor_entry, function_visitor_entry, loop_visitor_entry_set):
+    def is_path_from_function(self, visitor_entry, function_visitor_entry, loop_visitor_entry_set):
         # Se trovo un loop interrompo
         if visitor_entry in loop_visitor_entry_set:
             return False
-        # Imposto la funzione da cercare
-        if not function_visitor_entry:
-            function_visitor_entry = self.Gamma[visitor_entry]
         # Calcolo tutti i visitor entry che lo raggiungono
         previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
         for previous_visitor_entry in previous_visitor_entry_set:
@@ -117,7 +116,7 @@ class VisitorOutput:
                 return True
         for previous_visitor_entry in previous_visitor_entry_set:
             # Passo successivo della ricerca
-            if self.is_path_to_function(previous_visitor_entry, function_visitor_entry, loop_visitor_entry_set.union({visitor_entry})):
+            if self.is_path_from_function(previous_visitor_entry, function_visitor_entry, loop_visitor_entry_set.union({visitor_entry})):
                 return True
         return False
 
@@ -126,18 +125,20 @@ class VisitorOutput:
     def clear_events(self):
         is_change = True
         while is_change:
-            is_change = False
             remove_visitor_entry_set = set()
             for visitor_entry in self.R[self.Q0]:
                 if isinstance(visitor_entry, EventVisitorEntry):
-                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                    if not self.is_path_to_function(visitor_entry, None, set()):
-                        remove_visitor_entry_set.add(visitor_entry)
-                    # Seconda regola: rimuovo quando la funzione non fa parte dell'insieme
+                    # TODO DSE nella teoria questa regola non serve però ottimizza il codice
+                    # X regola: rimuovo quando la funzione non fa parte dell'insieme
                     if self.Gamma[visitor_entry] not in self.R[self.Q0]:
                         remove_visitor_entry_set.add(visitor_entry)
+                        continue
+                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                    if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
+                        remove_visitor_entry_set.add(visitor_entry)
+                        continue
                 # Terza regola: rimuovo quando non c'è niente che precede il visitor entry
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R[self.Q0]}:
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
                     remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
@@ -158,7 +159,7 @@ class VisitorOutput:
                 raise LoopException(visitor_entry)
             # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
             previous_visitor_entry_set = set()
-            for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state):
                 try:
                     self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
                     previous_visitor_entry_set.add(previous_visitor_entry)
@@ -184,30 +185,66 @@ class VisitorOutput:
 
 
 
-    # TODO DSE questa funzione è da rivedere ben bene
-    # def clear_time(self):
-    #     # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
-    #     remove_visitor_entry_set = set()
-    #     for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
-    #         is_executable = False
-    #         warning_code = set()
-    #         for previous_visitor_entry in {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}:
-    #             # Considero lo stipula time
-    #             if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
-    #                 is_executable = True
-    #                 # Controllo che le dipendenze siano confrontabili
-    #                 previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
-    #                 if previous_dependency_set:
-    #                     self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
-    #                 continue
-    #             warning_code.add((previous_visitor_entry, visitor_entry, ))
-    #         if is_executable:
-    #             self.warning_code.update(warning_code)
-    #             continue
-    #         remove_visitor_entry_set.add(visitor_entry)
-    #     self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
-    #     # Ripulisco l'insieme di raggiugibilità dai buchi creati
-    #     self.clear_holes(self.Q0)
+    def clear_time(self):
+        is_change = True
+        while is_change:
+            remove_visitor_entry_set = set()
+            for visitor_entry in self.R[self.Q0]:
+                # X regola: rimuovo il visitor entry se non c'è niente che lo precede
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R[self.Q0]):
+                    remove_visitor_entry_set.add(visitor_entry)
+                    continue
+                if isinstance(visitor_entry, EventVisitorEntry):
+                    # TODO DSE questa regola non serve nella teoria però ottimizza il codice
+                    # X regola: rimuovo quando la funzione non fa parte dell'insieme
+                    if self.Gamma[visitor_entry] not in self.R[self.Q0]:
+                        remove_visitor_entry_set.add(visitor_entry)
+                        continue
+                    # X regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                    if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
+                        remove_visitor_entry_set.add(visitor_entry)
+                        continue
+                    # X regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
+                    if not {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value}:
+                        remove_visitor_entry_set.add(visitor_entry)
+            is_change = bool(remove_visitor_entry_set)
+            self.R[self.Q0] = self.R[self.Q0].difference(remove_visitor_entry_set)
+
+
+
+    def clear_time_old(self):
+        # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
+        remove_visitor_entry_set = set()
+        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
+            is_executable = False
+            warning_code = set()
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state):
+                # Considero lo stipula time
+                if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
+                    is_executable = True
+                    # Controllo che le dipendenze siano confrontabili
+                    previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
+                    if previous_dependency_set:
+                        self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
+                    continue
+                warning_code.add((previous_visitor_entry, visitor_entry, ))
+            if is_executable:
+                self.warning_code.update(warning_code)
+                continue
+            remove_visitor_entry_set.add(visitor_entry)
+        self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
+        # Ripulisco l'insieme di raggiugibilità dai buchi creati
+        self.clear_holes(self.Q0)
+
+
+
+    def compute_warning_constraint(self):
+        pass
+
+
+
+    def compute_warning_code(self):
+        pass
 
 
 

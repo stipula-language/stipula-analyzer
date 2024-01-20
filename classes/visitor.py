@@ -45,9 +45,12 @@ class Visitor(StipulaVisitor):
         self.visitor_output.clear_events()
         # Calcolo dei tempi stipula
         self.visitor_output.compute_T()
-        # TODO DSE queste altre parti bisogna sistemarle
-        # # Controllo della sequenza temporale
-        # self.visitor_output.clear_time()
+        # Controllo della sequenza temporale
+        self.visitor_output.clear_time()
+        # Calcolo degli warning-constraint
+        self.visitor_output.compute_warning_constraint()
+        # Calcolo del warning-code
+        self.visitor_output.compute_warning_code()
         # Calcolo il dead-code
         self.visitor_output.compute_dead_code()
         return self.visitor_output
