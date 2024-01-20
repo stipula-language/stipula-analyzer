@@ -119,7 +119,7 @@ class VisitorOutput:
 
 
 
-    def clear_events(self):
+    def clear_events(self): 
         is_change = True
         while is_change:
             remove_visitor_entry_set = set()
