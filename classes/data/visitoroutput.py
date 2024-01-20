@@ -212,39 +212,18 @@ class VisitorOutput:
 
 
 
-    def clear_time_old(self):
-        # Rimuovo il codice non eseguibile e segnalo quello non sempre eseguibile
-        remove_visitor_entry_set = set()
-        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if isinstance(visitor_entry, EventVisitorEntry)):
-            is_executable = False
-            warning_code = set()
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state):
-                # Considero lo stipula time
-                if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
-                    is_executable = True
-                    # Controllo che le dipendenze siano confrontabili
-                    previous_dependency_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
-                    if previous_dependency_set:
-                        self.warning_constraint.add((tuple(previous_dependency_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
-                    continue
-                warning_code.add((previous_visitor_entry, visitor_entry, ))
-            if is_executable:
-                self.warning_code.update(warning_code)
-                continue
-            remove_visitor_entry_set.add(visitor_entry)
-        self.clear_visitor_entry_set(self.Q0, remove_visitor_entry_set)
-        # Ripulisco l'insieme di raggiugibilità dai buchi creati
-        self.clear_holes(self.Q0)
-
-
-
     def compute_warning_constraint(self):
-        pass
+        for visitor_entry in (visitor_entry for visitor_entry in self.R[self.Q0] if visitor_entry.start_state != self.Q0):
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value):
+                previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
+                if previous_dependency_diff_set:
+                    self.warning_constraint.add((tuple(previous_dependency_diff_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
 
 
 
     def compute_warning_code(self):
-        pass
+        for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R[self.Q0] if isinstance(event_visitor_entry, EventVisitorEntry)):
+            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == event_visitor_entry.start_state and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
 
 
 
