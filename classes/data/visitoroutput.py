@@ -84,7 +84,6 @@ class VisitorOutput:
 
 
 
-    # TODO DSE le regole sono diventate molto diverse da quanto definito all'interno della tesi
     def compute_R(self):
         is_change = True
         while is_change:
@@ -96,7 +95,7 @@ class VisitorOutput:
                     add_visitor_entry_set.add(visitor_entry)
                     continue
                 # Seconda regola: visitor entry raggiungibili da visitor entry già inseriti
-                if visitor_entry.start_state in (visitor_entry.end_state for visitor_entry in self.R):
+                if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in self.R}:
                     add_visitor_entry_set.add(visitor_entry)
             is_change = bool(add_visitor_entry_set.difference(self.R))
             self.R.update(add_visitor_entry_set)
@@ -126,8 +125,7 @@ class VisitorOutput:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
                 if isinstance(visitor_entry, EventVisitorEntry):
-                    # TODO DSE nella teoria questa regola non serve però ottimizza il codice
-                    # X regola: rimuovo quando la funzione non fa parte dell'insieme
+                    # Se la funzione che deinisce l'evento non è presente rimuovo subito
                     if self.Gamma[visitor_entry] not in self.R:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
@@ -135,8 +133,8 @@ class VisitorOutput:
                     if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
-                # Terza regola: rimuovo quando non c'è niente che precede il visitor entry
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R):
+                # Seconda regola: rimuovo quando non c'è niente che precede il visitor entry
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
                     remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R = self.R.difference(remove_visitor_entry_set)
@@ -189,7 +187,7 @@ class VisitorOutput:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
                 # X regola: rimuovo il visitor entry se non c'è niente che lo precede
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in (visitor_entry.end_state for visitor_entry in self.R):
+                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
                     remove_visitor_entry_set.add(visitor_entry)
                     continue
                 if isinstance(visitor_entry, EventVisitorEntry):
