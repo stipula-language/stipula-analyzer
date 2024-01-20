@@ -110,10 +110,9 @@ class VisitorOutput:
             return False
         # Calcolo tutti i visitor entry che lo raggiungono
         previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R[self.Q0] if previous_visitor_entry.end_state == visitor_entry.start_state}
-        for previous_visitor_entry in previous_visitor_entry_set:
-            # Verifico se ho trovato la funzione
-            if previous_visitor_entry == function_visitor_entry:
-                return True
+        # Verifico se ho trovato la funzione
+        if function_visitor_entry in previous_visitor_entry_set:
+            return True
         for previous_visitor_entry in previous_visitor_entry_set:
             # Passo successivo della ricerca
             if self.is_path_from_function(previous_visitor_entry, function_visitor_entry, loop_visitor_entry_set.union({visitor_entry})):
