@@ -125,16 +125,15 @@ class VisitorOutput:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
                 if isinstance(visitor_entry, EventVisitorEntry):
-                    # Se la funzione che deinisce l'evento non è presente rimuovo subito
+                    # Se la funzione che definisce l'evento non è presente rimuovo subito
                     if self.Gamma[visitor_entry] not in self.R:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                     # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
                     if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
                         remove_visitor_entry_set.add(visitor_entry)
-                        continue
-                # Seconda regola: rimuovo quando non c'è niente che precede il visitor entry
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
+                # Seconda regola: rimuovo quando non c'è niente che precede la funzione
+                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
                     remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R = self.R.difference(remove_visitor_entry_set)
@@ -186,23 +185,21 @@ class VisitorOutput:
         while is_change:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
-                # X regola: rimuovo il visitor entry se non c'è niente che lo precede
-                if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
-                    remove_visitor_entry_set.add(visitor_entry)
-                    continue
                 if isinstance(visitor_entry, EventVisitorEntry):
-                    # TODO DSE questa regola non serve nella teoria però ottimizza il codice
-                    # X regola: rimuovo quando la funzione non fa parte dell'insieme
+                    # Se la funzione che definisce l'evento non è presente rimuovo subito
                     if self.Gamma[visitor_entry] not in self.R:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
-                    # X regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
                     if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
-                    # X regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
+                    # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
                     if not {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value}:
                         remove_visitor_entry_set.add(visitor_entry)
+                # Terza regola: rimuovo la funzione se non c'è niente che la precede
+                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
+                    remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R = self.R.difference(remove_visitor_entry_set)
 
