@@ -68,41 +68,27 @@ def _main(is_readable, file_path):
         print(visitor_output)
 
     if visitor_output.warning_constraint:
-        print()
-        print('========== BEGIN WARNING CONSTRAINT ==========')
-        print()
+        print('WARNING CONSTRAINT')
         for dependency_tuple_1, dependency_tuple_2 in visitor_output.warning_constraint:
             print(f"{' + '.join(dependency_tuple_1)} <= {(' + '.join(dependency_tuple_2) if dependency_tuple_2 else '0')}")
-        print()
-        print('========== END WARNING CONSTRAINT ==========')
+        print('==================')
     if visitor_output.warning_code:
-        print()
-        print('========== BEGIN WARNING CODE ==========')
+        print('WARNING CODE')
         for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
-            print()
             print(f"{(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} --X-> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))}")
-            print()
             _print_code(line_list, visitor_entry_1, is_readable)
-            print()
             _print_code(line_list, visitor_entry_2, is_readable)
-        print()
-        print('========== END WARNING CODE ==========')
+        print('============')
     if visitor_output.expired_code:
-        print()
-        print('========== BEGIN EXPIRED CODE ==========')
+        print('EXPIRED CODE')
         for visitor_entry in visitor_output.expired_code:
-            print()
             _print_code(line_list, visitor_entry, is_readable)
-        print()
-        print('========== END EXPIRED CODE ==========')
+        print('============')
     if visitor_output.dead_code:
-        print()
-        print('========== BEGIN DEAD CODE ==========')
+        print('DEAD CODE')
         for visitor_entry in visitor_output.dead_code:
-            print()
             _print_code(line_list, visitor_entry, is_readable)
-        print()
-        print('========== END DEAD CODE ==========')
+        print('=========')
 
 
 
