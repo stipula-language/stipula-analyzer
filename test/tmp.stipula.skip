@@ -1,26 +1,16 @@
-stipula Esempio221 {
-
-	field x
-
+stipula Tmp {
+	field x, y
 	init Q0
- 
-	agreement(A)(x) {
 
-		A: x
-
+	agreement(A, B)(x, y) {
+		A, B: x, y
 	} => @Q0
- 
-	@Q0 A: f(y)[k] (true) {
 
-		now >> @Q0 {} => @Q2  // ev.1 (escluso perche' non raggiungibile)
-
-        //now >> @Q3 {} => @Q1  // ev.3
-
+	@Q0 A: f()[] {
+		now + x + 2 >> @Q2 {} => @Q3  // ev.1
 	} => @Q1
- 
-	@Q1 B: g(y)[k] (true) {
 
-		now >> @Q1 {} => @Q0  // ev.2 (escluso perche' non raggiungibile dalla funzione che lo definisce)
-
-	} => @Q3
+	@Q1 B: g()[] {
+		now + y + 1 >> @Q3 {} => @Q4  // ev.2
+	} => @Q2
 }

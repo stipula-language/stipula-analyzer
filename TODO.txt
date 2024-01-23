@@ -1,7 +1,5 @@
-=== FIX GRAFICI ===
-Sono quelli riportati su google keep
-
 === FIX ===
+(Forse questo va implementto in maniera differete)
 Samuele,
 
 questo codice lo riconosce come problematico (expired code)
@@ -54,6 +52,9 @@ stipula Sample5 {
 ev.2 e` dead code soltanto quando x+1 > y
 
 Cosimo
+
+=== TESI ===
+- Riscrivere le formule presente nella tesi in maniera corretta
 
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni
