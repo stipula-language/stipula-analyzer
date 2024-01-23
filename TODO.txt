@@ -1,25 +1,56 @@
-=== CORREZIONI ===
-- [OK] Gli warning constraint non hanno una sezione human readable
-- [OK] In caso di warning constraint forse è il caso di creare relazioni utilizzando la somma e non i singoli field
+=== FIX ===
+Samuele,
 
-=== TEST ===
-- [OK] Fornire test per verificare il funzionamento di warning code e warning constraint
-  - [OK] warning_code
-  - [OK] warning_constraint
-- Inviare una mail al professore con il nuovo codice
+questo codice lo riconosce come problematico (expired code)
 
-=== BUG CONOSCIUTI ===
-- Quando si rimuove del codice bisogna considerare di rimuoverlo anche dal warning_code
-- Gli warning_constraint devono tracciare gli eventi da cui dipendono per poter rimuovere le relazioni quando si rimuovono i visitor entry correlati
+stipula Sample5 {
+      field x= "2024-01-01"
+      init Init
 
-=== TESI ===
-- Ricontrollare tutto il codice scritto in appendice
-- Aggiungere esempiowcd e esempiowcon
-  - codice in appendice
-  - test
-- Aggiornare tutti i test
-- Aggiungere la regola per la corretta gestione degli stipula time
-- Verificare i passaggi della tesi per vedere se sono conformi con il nuovo codice
+      @Init A:f()[] {
+                "2024-01-01"  @Cont { } = @End
+      } = @Cont
+}
+
+invece quest’altro no
+
+stipula Sample5 {
+      field x= "2024-01-01"
+      init Init
+
+      @Init A:f()[] {
+                x  @Cont { } = @End
+      } = @Cont
+}
+
+
+Puoi sistemare l’analizzatore?
+
+Cosimo
+
+=== FIX ===
+da sistemare anche questo
+
+stipula Sample5 {
+  field x,y
+  init Q0
+
+  agreement(A,B)(x,y) {
+          A,B : x,y
+  } => @Q0
+
+  @Q0 A: f()[] {
+          now + x+2 >> @Q2 {} => @Q3  // ev.1
+  } => @Q1
+
+  @Q1 B: g()[] {
+          now + y+1 >> @Q3 {} => @Q4  // ev.2
+  } => @Q2
+}
+
+ev.2 e` dead code soltanto quando x+1 > y
+
+Cosimo
 
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni
