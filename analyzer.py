@@ -70,7 +70,7 @@ def _main(is_readable, is_compact, file_path):
     if visitor_output.warning_constraint:
         print('WARNING CONSTRAINT')
         for dependency_tuple_1, dependency_tuple_2 in visitor_output.warning_constraint:
-            print(f"    {' + '.join(dependency_tuple_1)} <= {(' + '.join(dependency_tuple_2) if dependency_tuple_2 else '0')}")
+            print(f"    {' + '.join(str(dependency) for dependency in dependency_tuple_1)} <= {(' + '.join(str(dependency) for dependency in dependency_tuple_2) if dependency_tuple_2 else '0')}")
         print('==================')
     if visitor_output.warning_code:
         print('WARNING CODE')

@@ -49,7 +49,7 @@ class VisitorOutput:
                 'dependency_set': list(value_dependency.dependency_set)
             } for visitor_entry, value_dependency in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
-            'warning_constraint': [[list(dependency_tuple_1), list(dependency_tuple_2)] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
+            'warning_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
             'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
@@ -216,16 +216,19 @@ class VisitorOutput:
 
     def compute_warning_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value):
+            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                 previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
                 if previous_dependency_diff_set:
-                    self.warning_constraint.add((tuple(previous_dependency_diff_set), tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), ))
+                    min_value = min(self.T[previous_visitor_entry].value, self.T[visitor_entry].value)
+                    previous_value = self.T[previous_visitor_entry].value - min_value
+                    value = self.T[visitor_entry].value - min_value
+                    self.warning_constraint.add(((*tuple(previous_dependency_diff_set), *((previous_value, ) if previous_value else ()), ), (*tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), *((value, ) if value else ()), ), ))
 
 
 
     def compute_warning_code(self):
         for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R if isinstance(event_visitor_entry, EventVisitorEntry)):
-            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R if previous_visitor_entry.end_state == event_visitor_entry.start_state and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
+            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R if previous_visitor_entry.end_state == event_visitor_entry.start_state and not self.T[previous_visitor_entry].dependency_set.difference(self.T[event_visitor_entry].dependency_set) and not self.T[event_visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set) and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
 
 
 
