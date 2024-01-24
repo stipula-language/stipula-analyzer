@@ -33,30 +33,6 @@ Puoi sistemare l’analizzatore?
 
 Cosimo
 
-=== FIX ===
-da sistemare anche questo
-
-stipula Sample5 {
-  field x,y
-  init Q0
-
-  agreement(A,B)(x,y) {
-          A,B : x,y
-  } => @Q0
-
-  @Q0 A: f()[] {
-          now + x+2 >> @Q2 {} => @Q3  // ev.1
-  } => @Q1
-
-  @Q1 B: g()[] {
-          now + y+1 >> @Q3 {} => @Q4  // ev.2
-  } => @Q2
-}
-
-ev.2 e` dead code soltanto quando x+1 > y
-
-Cosimo
-
 === TESI ===
 - Riscrivere le formule presente nella tesi in maniera corretta
 
