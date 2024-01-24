@@ -195,14 +195,17 @@ class VisitorOutput:
                         remove_visitor_entry_set.add(visitor_entry)
                         continue
                     # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
-
-                    # TODO DSE bisogna integrare le regole che permettono di controllare se i dependency_set sono confrontabili
-                    previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
-                    dependency_diff_set = self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)
-
-                    if not {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state and self.T[previous_visitor_entry].value <= self.T[visitor_entry].value}:
+                    is_executable = False
+                    for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                        # La certezza di dead-code è solo se tutte le dipendenze sono confrontabili
+                        if self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set) or self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set):
+                            is_executable = True
+                            break
+                        if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
+                            is_executable = True
+                            break
+                    if not is_executable:
                         remove_visitor_entry_set.add(visitor_entry)
-
                 # Terza regola: rimuovo la funzione se non c'è niente che la precede
                 if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
                     remove_visitor_entry_set.add(visitor_entry)
