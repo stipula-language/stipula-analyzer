@@ -1,6 +1,8 @@
 === FIX ===
 - Un preassegnamento può essere considerato solamente se il field non viene mai modificato in tutto il programma
 - Bisogna controllare se all'interno delle funzioni si fa override dei field, in questo caso quei field non vanno bene se usati nelle time expression
+- fields
+- assets
 
 === FIX ===
 (Forse questo va implementto in maniera differete)
