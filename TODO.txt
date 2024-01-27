@@ -1,5 +1,4 @@
 === FIX ===
-- Estrarre il codice scaduto prima di iniziare con il resto delle computazioni del programma
 - dead-code -> unreachable-code
 
 === FIX ===
