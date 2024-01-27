@@ -1,6 +1,6 @@
 stipula SPA {
-	asset wallet, property
-	field price, prop, pretzelMissed
+	assets wallet, property
+	fields price, prop, pretzelMissed
 	init Sign1
 
 	agreement(Chris, Eva)(price) {

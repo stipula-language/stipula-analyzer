@@ -23,7 +23,7 @@ public class StipulaParser extends Parser {
 		NOW=35, BOOL=36, TRUE=37, FALSE=38, TIMEDELTA=39, NUMBER=40, INTEGER=41, 
 		DATESTRING=42, STRING=43, ID=44, WS=45, LINECOMMENT=46, BLOCKCOMMENT=47;
 	public static final int
-		RULE_stipula = 0, RULE_assetDecl = 1, RULE_fieldDecl = 2, RULE_fieldInit = 3, 
+		RULE_stipula = 0, RULE_assetsDecl = 1, RULE_fieldsDecl = 2, RULE_fieldInit = 3, 
 		RULE_initStateDecl = 4, RULE_agreement = 5, RULE_agree = 6, RULE_functionDecl = 7, 
 		RULE_functionBody = 8, RULE_statement = 9, RULE_ifThenElse = 10, RULE_assetOperation = 11, 
 		RULE_fieldOperation = 12, RULE_eventDecl = 13, RULE_timeExpression = 14, 
@@ -32,18 +32,18 @@ public class StipulaParser extends Parser {
 		RULE_expression6 = 22;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"stipula", "assetDecl", "fieldDecl", "fieldInit", "initStateDecl", "agreement", 
-			"agree", "functionDecl", "functionBody", "statement", "ifThenElse", "assetOperation", 
-			"fieldOperation", "eventDecl", "timeExpression", "timeExpression1", "expression", 
-			"expression1", "expression2", "expression3", "expression4", "expression5", 
-			"expression6"
+			"stipula", "assetsDecl", "fieldsDecl", "fieldInit", "initStateDecl", 
+			"agreement", "agree", "functionDecl", "functionBody", "statement", "ifThenElse", 
+			"assetOperation", "fieldOperation", "eventDecl", "timeExpression", "timeExpression1", 
+			"expression", "expression1", "expression2", "expression3", "expression4", 
+			"expression5", "expression6"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'stipula'", "'{'", "'}'", "'asset'", "','", "'field'", "'='", 
+			null, "'stipula'", "'{'", "'}'", "'assets'", "','", "'fields'", "'='", 
 			"'init'", "'agreement'", "'('", "')'", "'=>'", "'@'", "':'", "'['", "']'", 
 			"'if'", "'else'", "'-o'", "'->'", "'>>'", "'!'", "'&&'", "'||'", "'=='", 
 			"'!='", "'<'", "'>'", "'<='", "'>='", "'+'", "'-'", "'*'", "'/'", "'now'", 
@@ -114,16 +114,16 @@ public class StipulaParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class StipulaContext extends ParserRuleContext {
 		public Token contractId;
-		public FieldDeclContext fieldDecl() {
-			return getRuleContext(FieldDeclContext.class,0);
+		public FieldsDeclContext fieldsDecl() {
+			return getRuleContext(FieldsDeclContext.class,0);
 		}
 		public InitStateDeclContext initStateDecl() {
 			return getRuleContext(InitStateDeclContext.class,0);
 		}
 		public TerminalNode EOF() { return getToken(StipulaParser.EOF, 0); }
 		public TerminalNode ID() { return getToken(StipulaParser.ID, 0); }
-		public AssetDeclContext assetDecl() {
-			return getRuleContext(AssetDeclContext.class,0);
+		public AssetsDeclContext assetsDecl() {
+			return getRuleContext(AssetsDeclContext.class,0);
 		}
 		public AgreementContext agreement() {
 			return getRuleContext(AgreementContext.class,0);
@@ -159,12 +159,12 @@ public class StipulaParser extends Parser {
 			if (_la==T__3) {
 				{
 				setState(49);
-				assetDecl();
+				assetsDecl();
 				}
 			}
 
 			setState(52);
-			fieldDecl();
+			fieldsDecl();
 			setState(53);
 			initStateDecl();
 			setState(55);
@@ -209,22 +209,22 @@ public class StipulaParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class AssetDeclContext extends ParserRuleContext {
+	public static class AssetsDeclContext extends ParserRuleContext {
 		public Token ID;
 		public List<Token> assetId = new ArrayList<Token>();
 		public List<TerminalNode> ID() { return getTokens(StipulaParser.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(StipulaParser.ID, i);
 		}
-		public AssetDeclContext(ParserRuleContext parent, int invokingState) {
+		public AssetsDeclContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_assetDecl; }
+		@Override public int getRuleIndex() { return RULE_assetsDecl; }
 	}
 
-	public final AssetDeclContext assetDecl() throws RecognitionException {
-		AssetDeclContext _localctx = new AssetDeclContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_assetDecl);
+	public final AssetsDeclContext assetsDecl() throws RecognitionException {
+		AssetsDeclContext _localctx = new AssetsDeclContext(_ctx, getState());
+		enterRule(_localctx, 2, RULE_assetsDecl);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -232,8 +232,8 @@ public class StipulaParser extends Parser {
 			setState(66);
 			match(T__3);
 			setState(67);
-			((AssetDeclContext)_localctx).ID = match(ID);
-			((AssetDeclContext)_localctx).assetId.add(((AssetDeclContext)_localctx).ID);
+			((AssetsDeclContext)_localctx).ID = match(ID);
+			((AssetsDeclContext)_localctx).assetId.add(((AssetsDeclContext)_localctx).ID);
 			setState(72);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -243,8 +243,8 @@ public class StipulaParser extends Parser {
 				setState(68);
 				match(T__4);
 				setState(69);
-				((AssetDeclContext)_localctx).ID = match(ID);
-				((AssetDeclContext)_localctx).assetId.add(((AssetDeclContext)_localctx).ID);
+				((AssetsDeclContext)_localctx).ID = match(ID);
+				((AssetsDeclContext)_localctx).assetId.add(((AssetsDeclContext)_localctx).ID);
 				}
 				}
 				setState(74);
@@ -265,22 +265,22 @@ public class StipulaParser extends Parser {
 	}
 
 	@SuppressWarnings("CheckReturnValue")
-	public static class FieldDeclContext extends ParserRuleContext {
+	public static class FieldsDeclContext extends ParserRuleContext {
 		public List<FieldInitContext> fieldInit() {
 			return getRuleContexts(FieldInitContext.class);
 		}
 		public FieldInitContext fieldInit(int i) {
 			return getRuleContext(FieldInitContext.class,i);
 		}
-		public FieldDeclContext(ParserRuleContext parent, int invokingState) {
+		public FieldsDeclContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_fieldDecl; }
+		@Override public int getRuleIndex() { return RULE_fieldsDecl; }
 	}
 
-	public final FieldDeclContext fieldDecl() throws RecognitionException {
-		FieldDeclContext _localctx = new FieldDeclContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_fieldDecl);
+	public final FieldsDeclContext fieldsDecl() throws RecognitionException {
+		FieldsDeclContext _localctx = new FieldsDeclContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_fieldsDecl);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

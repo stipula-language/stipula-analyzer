@@ -1,5 +1,5 @@
 stipula EsempioWCon {
-	field t1, t2
+	fields t1, t2
 	init Q0
 
 	agreement(A)(t1, t2) {

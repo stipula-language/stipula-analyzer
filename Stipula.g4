@@ -2,11 +2,11 @@ grammar Stipula;
 
 // Struttura del linguaggio
 
-stipula :  'stipula' contractId=ID '{' assetDecl? fieldDecl initStateDecl agreement? functionDecl* '}' EOF ;
+stipula :  'stipula' contractId=ID '{' assetsDecl? fieldsDecl initStateDecl agreement? functionDecl* '}' EOF ;
 
-assetDecl : 'asset' assetId+=ID (',' assetId+=ID)* ;
+assetsDecl : 'assets' assetId+=ID (',' assetId+=ID)* ;
 
-fieldDecl : 'field' fieldInit (',' fieldInit)* ;
+fieldsDecl : 'fields' fieldInit (',' fieldInit)* ;
 
 fieldInit : fieldId=ID ('=' value=(BOOL | TIMEDELTA | NUMBER | DATESTRING | STRING))? ;
 

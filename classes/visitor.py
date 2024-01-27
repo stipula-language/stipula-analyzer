@@ -33,7 +33,7 @@ class Visitor(StipulaVisitor):
     # Visit a parse tree produced by StipulaParser#stipula.
     def visitStipula(self, ctx:StipulaParser.StipulaContext):
         # Analizzo i field
-        self.visitFieldDecl(ctx.fieldDecl())
+        self.visitFieldsDecl(ctx.fieldsDecl())
         # Analizzo l'init
         self.visitInitStateDecl(ctx.initStateDecl())
         # Analizzo le funzioni
@@ -58,7 +58,7 @@ class Visitor(StipulaVisitor):
 
 
     # Visit a parse tree produced by StipulaParser#fieldDecl.
-    def visitFieldDecl(self, ctx:StipulaParser.FieldDeclContext):
+    def visitFieldsDecl(self, ctx:StipulaParser.FieldsDeclContext):
         for field_init_context in ctx.fieldInit():
             self.visitFieldInit(field_init_context)
 

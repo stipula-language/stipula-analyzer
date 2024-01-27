@@ -3,9 +3,9 @@ null
 'stipula'
 '{'
 '}'
-'asset'
+'assets'
 ','
-'field'
+'fields'
 '='
 'init'
 'agreement'
@@ -100,8 +100,8 @@ BLOCKCOMMENT
 
 rule names:
 stipula
-assetDecl
-fieldDecl
+assetsDecl
+fieldsDecl
 fieldInit
 initStateDecl
 agreement

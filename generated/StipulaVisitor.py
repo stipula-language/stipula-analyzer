@@ -14,13 +14,13 @@ class StipulaVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by StipulaParser#assetDecl.
-    def visitAssetDecl(self, ctx:StipulaParser.AssetDeclContext):
+    # Visit a parse tree produced by StipulaParser#assetsDecl.
+    def visitAssetsDecl(self, ctx:StipulaParser.AssetsDeclContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by StipulaParser#fieldDecl.
-    def visitFieldDecl(self, ctx:StipulaParser.FieldDeclContext):
+    # Visit a parse tree produced by StipulaParser#fieldsDecl.
+    def visitFieldsDecl(self, ctx:StipulaParser.FieldsDeclContext):
         return self.visitChildren(ctx)
 
 

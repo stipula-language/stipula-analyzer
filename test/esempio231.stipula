@@ -1,5 +1,5 @@
 stipula Esempio331 {
-	field x
+	fields x
 	init Q0
 
 	agreement(A)(x) {

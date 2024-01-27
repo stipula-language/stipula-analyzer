@@ -128,9 +128,9 @@ class StipulaParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'stipula'", "'{'", "'}'", "'asset'", 
-                     "','", "'field'", "'='", "'init'", "'agreement'", "'('", 
-                     "')'", "'=>'", "'@'", "':'", "'['", "']'", "'if'", 
+    literalNames = [ "<INVALID>", "'stipula'", "'{'", "'}'", "'assets'", 
+                     "','", "'fields'", "'='", "'init'", "'agreement'", 
+                     "'('", "')'", "'=>'", "'@'", "':'", "'['", "']'", "'if'", 
                      "'else'", "'-o'", "'->'", "'>>'", "'!'", "'&&'", "'||'", 
                      "'=='", "'!='", "'<'", "'>'", "'<='", "'>='", "'+'", 
                      "'-'", "'*'", "'/'", "'now'", "<INVALID>", "'true'", 
@@ -148,8 +148,8 @@ class StipulaParser ( Parser ):
                       "ID", "WS", "LINECOMMENT", "BLOCKCOMMENT" ]
 
     RULE_stipula = 0
-    RULE_assetDecl = 1
-    RULE_fieldDecl = 2
+    RULE_assetsDecl = 1
+    RULE_fieldsDecl = 2
     RULE_fieldInit = 3
     RULE_initStateDecl = 4
     RULE_agreement = 5
@@ -171,7 +171,7 @@ class StipulaParser ( Parser ):
     RULE_expression5 = 21
     RULE_expression6 = 22
 
-    ruleNames =  [ "stipula", "assetDecl", "fieldDecl", "fieldInit", "initStateDecl", 
+    ruleNames =  [ "stipula", "assetsDecl", "fieldsDecl", "fieldInit", "initStateDecl", 
                    "agreement", "agree", "functionDecl", "functionBody", 
                    "statement", "ifThenElse", "assetOperation", "fieldOperation", 
                    "eventDecl", "timeExpression", "timeExpression1", "expression", 
@@ -244,8 +244,8 @@ class StipulaParser ( Parser ):
             self.parser = parser
             self.contractId = None # Token
 
-        def fieldDecl(self):
-            return self.getTypedRuleContext(StipulaParser.FieldDeclContext,0)
+        def fieldsDecl(self):
+            return self.getTypedRuleContext(StipulaParser.FieldsDeclContext,0)
 
 
         def initStateDecl(self):
@@ -258,8 +258,8 @@ class StipulaParser ( Parser ):
         def ID(self):
             return self.getToken(StipulaParser.ID, 0)
 
-        def assetDecl(self):
-            return self.getTypedRuleContext(StipulaParser.AssetDeclContext,0)
+        def assetsDecl(self):
+            return self.getTypedRuleContext(StipulaParser.AssetsDeclContext,0)
 
 
         def agreement(self):
@@ -303,11 +303,11 @@ class StipulaParser ( Parser ):
             _la = self._input.LA(1)
             if _la==4:
                 self.state = 49
-                self.assetDecl()
+                self.assetsDecl()
 
 
             self.state = 52
-            self.fieldDecl()
+            self.fieldsDecl()
             self.state = 53
             self.initStateDecl()
             self.state = 55
@@ -341,7 +341,7 @@ class StipulaParser ( Parser ):
         return localctx
 
 
-    class AssetDeclContext(ParserRuleContext):
+    class AssetsDeclContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -357,21 +357,21 @@ class StipulaParser ( Parser ):
                 return self.getToken(StipulaParser.ID, i)
 
         def getRuleIndex(self):
-            return StipulaParser.RULE_assetDecl
+            return StipulaParser.RULE_assetsDecl
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitAssetDecl" ):
-                return visitor.visitAssetDecl(self)
+            if hasattr( visitor, "visitAssetsDecl" ):
+                return visitor.visitAssetsDecl(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def assetDecl(self):
+    def assetsDecl(self):
 
-        localctx = StipulaParser.AssetDeclContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 2, self.RULE_assetDecl)
+        localctx = StipulaParser.AssetsDeclContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 2, self.RULE_assetsDecl)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
@@ -402,7 +402,7 @@ class StipulaParser ( Parser ):
         return localctx
 
 
-    class FieldDeclContext(ParserRuleContext):
+    class FieldsDeclContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -417,21 +417,21 @@ class StipulaParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return StipulaParser.RULE_fieldDecl
+            return StipulaParser.RULE_fieldsDecl
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitFieldDecl" ):
-                return visitor.visitFieldDecl(self)
+            if hasattr( visitor, "visitFieldsDecl" ):
+                return visitor.visitFieldsDecl(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def fieldDecl(self):
+    def fieldsDecl(self):
 
-        localctx = StipulaParser.FieldDeclContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 4, self.RULE_fieldDecl)
+        localctx = StipulaParser.FieldsDeclContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 4, self.RULE_fieldsDecl)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)

@@ -48,9 +48,9 @@ BLOCKCOMMENT=47
 'stipula'=1
 '{'=2
 '}'=3
-'asset'=4
+'assets'=4
 ','=5
-'field'=6
+'fields'=6
 '='=7
 'init'=8
 'agreement'=9
