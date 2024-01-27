@@ -81,17 +81,18 @@ class Visitor(StipulaVisitor):
         function_visitor_entry = FunctionVisitorEntry(ctx.startStateId.text, ctx.partyId.text, ctx.functionId.text, ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
         self.visitor_output.add_visitor_entry(function_visitor_entry)
         # Analizzo gli eventi
+        field_id_set = set(ctx.fieldId)
         for event_decl_context in ctx.functionBody().eventDecl():
-            self.visitor_output.add_event_definition(self.visitEventDecl(event_decl_context), function_visitor_entry)
+            self.visitor_output.add_event_definition(self.visitEventDecl(event_decl_context, field_id_set), function_visitor_entry)
 
 
 
     # Visit a parse tree produced by StipulaParser#eventDecl.
-    def visitEventDecl(self, ctx:StipulaParser.EventDeclContext):
+    def visitEventDecl(self, ctx:StipulaParser.EventDeclContext, field_id_set):
         # Le time expression devono essere nella forma `now + t`
         event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
         try:
-            value_dependency = self.visitTimeExpression(ctx.trigger)
+            value_dependency = self.visitTimeExpression(ctx.trigger, field_id_set)
             self.visitor_output.add_visitor_entry(event_visitor_entry)
             self.visitor_output.add_dependency_t(event_visitor_entry, value_dependency.dependency_set)
             self.visitor_output.set_t(event_visitor_entry, value_dependency.value)
@@ -102,12 +103,12 @@ class Visitor(StipulaVisitor):
 
 
     # Visit a parse tree produced by StipulaParser#timeExpression.
-    def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext):
+    def visitTimeExpression(self, ctx:StipulaParser.TimeExpressionContext, field_id_set):
         if ctx.NOW():
             # Time expressione nella forma `now + t`
             right_value_dependency = ValueDependency(timedelta(seconds=0), set())
             if ctx.right:
-                right_value_dependency = self.visitTimeExpression1(ctx.right)
+                right_value_dependency = self.visitTimeExpression1(ctx.right, field_id_set)
             return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
@@ -116,6 +117,9 @@ class Visitor(StipulaVisitor):
                 raise ExpiredException(ctx.DATESTRING().getText()[1:-1])
             return ValueDependency(time_delta, set())
         if ctx.ID():
+            # Gli id non possono essere presi dai parametri
+            if ctx.ID().getText() in field_id_set:
+                raise SymbolException(ctx.ID().getText())
             # Gli id devono essere di field del contratto
             if ctx.ID().getText() not in self.visitor_output.field_id_set:
                 raise SymbolException(ctx.ID().getText())
@@ -124,7 +128,7 @@ class Visitor(StipulaVisitor):
 
 
     # Visit a parse tree produced by StipulaParser#timeExpression1.
-    def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context):
+    def visitTimeExpression1(self, ctx:StipulaParser.TimeExpression1Context, field_id_set):
         match ctx.left.type:
             case StipulaParser.TIMEDELTA:
                 # Bisogna leggere correttamente l'ordine di grandezza
@@ -144,11 +148,14 @@ class Visitor(StipulaVisitor):
                     case _:
                         left_value_dependency = ValueDependency(timedelta(minutes=int(ctx.left.text)), set())
             case StipulaParser.ID:
+                # Gli id non possono essere presi dai parametri
+                if ctx.left.text in field_id_set:
+                    raise SymbolException(ctx.left.text)
                 # Gli id devono essere i field del contratto
                 if ctx.left.text not in self.visitor_output.field_id_set:
                     raise SymbolException(ctx.left.text)
                 left_value_dependency = ValueDependency(timedelta(seconds=0), {ctx.left.text})
         right_value_dependency = ValueDependency(timedelta(seconds=0), set())
         if ctx.right:
-            right_value_dependency = self.visitTimeExpression1(ctx.right)
+            right_value_dependency = self.visitTimeExpression1(ctx.right, field_id_set)
         return ValueDependency(left_value_dependency.value + right_value_dependency.value, left_value_dependency.dependency_set.union(right_value_dependency.dependency_set))
