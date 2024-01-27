@@ -9,7 +9,6 @@ from generated.StipulaVisitor import StipulaVisitor
 from generated.StipulaParser import StipulaParser
 
 from classes.exceptions.symbolexception import SymbolException
-from classes.exceptions.expiredexception import ExpiredException
 from classes.data import visitoroutput
 from classes.data.functionvisitorentry import FunctionVisitorEntry
 from classes.data.eventvisitorentry import EventVisitorEntry
@@ -39,6 +38,8 @@ class Visitor(StipulaVisitor):
         # Analizzo le funzioni
         for function_decl_context in ctx.functionDecl():
             self.visitFunctionDecl(function_decl_context)
+        # Rimuovo tutti gli eventi già scaduti
+        self.visitor_output.compute_expired_code()
         # Costruzione di R a partire da C
         self.visitor_output.compute_R()
         # Rimozione di eventi non raggiungibili e pulizia degli stati
@@ -140,13 +141,10 @@ class Visitor(StipulaVisitor):
     def visitEventDecl(self, ctx:StipulaParser.EventDeclContext, field_id_set):
         # Le time expression devono essere nella forma `now + t`
         event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
-        try:
-            value_dependency = self.visitTimeExpression(ctx.trigger, field_id_set)
-            self.visitor_output.add_visitor_entry(event_visitor_entry)
-            self.visitor_output.add_dependency_t(event_visitor_entry, value_dependency.dependency_set)
-            self.visitor_output.set_t(event_visitor_entry, value_dependency.value)
-        except ExpiredException as exception:
-            self.visitor_output.set_expired_code(event_visitor_entry, exception.date_str)
+        value_dependency = self.visitTimeExpression(ctx.trigger, field_id_set)
+        self.visitor_output.add_visitor_entry(event_visitor_entry)
+        self.visitor_output.add_dependency_t(event_visitor_entry, value_dependency.dependency_set)
+        self.visitor_output.set_t(event_visitor_entry, value_dependency.value)
         return event_visitor_entry
 
 
@@ -161,10 +159,7 @@ class Visitor(StipulaVisitor):
             return ValueDependency(right_value_dependency.value, right_value_dependency.dependency_set.union({visitoroutput.NOW}))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
-            time_delta = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time
-            if time_delta < timedelta(seconds=0):
-                raise ExpiredException(ctx.DATESTRING().getText()[1:-1])
-            return ValueDependency(time_delta, set())
+            return ValueDependency(datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time, set())
         if ctx.ID():
             # Gli id non possono essere presi dai parametri
             if ctx.ID().getText() in field_id_set:

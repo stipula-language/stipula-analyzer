@@ -50,7 +50,7 @@ def print_visitor_output(visitor_output, is_compact):
             'warning_code': [f"{str_visitor_entry(visitor_entry_1)} -> {str_visitor_entry(visitor_entry_2)}" for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code]
         } if not is_compact else {}),
         **({
-            'expired_code': {str_visitor_entry(visitor_entry): date_str for visitor_entry, date_str in visitor_output.expired_code.items()}
+            'expired_code': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.expired_code.items()}
         } if not is_compact else {}),
         'dead_code': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.dead_code]
     }, indent=2))

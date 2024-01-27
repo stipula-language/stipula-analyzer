@@ -51,7 +51,7 @@ class VisitorOutput:
             'R': [str(visitor_entry) for visitor_entry in self.R],
             'warning_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
-            'expired_code': {str(visitor_entry): date_str for visitor_entry, date_str in self.expired_code.items()},
+            'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
             'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
         }, indent=2)
     
@@ -81,6 +81,29 @@ class VisitorOutput:
 
     def set_t(self, event_visitor_entry, time_delta):
         self.t[event_visitor_entry] = time_delta
+
+
+
+    def compute_expired_code(self):
+        # Identifico gli eventi già scaduti
+        remove_event_visitor_entry_set = set()
+        for event_visitor_entry in (visitor_entry for visitor_entry in self.C if isinstance(visitor_entry, EventVisitorEntry)):
+            is_executable = False
+            value = self.t[event_visitor_entry]
+            for field_id in self.dependency_t_map[event_visitor_entry]:
+                if field_id == NOW:
+                    is_executable = True
+                    break
+                if self.field_id_map[field_id] is None:
+                    is_executable = True
+                    break
+                value += self.field_id_map[field_id]
+            if is_executable:
+                continue
+            if value < timedelta(seconds=0):
+                remove_event_visitor_entry_set.add(event_visitor_entry)
+                self.expired_code[event_visitor_entry] = value
+        self.C = self.C.difference(remove_event_visitor_entry_set)
 
 
 
@@ -229,12 +252,6 @@ class VisitorOutput:
     def compute_warning_code(self):
         for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R if isinstance(event_visitor_entry, EventVisitorEntry)):
             self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R if previous_visitor_entry.end_state == event_visitor_entry.start_state and not self.T[previous_visitor_entry].dependency_set.difference(self.T[event_visitor_entry].dependency_set) and not self.T[event_visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set) and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
-
-
-
-    def set_expired_code(self, event_visitor_entry, date_str):
-        # Identifico un evento come expired
-        self.expired_code[event_visitor_entry] = date_str
 
 
 
