@@ -21,11 +21,11 @@ class VisitorOutput:
 
 
     def __init__(self):
-        self.field_id_set = set()
+        self.field_id_map = {}
         self.Q0 = None
         self.C = set()
         self.Gamma = {}
-        self.dependency_t_dict = {}
+        self.dependency_t_map = {}
         self.t = {}
         self.T = {}
         self.R = set()
@@ -38,11 +38,11 @@ class VisitorOutput:
 
     def __str__(self):
         return json.dumps({
-            'field_id_set': list(self.field_id_set),
+            'field_id_map': {field_id: str(value) for field_id, value in self.field_id_map.items()},
             'Q0': self.Q0,
             'C': [str(visitor_entry) for visitor_entry in self.C],
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
-            'dependency_t_dict': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_dict.items()},
+            'dependency_t_map': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
             'T': {str(visitor_entry): {
                 'value': str(value_dependency.value),
@@ -57,8 +57,8 @@ class VisitorOutput:
     
 
 
-    def add_field_id(self, field_id):
-        self.field_id_set.add(field_id)
+    def set_field_id(self, field_id, value):
+        self.field_id_map[field_id] = value
 
 
 
@@ -73,9 +73,9 @@ class VisitorOutput:
 
 
     def add_dependency_t(self, event_visitor_entry, field_id_set):
-        if event_visitor_entry not in self.dependency_t_dict:
-            self.dependency_t_dict[event_visitor_entry] = set()
-        self.dependency_t_dict[event_visitor_entry].update(field_id_set)
+        if event_visitor_entry not in self.dependency_t_map:
+            self.dependency_t_map[event_visitor_entry] = set()
+        self.dependency_t_map[event_visitor_entry].update(field_id_set)
 
 
 
@@ -168,8 +168,8 @@ class VisitorOutput:
             return
         # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
         self.compute_stipula_time(self.Gamma[visitor_entry], set())
-        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], self.dependency_t_dict.get(visitor_entry, set()).difference({NOW}))
-        if NOW in self.dependency_t_dict.get(visitor_entry, set()):
+        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], self.dependency_t_map.get(visitor_entry, set()).difference({NOW}))
+        if NOW in self.dependency_t_map.get(visitor_entry, set()):
             self.T[visitor_entry].value += self.T[self.Gamma[visitor_entry]].value
 
 

@@ -26,14 +26,14 @@ def str_visitor_entry(visitor_entry):
 
 def print_visitor_output(visitor_output, is_compact):
     print(json.dumps({
-        'field_id_set': list(visitor_output.field_id_set),
+        'field_id_map': {field_id: str(value) for field_id, value in visitor_output.field_id_map.items()},
         'Q0': visitor_output.Q0,
         'C': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.C],
         **({
             'Gamma': {str_visitor_entry(event_visitor_entry): str_visitor_entry(function_visitor_entry) for event_visitor_entry, function_visitor_entry in visitor_output.Gamma.items()}
         } if not is_compact else {}),
         **({
-            'dependency_t_dict': {str_visitor_entry(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in visitor_output.dependency_t_dict.items()}
+            'dependency_t_map': {str_visitor_entry(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in visitor_output.dependency_t_map.items()}
         } if not is_compact else {}),
         **({
             't': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.t.items()}

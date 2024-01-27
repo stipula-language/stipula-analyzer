@@ -1,0 +1,8 @@
+stipula Sample5 {
+    fields x = "2024-01-01"
+    init Init
+
+    @Init A: f()[] {
+        x >> @Cont {} => @End
+    } => @Cont
+}

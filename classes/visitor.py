@@ -66,7 +66,34 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#fieldInit.
     def visitFieldInit(self, ctx:StipulaParser.FieldInitContext):
-        self.visitor_output.add_field_id(ctx.fieldId.text)
+        value = None
+        if ctx.value:
+            match ctx.value.type:
+                case StipulaParser.BOOL:
+                    value = ctx.value.text == 'true'
+                case StipulaParser.TIMEDELTA:
+                    match ctx.value.text[-1]:
+                        case 'Y':
+                            value = (self.now_date_time + relativedelta(years=int(ctx.value.text[:-1]))) - self.now_date_time
+                        case 'M':
+                            value = (self.now_date_time + relativedelta(months=int(ctx.value.text[:-1]))) - self.now_date_time
+                        case 'D':
+                            value = timedelta(days=int(ctx.value.text[:-1]))
+                        case 'h':
+                            value = timedelta(hours=int(ctx.value.text[:-1]))
+                        case 'm':
+                            value = timedelta(minutes=int(ctx.value.text[:-1]))
+                        case 's':
+                            value = timedelta(seconds=float(ctx.value.text[:-1]))
+                        case _:
+                            value = timedelta(minutes=int(ctx.value.text))
+                case StipulaParser.NUMBER:
+                    value = float(ctx.value.text)
+                case StipulaParser.DATESTRING:
+                    value = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time
+                case StipulaParser.STRING:
+                    value = ctx.value.text[1:-1]
+        self.visitor_output.set_field_id(ctx.fieldId.text, value)
 
 
 
@@ -79,11 +106,33 @@ class Visitor(StipulaVisitor):
     # Visit a parse tree produced by StipulaParser#functionDecl.
     def visitFunctionDecl(self, ctx:StipulaParser.FunctionDeclContext):
         function_visitor_entry = FunctionVisitorEntry(ctx.startStateId.text, ctx.partyId.text, ctx.functionId.text, ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
-        self.visitor_output.add_visitor_entry(function_visitor_entry)
-        # Analizzo gli eventi
         field_id_set = set(ctx.fieldId)
-        for event_decl_context in ctx.functionBody().eventDecl():
+        self.visitor_output.add_visitor_entry(function_visitor_entry)
+        self.visitFunctionBody(ctx.functionBody(), function_visitor_entry, field_id_set)
+
+
+
+    # Visit a parse tree produced by StipulaParser#functionBody.
+    def visitFunctionBody(self, ctx:StipulaParser.FunctionBodyContext, function_visitor_entry, field_id_set):
+        # Analizzo gli statement
+        for statement_context in ctx.statement():
+            self.visitStatement(statement_context)
+        # Analizzo gli eventi
+        for event_decl_context in ctx.eventDecl():
             self.visitor_output.add_event_definition(self.visitEventDecl(event_decl_context, field_id_set), function_visitor_entry)
+
+
+
+    # Visit a parse tree produced by StipulaParser#statement.
+    def visitStatement(self, ctx:StipulaParser.StatementContext):
+        if ctx.fieldOperation():
+            self.visitFieldOperation(ctx.fieldOperation())
+    
+
+
+    # Visit a parse tree produced by StipulaParser#fieldOperation.
+    def visitFieldOperation(self, ctx:StipulaParser.FieldOperationContext):
+        self.visitor_output.set_field_id(ctx.right.text, None)
 
 
 
@@ -121,7 +170,7 @@ class Visitor(StipulaVisitor):
             if ctx.ID().getText() in field_id_set:
                 raise SymbolException(ctx.ID().getText())
             # Gli id devono essere di field del contratto
-            if ctx.ID().getText() not in self.visitor_output.field_id_set:
+            if ctx.ID().getText() not in self.visitor_output.field_id_map:
                 raise SymbolException(ctx.ID().getText())
             return ValueDependency(timedelta(seconds=0), {ctx.ID().getText()})
 
@@ -152,7 +201,7 @@ class Visitor(StipulaVisitor):
                 if ctx.left.text in field_id_set:
                     raise SymbolException(ctx.left.text)
                 # Gli id devono essere i field del contratto
-                if ctx.left.text not in self.visitor_output.field_id_set:
+                if ctx.left.text not in self.visitor_output.field_id_map:
                     raise SymbolException(ctx.left.text)
                 left_value_dependency = ValueDependency(timedelta(seconds=0), {ctx.left.text})
         right_value_dependency = ValueDependency(timedelta(seconds=0), set())
