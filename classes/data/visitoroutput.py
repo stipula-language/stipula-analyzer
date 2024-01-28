@@ -57,8 +57,13 @@ class VisitorOutput:
     
 
 
-    def set_field_id(self, field_id, value):
+    def set_field_id_value(self, field_id, value):
         self.field_id_map[field_id] = value
+
+
+
+    def set_init_state_id(self, state_id):
+        self.Q0 = state_id
 
 
 
@@ -67,15 +72,13 @@ class VisitorOutput:
 
 
 
-    def add_event_definition(self, event_visitor_entry, function_visitor_entry):
+    def set_event_definition(self, event_visitor_entry, function_visitor_entry):
         self.Gamma[event_visitor_entry] = function_visitor_entry
 
 
 
-    def add_dependency_t(self, event_visitor_entry, field_id_set):
-        if event_visitor_entry not in self.dependency_t_map:
-            self.dependency_t_map[event_visitor_entry] = set()
-        self.dependency_t_map[event_visitor_entry].update(field_id_set)
+    def set_dependency_t(self, event_visitor_entry, field_id_set):
+        self.dependency_t_map[event_visitor_entry] = field_id_set
 
 
 

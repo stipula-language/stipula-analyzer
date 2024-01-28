@@ -94,13 +94,13 @@ class Visitor(StipulaVisitor):
                     value = datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time
                 case StipulaParser.STRING:
                     value = ctx.value.text[1:-1]
-        self.visitor_output.set_field_id(ctx.fieldId.text, value)
+        self.visitor_output.set_field_id_value(ctx.fieldId.text, value)
 
 
 
     # Visit a parse tree produced by StipulaParser#initStateDecl.
     def visitInitStateDecl(self, ctx:StipulaParser.InitStateDeclContext):
-        self.visitor_output.Q0 = ctx.stateId.text
+        self.visitor_output.set_init_state_id(ctx.stateId.text)
 
 
 
@@ -120,7 +120,7 @@ class Visitor(StipulaVisitor):
             self.visitStatement(statement_context)
         # Analizzo gli eventi
         for event_decl_context in ctx.eventDecl():
-            self.visitor_output.add_event_definition(self.visitEventDecl(event_decl_context, field_id_set), function_visitor_entry)
+            self.visitor_output.set_event_definition(self.visitEventDecl(event_decl_context, field_id_set), function_visitor_entry)
 
 
 
@@ -133,7 +133,7 @@ class Visitor(StipulaVisitor):
 
     # Visit a parse tree produced by StipulaParser#fieldOperation.
     def visitFieldOperation(self, ctx:StipulaParser.FieldOperationContext):
-        self.visitor_output.set_field_id(ctx.right.text, None)
+        self.visitor_output.set_field_id_value(ctx.right.text, None)
 
 
 
@@ -143,7 +143,7 @@ class Visitor(StipulaVisitor):
         event_visitor_entry = EventVisitorEntry(ctx.startStateId.text, 'Ev', ctx.getSourceInterval()[0], ctx.endStateId.text, CodeReference(ctx.start.line, ctx.stop.line))
         value_dependency = self.visitTimeExpression(ctx.trigger, field_id_set)
         self.visitor_output.add_visitor_entry(event_visitor_entry)
-        self.visitor_output.add_dependency_t(event_visitor_entry, value_dependency.dependency_set)
+        self.visitor_output.set_dependency_t(event_visitor_entry, value_dependency.dependency_set)
         self.visitor_output.set_t(event_visitor_entry, value_dependency.value)
         return event_visitor_entry
 
