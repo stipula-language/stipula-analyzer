@@ -52,8 +52,8 @@ class Visitor(StipulaVisitor):
         self.visitor_output.compute_warning_constraint()
         # Calcolo del warning-code
         self.visitor_output.compute_warning_code()
-        # Calcolo il dead-code
-        self.visitor_output.compute_dead_code()
+        # Calcolo l'unreachable-code
+        self.visitor_output.compute_unreachable_code()
         return self.visitor_output
 
 

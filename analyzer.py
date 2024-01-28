@@ -88,14 +88,14 @@ def _main(is_readable, is_compact, file_path):
                 continue
             _print_code(line_list, visitor_entry, is_readable)
         print('============')
-    if visitor_output.dead_code:
-        print('DEAD CODE')
-        for visitor_entry in visitor_output.dead_code:
+    if visitor_output.unreachable_code:
+        print('UNREACHABLE CODE')
+        for visitor_entry in visitor_output.unreachable_code:
             if is_compact:
                 print(f"    {visitoroutputprints.str_visitor_entry(visitor_entry)}")
                 continue
             _print_code(line_list, visitor_entry, is_readable)
-        print('=========')
+        print('================')
 
 
 

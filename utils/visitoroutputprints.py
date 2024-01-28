@@ -52,5 +52,5 @@ def print_visitor_output(visitor_output, is_compact):
         **({
             'expired_code': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.expired_code.items()}
         } if not is_compact else {}),
-        'dead_code': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.dead_code]
+        'unreachable_code': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.unreachable_code]
     }, indent=2))

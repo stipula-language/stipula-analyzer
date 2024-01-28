@@ -32,7 +32,7 @@ class VisitorOutput:
         self.warning_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
-        self.dead_code = set()
+        self.unreachable_code = set()
 
 
 
@@ -52,7 +52,7 @@ class VisitorOutput:
             'warning_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
-            'dead_code': [str(visitor_entry) for visitor_entry in self.dead_code]
+            'unreachable_code': [str(visitor_entry) for visitor_entry in self.unreachable_code]
         }, indent=2)
     
 
@@ -220,7 +220,7 @@ class VisitorOutput:
                     # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
                     is_executable = False
                     for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                        # La certezza di dead-code è solo se tutte le dipendenze sono confrontabili
+                        # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
                         if self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set) or self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set):
                             is_executable = True
                             break
@@ -255,6 +255,6 @@ class VisitorOutput:
 
 
 
-    def compute_dead_code(self):
-        # Calcolo il dead code
-        self.dead_code = self.C.difference(self.R)
+    def compute_unreachable_code(self):
+        # Calcolo l'unreachable-code
+        self.unreachable_code = self.C.difference(self.R)

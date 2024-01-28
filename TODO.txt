@@ -1,7 +1,6 @@
 === FIX ===
 - Ripulire la expired exception che non serve più
 - Rinominare in maniera consona le funzioni che potrebbero non essere corrette
-- dead-code -> unreachable-code
 
 === FIX ===
 (Forse questo va implementto in maniera differete)
