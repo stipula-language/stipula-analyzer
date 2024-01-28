@@ -1,8 +1,4 @@
 === FIX ===
-- Ripulire la expired exception che non serve più
-- Rinominare in maniera consona le funzioni che potrebbero non essere corrette
-
-=== FIX ===
 (Forse questo va implementto in maniera differete)
 Samuele,
 
