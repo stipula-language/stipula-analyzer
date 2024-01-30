@@ -1,5 +1,11 @@
 === TESI ===
 - Riscrivere le formule presente nella tesi in maniera corretta
 
+=== FIX ===
+- Nel calcolo degli warning constraint viene costruito l'insieme totale di tutte le dipendenze, partendo da insiemi, invece
+  - le time expression vanno viste come tuple in modo da rendere utilizzabili field ripetuti
+  - dentro T i dependency set devono essere insiemi di tuple per poter considerare tutti i possibili entry point senza mettere tutto insieme
+  - tutti i calcoli vanno aggiustati di conseguenza
+
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni
