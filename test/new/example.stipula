@@ -1,0 +1,171 @@
+/*
+stipula Sample1 {
+	
+	field x = 5
+	init Init
+
+	@Init A: f()[] {
+		now + x >> @Run { } => @Go
+	} => @Run
+
+	@Go A : g()[] {		
+	} => @End
+
+}
+*/
+
+/*
+stipula Sample2 {
+	
+	field x = 5
+	init Init
+
+	@Init A:f()[] {
+		now + x >> @Go { } => @End
+	} => @Run
+
+	@Init A:g()[] {		
+	} => @Go
+
+	@End A:h()[] {		
+	} => @End
+
+}
+*/
+
+/*
+stipula Sample2 {
+	field x = 2, y = 1
+	init Init
+
+	@Init A:f()[] {
+		now + 2 >> @Go {} => @Cont
+	} => @Run
+
+	@Run B:g()[] {
+		now + 1 >> @Cont {} => @End
+	} => @Go
+}
+*/
+
+/*
+stipula Sample3 { 
+        field x = 1, y = 2 
+        init Init
+
+        @Init A:f()[] {
+                 now + 1 >> @Cont { } => @Run
+                 now + 2 >> @Comp { } => @End
+        } => @Cont
+
+        @Run B:g()[] {
+                 now + 2 >> @Go{ } => @Comp 
+        }=>@Go
+}
+*/
+
+/*
+stipula Sample5 {
+	field x,y
+	init Q0
+
+	agreement(A,B)(x,y) {
+		A,B : x,y
+	} => @Q0
+
+	@Q0 A: f()[] {
+		now + x >> @Q2 {} => @Q3  // ev.1 
+	} => @Q1
+
+	@Q1 B: g()[] {
+		now + y >> @Q3 {} => @Q4  // ev.2
+	} => @Q2
+}
+*/
+
+/*
+stipula Sample6 { 
+        field x= "2024-01-01" 
+        init Init
+
+        @Init A:f()[] {
+                 "2024-01-01" >> @Cont { } => @End
+        } => @Cont
+}
+*/
+
+/*
+stipula Wrong { 
+        field x  
+        init Init
+
+        @Init A:f()[] {
+                 now >> @Run { } => @End
+        } => @Cont
+
+        @Init B:g()[] {
+                 now >> @Cont{ } => @Run 
+        }=>@Cont
+}
+*/
+
+/*
+stipula Sample7 {
+	field x 
+	init Init
+
+	@Init A: f()[] {
+		now >> @Comp {} => @End
+	} => @Cont
+
+	@Cont B: g()[] {
+		now >> @Run {} => @Comp
+	} => @Run
+
+	@Cont C: d()[] {
+		now + 1 >> @Run {} => @Comp
+	} => @Run
+}
+*/
+
+
+stipula Sample8 {
+	fields x,y,z
+	init Q0
+
+	@Q0 A: f()[] {			  // T = 0	
+		now + x >> @Q2 {} => @Q3  // ev.1: T = x,z
+	} => @Q1
+	
+	@Q0 A: f1()[] {
+		now+z >> @Q9 {} => @Q4
+	} => @Q9
+
+	@Q1 B: g()[] {			  // T = 0
+		now + y >> @Q3 {} => @Q4  // ev.2: T = y,w
+	} => @Q2
+
+	@Q4 A: h()[] {			      // T = y, z
+		now + x + 1 >> @Q5 {} => @Q6  // ev.3 : T = y + x + 1, z + x + 1
+	} => @Q5
+}
+
+/*
+stipula Sample9 {
+	fields x = "2024-02-02", y = "2024-02-03"
+	init Q0
+
+	@Q0 A: f()[] {
+		x >> @Q2 {} => @Q3  // ev.1 
+	} => @Q1
+
+	@Q1 B: g()[] {
+		y >> @Q3 {} => @Q4  // ev.2
+	} => @Q2
+
+	@Q4 A: h()[] {
+		x >> @Q5 {} => @Q6  // ev.1 
+	} => @Q5
+}
+*/
+
