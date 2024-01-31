@@ -33,14 +33,14 @@ def print_visitor_output(visitor_output, is_compact):
             'Gamma': {str_visitor_entry(event_visitor_entry): str_visitor_entry(function_visitor_entry) for event_visitor_entry, function_visitor_entry in visitor_output.Gamma.items()}
         } if not is_compact else {}),
         **({
-            'dependency_t_map': {str_visitor_entry(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in visitor_output.dependency_t_map.items()}
+            'dependency_t_map': {str_visitor_entry(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in visitor_output.dependency_t_map.items()}
         } if not is_compact else {}),
         **({
             't': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.t.items()}
         } if not is_compact else {}),
         'T': {str_visitor_entry(visitor_entry): ({
             'value': str(value_dependency.value),
-            'dependency_set': list(value_dependency.dependency_set)
+            'dependency_tuple': list(value_dependency.dependency_tuple)
         } if not is_compact else str(value_dependency.value)) for visitor_entry, value_dependency in visitor_output.T.items()},
         'R': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.R],
         **({

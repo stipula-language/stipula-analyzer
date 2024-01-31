@@ -42,11 +42,11 @@ class VisitorOutput:
             'Q0': self.Q0,
             'C': [str(visitor_entry) for visitor_entry in self.C],
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
-            'dependency_t_map': {str(visitor_entry): list(field_id_set) for visitor_entry, field_id_set in self.dependency_t_map.items()},
+            'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
             'T': {str(visitor_entry): {
                 'value': str(value_dependency.value),
-                'dependency_set': list(value_dependency.dependency_set)
+                'dependency_tuple': list(value_dependency.dependency_tuple)
             } for visitor_entry, value_dependency in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
@@ -77,8 +77,8 @@ class VisitorOutput:
 
 
 
-    def set_dependency_t(self, event_visitor_entry, field_id_set):
-        self.dependency_t_map[event_visitor_entry] = field_id_set
+    def set_dependency_t(self, event_visitor_entry, field_id_tuple):
+        self.dependency_t_map[event_visitor_entry] = field_id_tuple
 
 
 
@@ -173,7 +173,7 @@ class VisitorOutput:
         if isinstance(visitor_entry, FunctionVisitorEntry):
             # Prima regola: funzione che parte dallo stato iniziale
             if visitor_entry.start_state == self.Q0:
-                self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), set())
+                self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), ())
                 return
             # Seconda regola: funzione che fa parte del suo stesso loop
             if visitor_entry in loop_visitor_entry_set:
@@ -190,12 +190,15 @@ class VisitorOutput:
             if not previous_visitor_entry_set:
                 raise LoopException(visitor_entry)
             # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
-            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry].dependency_set for previous_visitor_entry in previous_visitor_entry_set), set()))
+            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), functools.reduce(lambda a, b: (
+                *a,
+                *b,
+            ), (self.T[previous_visitor_entry].dependency_tuple for previous_visitor_entry in previous_visitor_entry_set), ()))
             return
         # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
         self.compute_stipula_time(self.Gamma[visitor_entry], set())
-        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], self.dependency_t_map.get(visitor_entry, set()).difference({NOW}))
-        if NOW in self.dependency_t_map.get(visitor_entry, set()):
+        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
+        if NOW in self.dependency_t_map.get(visitor_entry, ()):
             self.T[visitor_entry].value += self.T[self.Gamma[visitor_entry]].value
 
 
@@ -224,8 +227,15 @@ class VisitorOutput:
                     is_executable = False
                     for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                         # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
-                        if self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set) or self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set):
-                            is_executable = True
+                        for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
+                            if previous_dependency not in self.T[visitor_entry].dependency_tuple:
+                                is_executable = True
+                                break
+                        for dependency in self.T[visitor_entry].dependency_tuple:
+                            if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                                is_executable = True
+                                break
+                        if is_executable:
                             break
                         if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
                             is_executable = True
@@ -243,18 +253,62 @@ class VisitorOutput:
     def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
-                if previous_dependency_diff_set:
+                previous_dependency_diff_tuple = ()
+                for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
+                    if previous_dependency not in self.T[visitor_entry].dependency_tuple:
+                        previous_dependency_diff_tuple = (
+                            *previous_dependency_diff_tuple,
+                            previous_dependency,
+                        )
+                if previous_dependency_diff_tuple:
+                    dependency_diff_tuple = ()
+                    for dependency in self.T[visitor_entry].dependency_tuple:
+                        if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                            dependency_diff_tuple = (
+                                *dependency_diff_tuple,
+                                dependency,
+                            )
                     min_value = min(self.T[previous_visitor_entry].value, self.T[visitor_entry].value)
                     previous_value = self.T[previous_visitor_entry].value - min_value
                     value = self.T[visitor_entry].value - min_value
-                    self.reachability_constraint.add(((*tuple(previous_dependency_diff_set), *((previous_value, ) if previous_value else ()), ), (*tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), *((value, ) if value else ()), ), ))
+                    self.reachability_constraint.add((
+                        (
+                            *previous_dependency_diff_tuple,
+                            *((
+                                previous_value,
+                            ) if previous_value else ()),
+                        ),
+                        (
+                            *dependency_diff_tuple,
+                            *((
+                                value,
+                            ) if value else ()),
+                        ),
+                    ))
 
 
 
     def compute_warning_code(self):
-        for event_visitor_entry in (event_visitor_entry for event_visitor_entry in self.R if isinstance(event_visitor_entry, EventVisitorEntry)):
-            self.warning_code.update({(previous_visitor_entry, event_visitor_entry, ) for previous_visitor_entry in self.R if previous_visitor_entry.end_state == event_visitor_entry.start_state and not self.T[previous_visitor_entry].dependency_set.difference(self.T[event_visitor_entry].dependency_set) and not self.T[event_visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set) and self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value})
+        for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry)):
+            for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
+                is_executable = False
+                for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
+                    if previous_dependency not in self.T[event_visitor_entry].dependency_tuple:
+                        is_executable = True
+                        break
+                if is_executable:
+                    break
+                for dependency in self.T[event_visitor_entry].dependency_tuple:
+                    if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                        is_executable = True
+                        break
+                if is_executable:
+                    break
+                if self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value:
+                    self.warning_code.add((
+                        previous_visitor_entry,
+                        event_visitor_entry,
+                    ))
 
 
 

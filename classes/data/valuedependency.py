@@ -5,6 +5,6 @@ class ValueDependency:
 
 
 
-    def __init__(self, value, dependency_set):
+    def __init__(self, value, dependency_tuple):
         self.value = value
-        self.dependency_set = dependency_set
+        self.dependency_tuple = dependency_tuple
