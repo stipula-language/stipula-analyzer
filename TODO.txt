@@ -2,6 +2,15 @@
 - Riscrivere le formule presente nella tesi in maniera corretta
 
 === FIX ===
+- creare il numero orcid
+- warning contraint -> reachability constraint
+- correggere l'analizzatore con l'idea del professore
+  - stipula time 0 collassano il calcolo
+  - stpuala time non 0 senza field permettono il calcolo del minimo
+  - stipula time non 0 ma con almeno un field in uno stipula time generano e propagano l'indecidibilità
+- i constraint vanno agregati x + x -> 2x nella scrittura finale, vanno anche resi un minimo leggibili come formule matematiche
+- nei titoli degli output usare le parentesi quadre
+
 - Nel calcolo degli warning constraint viene costruito l'insieme totale di tutte le dipendenze, partendo da insiemi, invece
   - le time expression vanno viste come tuple in modo da rendere utilizzabili field ripetuti
   - dentro T i dependency set devono essere insiemi di tuple per poter considerare tutti i possibili entry point senza mettere tutto insieme
