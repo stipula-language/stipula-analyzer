@@ -227,12 +227,12 @@ class VisitorOutput:
                     is_executable = False
                     for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                         # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
-                        for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
-                            if previous_dependency not in self.T[visitor_entry].dependency_tuple:
+                        for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
+                            if previous_field_id not in self.T[visitor_entry].dependency_tuple:
                                 is_executable = True
                                 break
-                        for dependency in self.T[visitor_entry].dependency_tuple:
-                            if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                        for field_id in self.T[visitor_entry].dependency_tuple:
+                            if field_id not in self.T[previous_visitor_entry].dependency_tuple:
                                 is_executable = True
                                 break
                         if is_executable:
@@ -254,19 +254,19 @@ class VisitorOutput:
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                 previous_dependency_diff_tuple = ()
-                for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
-                    if previous_dependency not in self.T[visitor_entry].dependency_tuple:
+                for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
+                    if previous_field_id not in self.T[visitor_entry].dependency_tuple:
                         previous_dependency_diff_tuple = (
                             *previous_dependency_diff_tuple,
-                            previous_dependency,
+                            previous_field_id,
                         )
                 if previous_dependency_diff_tuple:
                     dependency_diff_tuple = ()
-                    for dependency in self.T[visitor_entry].dependency_tuple:
-                        if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                    for field_id in self.T[visitor_entry].dependency_tuple:
+                        if field_id not in self.T[previous_visitor_entry].dependency_tuple:
                             dependency_diff_tuple = (
                                 *dependency_diff_tuple,
-                                dependency,
+                                field_id,
                             )
                     min_value = min(self.T[previous_visitor_entry].value, self.T[visitor_entry].value)
                     previous_value = self.T[previous_visitor_entry].value - min_value
@@ -292,14 +292,14 @@ class VisitorOutput:
         for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry)):
             for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
                 is_executable = False
-                for previous_dependency in self.T[previous_visitor_entry].dependency_tuple:
-                    if previous_dependency not in self.T[event_visitor_entry].dependency_tuple:
+                for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
+                    if previous_field_id not in self.T[event_visitor_entry].dependency_tuple:
                         is_executable = True
                         break
                 if is_executable:
                     break
-                for dependency in self.T[event_visitor_entry].dependency_tuple:
-                    if dependency not in self.T[previous_visitor_entry].dependency_tuple:
+                for field_id in self.T[event_visitor_entry].dependency_tuple:
+                    if field_id not in self.T[previous_visitor_entry].dependency_tuple:
                         is_executable = True
                         break
                 if is_executable:
