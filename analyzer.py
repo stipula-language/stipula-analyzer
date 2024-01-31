@@ -68,34 +68,34 @@ def _main(is_readable, is_compact, file_path):
         print(visitor_output)
 
     if visitor_output.reachability_constraint:
-        print('REACHABILITY CONSTRAINT')
+        print('REACHABILITY CONSTRAINT [', end=('' if len(visitor_output.reachability_constraint) == 1 and is_compact else '\n'))
         for dependency_tuple_1, dependency_tuple_2 in visitor_output.reachability_constraint:
-            print(f"    {' + '.join(str(dependency) for dependency in dependency_tuple_1)} <= {(' + '.join(str(dependency) for dependency in dependency_tuple_2) if dependency_tuple_2 else '0')}")
-        print('=======================')
+            print(f"    {' + '.join(str(dependency) for dependency in dependency_tuple_1)} <= {(' + '.join(str(dependency) for dependency in dependency_tuple_2) if dependency_tuple_2 else '0')}{('    ' if len(visitor_output.reachability_constraint) == 1 else '')}", end=('' if len(visitor_output.reachability_constraint) == 1 else '\n'))
+        print(']')
     if visitor_output.warning_code:
-        print('WARNING CODE')
+        print('WARNING CODE [', end=('' if len(visitor_output.warning_code) == 1 and is_compact else '\n'))
         for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
-            print(f"    {(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} --X-> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))}")
+            print(f"    {(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} --X-> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))}{('    ' if len(visitor_output.warning_code) == 1 else '')}", end=('' if len(visitor_output.warning_code) == 1 else '\n'))
             if not is_compact:
                 _print_code(line_list, visitor_entry_1, is_readable)
                 _print_code(line_list, visitor_entry_2, is_readable)
-        print('============')
+        print(']')
     if visitor_output.expired_code:
-        print('EXPIRED CODE')
+        print('EXPIRED CODE [', end=('' if len(visitor_output.expired_code) == 1 and is_compact else '\n'))
         for visitor_entry in visitor_output.expired_code:
             if is_compact:
-                print(f"    {visitoroutputprints.str_visitor_entry(visitor_entry)}")
+                print(f"    {visitoroutputprints.str_visitor_entry(visitor_entry)}{('    ' if len(visitor_output.expired_code) == 1 else '')}", end=('' if len(visitor_output.expired_code) == 1 else '\n'))
                 continue
             _print_code(line_list, visitor_entry, is_readable)
-        print('============')
+        print(']')
     if visitor_output.unreachable_code:
-        print('UNREACHABLE CODE')
+        print('UNREACHABLE CODE [', end=('' if len(visitor_output.unreachable_code) == 1 and is_compact else '\n'))
         for visitor_entry in visitor_output.unreachable_code:
             if is_compact:
-                print(f"    {visitoroutputprints.str_visitor_entry(visitor_entry)}")
+                print(f"    {visitoroutputprints.str_visitor_entry(visitor_entry)}{('    ' if len(visitor_output.unreachable_code) == 1 else '')}", end=('' if len(visitor_output.unreachable_code) == 1 else '\n'))
                 continue
             _print_code(line_list, visitor_entry, is_readable)
-        print('================')
+        print(']')
 
 
 
