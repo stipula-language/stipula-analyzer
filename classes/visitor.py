@@ -49,7 +49,7 @@ class Visitor(StipulaVisitor):
         # Controllo della sequenza temporale
         self.visitor_output.clear_time()
         # Calcolo degli warning-constraint
-        self.visitor_output.compute_warning_constraint()
+        self.visitor_output.compute_reachability_constraint()
         # Calcolo del warning-code
         self.visitor_output.compute_warning_code()
         # Calcolo l'unreachable-code

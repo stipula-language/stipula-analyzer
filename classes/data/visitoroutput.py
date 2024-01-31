@@ -29,7 +29,7 @@ class VisitorOutput:
         self.t = {}
         self.T = {}
         self.R = set()
-        self.warning_constraint = set()
+        self.reachability_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
         self.unreachable_code = set()
@@ -49,7 +49,7 @@ class VisitorOutput:
                 'dependency_set': list(value_dependency.dependency_set)
             } for visitor_entry, value_dependency in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
-            'warning_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.warning_constraint],
+            'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
             'unreachable_code': [str(visitor_entry) for visitor_entry in self.unreachable_code]
@@ -240,7 +240,7 @@ class VisitorOutput:
 
 
 
-    def compute_warning_constraint(self):
+    def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                 previous_dependency_diff_set = self.T[previous_visitor_entry].dependency_set.difference(self.T[visitor_entry].dependency_set)
@@ -248,7 +248,7 @@ class VisitorOutput:
                     min_value = min(self.T[previous_visitor_entry].value, self.T[visitor_entry].value)
                     previous_value = self.T[previous_visitor_entry].value - min_value
                     value = self.T[visitor_entry].value - min_value
-                    self.warning_constraint.add(((*tuple(previous_dependency_diff_set), *((previous_value, ) if previous_value else ()), ), (*tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), *((value, ) if value else ()), ), ))
+                    self.reachability_constraint.add(((*tuple(previous_dependency_diff_set), *((previous_value, ) if previous_value else ()), ), (*tuple(self.T[visitor_entry].dependency_set.difference(self.T[previous_visitor_entry].dependency_set)), *((value, ) if value else ()), ), ))
 
 
 

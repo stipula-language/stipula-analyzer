@@ -67,11 +67,11 @@ def _main(is_readable, is_compact, file_path):
     else:
         print(visitor_output)
 
-    if visitor_output.warning_constraint:
-        print('WARNING CONSTRAINT')
-        for dependency_tuple_1, dependency_tuple_2 in visitor_output.warning_constraint:
+    if visitor_output.reachability_constraint:
+        print('REACHABILITY CONSTRAINT')
+        for dependency_tuple_1, dependency_tuple_2 in visitor_output.reachability_constraint:
             print(f"    {' + '.join(str(dependency) for dependency in dependency_tuple_1)} <= {(' + '.join(str(dependency) for dependency in dependency_tuple_2) if dependency_tuple_2 else '0')}")
-        print('==================')
+        print('=======================')
     if visitor_output.warning_code:
         print('WARNING CODE')
         for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
