@@ -3,7 +3,6 @@
 
 === FIX ===
 - creare il numero orcid
-- warning contraint -> reachability constraint
 - correggere l'analizzatore con l'idea del professore
   - stipula time 0 collassano il calcolo
   - stpuala time non 0 senza field permettono il calcolo del minimo
