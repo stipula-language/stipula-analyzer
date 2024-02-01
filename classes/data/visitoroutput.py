@@ -234,19 +234,18 @@ class VisitorOutput:
                     # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
                     is_executable = False
                     for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                        # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
-                        for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
-                            if previous_field_id not in self.T[visitor_entry].dependency_tuple:
-                                is_executable = True
-                                break
-                        for field_id in self.T[visitor_entry].dependency_tuple:
-                            if field_id not in self.T[previous_visitor_entry].dependency_tuple:
-                                is_executable = True
+                        for previous_value_dependency in self.T[previous_visitor_entry]:
+                            for value_dependency in self.T[visitor_entry]:
+                                # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
+                                is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple})
+                                if is_executable:
+                                    break
+                                if previous_value_dependency.value <= value_dependency.value:
+                                    is_executable = True
+                                    break
+                            if is_executable:
                                 break
                         if is_executable:
-                            break
-                        if self.T[previous_visitor_entry].value <= self.T[visitor_entry].value:
-                            is_executable = True
                             break
                     if not is_executable:
                         remove_visitor_entry_set.add(visitor_entry)
