@@ -51,8 +51,8 @@ class Visitor(StipulaVisitor):
         # TODO DSE bisogna finire la revizione di questi passaggi
         # # Calcolo dei reachability-constraint
         # self.visitor_output.compute_reachability_constraint()
-        # # Calcolo del warning-code
-        # self.visitor_output.compute_warning_code()
+        # Calcolo del warning-code
+        self.visitor_output.compute_warning_code()
         # Calcolo l'unreachable-code
         self.visitor_output.compute_unreachable_code()
         return self.visitor_output

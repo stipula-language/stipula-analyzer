@@ -75,7 +75,7 @@ def _main(is_readable, is_compact, file_path):
     if visitor_output.warning_code:
         print('WARNING CODE [', end=('' if len(visitor_output.warning_code) == 1 and is_compact else '\n'))
         for visitor_entry_1, visitor_entry_2 in visitor_output.warning_code:
-            print(f"    {(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} --X-> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))}{('    ' if len(visitor_output.warning_code) == 1 else '')}", end=('' if len(visitor_output.warning_code) == 1 else '\n'))
+            print(f"    {(visitoroutputprints.str_visitor_entry(visitor_entry_1) if is_readable else str(visitor_entry_1))} --X-> {(visitoroutputprints.str_visitor_entry(visitor_entry_2) if is_readable else str(visitor_entry_2))}{('    ' if len(visitor_output.warning_code) == 1 and is_compact else '')}", end=('' if len(visitor_output.warning_code) == 1 and is_compact else '\n'))
             if not is_compact:
                 _print_code(line_list, visitor_entry_1, is_readable)
                 _print_code(line_list, visitor_entry_2, is_readable)

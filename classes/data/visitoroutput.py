@@ -247,8 +247,9 @@ class VisitorOutput:
                                 break
                         if is_executable:
                             break
-                    if not is_executable:
-                        remove_visitor_entry_set.add(visitor_entry)
+                    if is_executable:
+                        continue
+                    remove_visitor_entry_set.add(visitor_entry)
                 # Terza regola: rimuovo la funzione se non c'è niente che la precede
                 if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
                     remove_visitor_entry_set.add(visitor_entry)
@@ -299,23 +300,19 @@ class VisitorOutput:
         for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry)):
             for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
                 is_executable = False
-                for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
-                    if previous_field_id not in self.T[event_visitor_entry].dependency_tuple:
-                        is_executable = True
+                for previous_value_dependency in self.T[previous_visitor_entry]:
+                    for value_dependency in self.T[event_visitor_entry]:
+                        is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple}) or previous_value_dependency.value <= value_dependency.value
+                        if is_executable:
+                            break
+                    if is_executable:
                         break
                 if is_executable:
-                    break
-                for field_id in self.T[event_visitor_entry].dependency_tuple:
-                    if field_id not in self.T[previous_visitor_entry].dependency_tuple:
-                        is_executable = True
-                        break
-                if is_executable:
-                    break
-                if self.T[previous_visitor_entry].value > self.T[event_visitor_entry].value:
-                    self.warning_code.add((
-                        previous_visitor_entry,
-                        event_visitor_entry,
-                    ))
+                    continue
+                self.warning_code.add((
+                    previous_visitor_entry,
+                    event_visitor_entry,
+                ))
 
 
 

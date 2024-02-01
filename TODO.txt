@@ -2,7 +2,6 @@
 - Riscrivere le formule presente nella tesi in maniera corretta
 
 === FIX ===
-- creare il numero orcid
 - correggere l'analizzatore con l'idea del professore
   - stipula time 0 collassano il calcolo
   - stpuala time non 0 senza field permettono il calcolo del minimo
