@@ -46,12 +46,12 @@ class Visitor(StipulaVisitor):
         self.visitor_output.clear_events()
         # Calcolo dei tempi stipula
         self.visitor_output.compute_T()
-        # Controllo della sequenza temporale
-        self.visitor_output.clear_time()
-        # Calcolo degli warning-constraint
-        self.visitor_output.compute_reachability_constraint()
-        # Calcolo del warning-code
-        self.visitor_output.compute_warning_code()
+        # # Controllo della sequenza temporale
+        # self.visitor_output.clear_time()
+        # # Calcolo degli warning-constraint
+        # self.visitor_output.compute_reachability_constraint()
+        # # Calcolo del warning-code
+        # self.visitor_output.compute_warning_code()
         # Calcolo l'unreachable-code
         self.visitor_output.compute_unreachable_code()
         return self.visitor_output

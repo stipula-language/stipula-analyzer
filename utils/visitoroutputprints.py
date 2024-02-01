@@ -38,10 +38,12 @@ def print_visitor_output(visitor_output, is_compact):
         **({
             't': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.t.items()}
         } if not is_compact else {}),
-        'T': {str_visitor_entry(visitor_entry): ({
-            'value': str(value_dependency.value),
-            'dependency_tuple': list(value_dependency.dependency_tuple)
-        } if not is_compact else str(value_dependency.value)) for visitor_entry, value_dependency in visitor_output.T.items()},
+        'T': {str_visitor_entry(visitor_entry): [
+            ({
+                'value': str(value_dependency.value),
+                'dependency_tuple': list(value_dependency.dependency_tuple)
+            } if not is_compact else str(value_dependency.value)) for value_dependency in value_dependency_set
+        ] for visitor_entry, value_dependency_set in visitor_output.T.items()},
         'R': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.R],
         **({
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in visitor_output.reachability_constraint]

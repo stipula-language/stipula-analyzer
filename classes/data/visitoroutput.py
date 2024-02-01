@@ -44,10 +44,12 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
-            'T': {str(visitor_entry): {
-                'value': str(value_dependency.value),
-                'dependency_tuple': list(value_dependency.dependency_tuple)
-            } for visitor_entry, value_dependency in self.T.items()},
+            'T': {str(visitor_entry): [
+                {
+                    'value': str(value_dependency.value),
+                    'dependency_tuple': list(value_dependency.dependency_tuple)
+                } for value_dependency in value_dependency_set
+            ] for visitor_entry, value_dependency_set in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
@@ -173,7 +175,9 @@ class VisitorOutput:
         if isinstance(visitor_entry, FunctionVisitorEntry):
             # Prima regola: funzione che parte dallo stato iniziale
             if visitor_entry.start_state == self.Q0:
-                self.T[visitor_entry] = ValueDependency(timedelta(seconds=0), ())
+                self.T[visitor_entry] = {
+                    ValueDependency(timedelta(seconds=0), ())
+                }
                 return
             # Seconda regola: funzione che fa parte del suo stesso loop
             if visitor_entry in loop_visitor_entry_set:
@@ -190,16 +194,20 @@ class VisitorOutput:
             if not previous_visitor_entry_set:
                 raise LoopException(visitor_entry)
             # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
-            self.T[visitor_entry] = ValueDependency(min(self.T[previous_visitor_entry].value for previous_visitor_entry in previous_visitor_entry_set), functools.reduce(lambda a, b: (
-                *a,
-                *b,
-            ), (self.T[previous_visitor_entry].dependency_tuple for previous_visitor_entry in previous_visitor_entry_set), ()))
+            self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set), set())
             return
         # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
         self.compute_stipula_time(self.Gamma[visitor_entry], set())
-        self.T[visitor_entry] = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
+        value_dependency = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
+        value_dependency_set = {
+            value_dependency
+        }
         if NOW in self.dependency_t_map.get(visitor_entry, ()):
-            self.T[visitor_entry].value += self.T[self.Gamma[visitor_entry]].value
+            value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, (
+                *value_dependency.dependency_tuple,
+                *function_value_dependency.dependency_tuple,
+            )) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
+        self.T[visitor_entry] = value_dependency_set
 
 
 
