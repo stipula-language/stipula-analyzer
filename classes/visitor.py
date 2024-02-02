@@ -49,8 +49,8 @@ class Visitor(StipulaVisitor):
         # Controllo della sequenza temporale
         self.visitor_output.clear_time()
         # TODO DSE bisogna finire la revizione di questi passaggi
-        # # Calcolo dei reachability-constraint
-        # self.visitor_output.compute_reachability_constraint()
+        # Calcolo dei reachability-constraint
+        self.visitor_output.compute_reachability_constraint()
         # Calcolo del warning-code
         self.visitor_output.compute_warning_code()
         # Calcolo l'unreachable-code
