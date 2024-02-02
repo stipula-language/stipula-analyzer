@@ -8,11 +8,9 @@
   - stipula time non 0 ma con almeno un field in uno stipula time generano e propagano l'indecidibilità
 - i constraint vanno agregati x + x -> 2x nella scrittura finale, vanno anche resi un minimo leggibili come formule matematiche
 
-(Forse questi passaggi non sono da fare)
-- Nel calcolo degli warning constraint viene costruito l'insieme totale di tutte le dipendenze, partendo da insiemi, invece
-  - le time expression vanno viste come tuple in modo da rendere utilizzabili field ripetuti
-  - dentro T i dependency set devono essere insiemi di tuple per poter considerare tutti i possibili entry point senza mettere tutto insieme
-  - tutti i calcoli vanno aggiustati di conseguenza
+- bisogna bisogna rivalutare come lavorare su T
+  - le dependency_tuple vanno ordinate in modo che possano essere confrontabili
+  - i ValueDependency vanno aggregati trovando il minimo tra i gruppi confrontabili
 
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni

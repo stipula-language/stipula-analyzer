@@ -261,6 +261,31 @@ class VisitorOutput:
     def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+
+
+
+                # TODO DSE verosimilmente questo calcolo va ripetuto per tutte le entry, vanno usate due liste e ridotte in base alle necessità
+                for previous_value_dependency in self.T[previous_visitor_entry]:
+                    for value_dependency in self.T[visitor_entry]:
+                        previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
+                        field_id_diff_list = list(value_dependency.dependency_tuple)
+                        index = 0
+                        while index < len(previous_field_id_diff_list):
+                            if previous_field_id_diff_list[index] in field_id_diff_list:
+                                previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
+                                field_id_diff_list.remove(previous_field_id_diff_list[index])
+                                continue
+                            index += 1
+                        if previous_field_id_diff_list or field_id_diff_list:
+                            min_value = min(previous_value_dependency.value, value_dependency.value)
+                            # TODO DSE bisogna calcolare correttamente i constraint
+                            previous_value = previous_value_dependency.value - min_value
+                            previous_reachability_constraint_tuple = ()
+                            value = value_dependency.value - min_value
+                            reachability_constraint_tuple = ()
+
+
+
                 previous_field_id_diff_tuple = ()
                 for previous_field_id in self.T[previous_visitor_entry].dependency_tuple:
                     if previous_field_id not in self.T[visitor_entry].dependency_tuple:
