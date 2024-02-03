@@ -174,7 +174,6 @@ class VisitorOutput:
         #Il valore è già calcolato
         if visitor_entry in self.T:
             return
-        
         match type(visitor_entry).__name__:
             case FunctionVisitorEntry.__name__:
                 # Prima regola: funzione che parte dallo stato iniziale
