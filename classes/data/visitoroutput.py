@@ -203,10 +203,10 @@ class VisitorOutput:
             value_dependency
         }
         if NOW in self.dependency_t_map.get(visitor_entry, ()):
-            value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, (
+            value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, tuple(sorted([
                 *value_dependency.dependency_tuple,
-                *function_value_dependency.dependency_tuple,
-            )) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
+                *function_value_dependency.dependency_tuple
+            ]))) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
         self.T[visitor_entry] = value_dependency_set
 
 

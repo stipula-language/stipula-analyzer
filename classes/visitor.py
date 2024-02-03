@@ -48,7 +48,6 @@ class Visitor(StipulaVisitor):
         self.visitor_output.compute_T()
         # Controllo della sequenza temporale
         self.visitor_output.clear_time()
-        # TODO DSE bisogna finire la revizione di questi passaggi
         # Calcolo dei reachability-constraint
         self.visitor_output.compute_reachability_constraint()
         # Calcolo del warning-code
@@ -157,10 +156,10 @@ class Visitor(StipulaVisitor):
             right_value_dependency = ValueDependency(timedelta(seconds=0), ())
             if ctx.right:
                 right_value_dependency = self.visitTimeExpression1(ctx.right, field_id_set)
-            return ValueDependency(right_value_dependency.value, (
+            return ValueDependency(right_value_dependency.value, tuple(sorted([
                 *right_value_dependency.dependency_tuple,
-                visitoroutput.NOW,
-            ))
+                visitoroutput.NOW
+            ])))
         if ctx.DATESTRING():
             # Il delta è calcolato in secondi
             return ValueDependency(datetime.fromisoformat(ctx.DATESTRING().getText()[1:-1]) - self.now_date_time, ())
@@ -210,7 +209,7 @@ class Visitor(StipulaVisitor):
         right_value_dependency = ValueDependency(timedelta(seconds=0), ())
         if ctx.right:
             right_value_dependency = self.visitTimeExpression1(ctx.right, field_id_set)
-        return ValueDependency(left_value_dependency.value + right_value_dependency.value, (
+        return ValueDependency(left_value_dependency.value + right_value_dependency.value, tuple(sorted([
             *left_value_dependency.dependency_tuple,
-            *right_value_dependency.dependency_tuple,
-        ))
+            *right_value_dependency.dependency_tuple
+        ])))

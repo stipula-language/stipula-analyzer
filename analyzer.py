@@ -14,6 +14,26 @@ from utils import visitoroutputprints
 
 
 
+def _print_constraint(dependency_tuple):
+    if not dependency_tuple:
+        return '0'
+    dependency_list = []
+    actual_dependency = dependency_tuple[0]
+    dependency_counter = 1
+    for dependency in (
+        *dependency_tuple[1:],
+        None,
+    ):
+        if dependency == actual_dependency:
+            dependency_counter += 1
+            continue
+        dependency_list.append(f"{f'{dependency_counter} ' if dependency_counter > 1 else ''}{actual_dependency}")
+        actual_dependency = dependency
+        dependency_counter = 1
+    return ' + '.join(dependency_list)
+
+
+
 def _clear_code(line_list):
     space_before = 0
     index = 0
@@ -70,7 +90,7 @@ def _main(is_readable, is_compact, file_path):
     if visitor_output.reachability_constraint:
         print('REACHABILITY CONSTRAINT [', end=('' if len(visitor_output.reachability_constraint) == 1 and is_compact else '\n'))
         for dependency_tuple_1, dependency_tuple_2 in visitor_output.reachability_constraint:
-            print(f"    {' + '.join(str(dependency) for dependency in dependency_tuple_1)} <= {(' + '.join(str(dependency) for dependency in dependency_tuple_2) if dependency_tuple_2 else '0')}{('    ' if len(visitor_output.reachability_constraint) == 1 and is_compact else '')}", end=('' if len(visitor_output.reachability_constraint) == 1 and is_compact else '\n'))
+            print(f"    {_print_constraint(dependency_tuple_1)} <= {_print_constraint(dependency_tuple_2)}{('    ' if len(visitor_output.reachability_constraint) == 1 and is_compact else '')}", end=('' if len(visitor_output.reachability_constraint) == 1 and is_compact else '\n'))
         print(']')
     if visitor_output.warning_code:
         print('WARNING CODE [', end=('' if len(visitor_output.warning_code) == 1 and is_compact else '\n'))
