@@ -290,8 +290,8 @@ class VisitorOutput:
                         index = 0
                         while index < len(previous_field_id_diff_list):
                             if previous_field_id_diff_list[index] in field_id_diff_list:
-                                previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
                                 field_id_diff_list.remove(previous_field_id_diff_list[index])
+                                previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
                                 continue
                             index += 1
                         if previous_field_id_diff_list:
