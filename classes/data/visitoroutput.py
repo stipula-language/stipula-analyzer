@@ -152,17 +152,19 @@ class VisitorOutput:
         while is_change:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
-                if isinstance(visitor_entry, EventVisitorEntry):
-                    # Se la funzione che definisce l'evento non è presente rimuovo subito
-                    if self.Gamma[visitor_entry] not in self.R:
-                        remove_visitor_entry_set.add(visitor_entry)
-                        continue
-                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                    if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
-                        remove_visitor_entry_set.add(visitor_entry)
-                # Seconda regola: rimuovo quando non c'è niente che precede la funzione
-                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
-                    remove_visitor_entry_set.add(visitor_entry)
+                match type(visitor_entry).__name__:
+                    case EventVisitorEntry.__name__:
+                        # Se la funzione che definisce l'evento non è presente rimuovo subito
+                        if self.Gamma[visitor_entry] not in self.R:
+                            remove_visitor_entry_set.add(visitor_entry)
+                            continue
+                        # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                        if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
+                            remove_visitor_entry_set.add(visitor_entry)
+                    case FunctionVisitorEntry.__name__:
+                        # Seconda regola: rimuovo quando non c'è niente che precede la funzione
+                        if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
+                            remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R = self.R.difference(remove_visitor_entry_set)
 
