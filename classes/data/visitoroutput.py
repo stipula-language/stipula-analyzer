@@ -225,37 +225,40 @@ class VisitorOutput:
         while is_change:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
-                if isinstance(visitor_entry, EventVisitorEntry):
-                    # Se la funzione che definisce l'evento non è presente rimuovo subito
-                    if self.Gamma[visitor_entry] not in self.R:
-                        remove_visitor_entry_set.add(visitor_entry)
-                        continue
-                    # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                    if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
-                        remove_visitor_entry_set.add(visitor_entry)
-                        continue
-                    # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
-                    is_executable = False
-                    for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                        for previous_value_dependency in self.T[previous_visitor_entry]:
-                            for value_dependency in self.T[visitor_entry]:
-                                # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
-                                is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple})
+
+                match type(visitor_entry).__name__:
+                    case EventVisitorEntry.__name__:
+                        # Se la funzione che definisce l'evento non è presente rimuovo subito
+                        if self.Gamma[visitor_entry] not in self.R:
+                            remove_visitor_entry_set.add(visitor_entry)
+                            continue
+                        # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
+                        if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
+                            remove_visitor_entry_set.add(visitor_entry)
+                            continue
+                        # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
+                        is_executable = False
+                        for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                            for previous_value_dependency in self.T[previous_visitor_entry]:
+                                for value_dependency in self.T[visitor_entry]:
+                                    # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
+                                    is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple})
+                                    if is_executable:
+                                        break
+                                    if previous_value_dependency.value <= value_dependency.value:
+                                        is_executable = True
+                                        break
                                 if is_executable:
-                                    break
-                                if previous_value_dependency.value <= value_dependency.value:
-                                    is_executable = True
                                     break
                             if is_executable:
                                 break
                         if is_executable:
-                            break
-                    if is_executable:
-                        continue
-                    remove_visitor_entry_set.add(visitor_entry)
-                # Terza regola: rimuovo la funzione se non c'è niente che la precede
-                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
-                    remove_visitor_entry_set.add(visitor_entry)
+                            continue
+                        remove_visitor_entry_set.add(visitor_entry)
+                    case FunctionVisitorEntry.__name__:
+                        # Terza regola: rimuovo la funzione se non c'è niente che la precede
+                        if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
+                            remove_visitor_entry_set.add(visitor_entry)
             is_change = bool(remove_visitor_entry_set)
             self.R = self.R.difference(remove_visitor_entry_set)
 
