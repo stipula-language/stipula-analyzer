@@ -260,7 +260,9 @@ class VisitorOutput:
 
     def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
+            # TODO DSE di questi devo prendere le classi comparabili con valore più basso
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                # TODO DSE di questi devo prendere le classi comparabili con valore più alto
                 for previous_value_dependency in self.T[previous_visitor_entry]:
                     for value_dependency in self.T[visitor_entry]:
                         previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
