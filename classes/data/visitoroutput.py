@@ -225,7 +225,6 @@ class VisitorOutput:
         while is_change:
             remove_visitor_entry_set = set()
             for visitor_entry in self.R:
-
                 match type(visitor_entry).__name__:
                     case EventVisitorEntry.__name__:
                         # Se la funzione che definisce l'evento non è presente rimuovo subito
@@ -266,11 +265,26 @@ class VisitorOutput:
 
     def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
-            # TODO DSE di questi devo prendere le classi comparabili con valore più basso
+            # ValueDependency filtrati per dipendenze compatibili e valore minore
+            value_dependency_map = {}
+            for value_dependency in self.T[visitor_entry]:
+                if value_dependency.dependency_tuple not in value_dependency_map:
+                    value_dependency_map[value_dependency.dependency_tuple] = value_dependency
+                    continue
+                if value_dependency.value < value_dependency_map[value_dependency.dependency_tuple].value:
+                    value_dependency_map[value_dependency.dependency_tuple] = value_dependency
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                # TODO DSE di questi devo prendere le classi comparabili con valore più alto
+                # ValueDependency filtrati per dipendenze compatibili e valore maggiore
+                previous_value_dependency_map = {}
                 for previous_value_dependency in self.T[previous_visitor_entry]:
-                    for value_dependency in self.T[visitor_entry]:
+                    if previous_value_dependency.dependency_tuple not in previous_value_dependency_map:
+                        previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
+                        continue
+                    if previous_value_dependency.value > previous_value_dependency_map[previous_value_dependency.dependency_tuple].value:
+                        previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
+                # Controllo dei ValueDependency
+                for previous_value_dependency in previous_value_dependency_map.values():
+                    for value_dependency in value_dependency_map.values():
                         previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
                         field_id_diff_list = list(value_dependency.dependency_tuple)
                         index = 0
