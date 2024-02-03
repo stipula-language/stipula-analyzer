@@ -1,16 +1,5 @@
 === TESI ===
 - Riscrivere le formule presente nella tesi in maniera corretta
 
-=== FIX ===
-- correggere l'analizzatore con l'idea del professore
-  - stipula time 0 collassano il calcolo
-  - stpuala time non 0 senza field permettono il calcolo del minimo
-  - stipula time non 0 ma con almeno un field in uno stipula time generano e propagano l'indecidibilità
-- i constraint vanno agregati x + x -> 2x nella scrittura finale, vanno anche resi un minimo leggibili come formule matematiche
-
-- bisogna bisogna rivalutare come lavorare su T
-  - le dependency_tuple vanno ordinate in modo che possano essere confrontabili
-  - i ValueDependency vanno aggregati trovando il minimo tra i gruppi confrontabili
-
 === PARTI DA AGGIUNGERE ===
 - Cercare di implementare il controllo sul tempo logico dell'esecuzioni
