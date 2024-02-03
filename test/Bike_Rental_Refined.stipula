@@ -1,0 +1,69 @@
+/*
+This contract corresponds to the real bike rental contract available in http://www.thebicyclecellar.com/wp-content/uploads/2013/10/Bike-Rental-Contract-BW.pdf
+*/
+
+stipula Bike_Rental_Refined {
+	assets wallet
+	fields cost, rentingTime, code, deposit
+	init Inactive
+
+	agreement(Lender, Borrower, Authority)(rentingTime, cost, deposit) { 
+		Lender, Borrower: rentingTime, cost, deposit
+	} => @Inactive
+
+	@Inactive Lender: offer(x)[] { 
+		x -> code
+	} => @Payment
+
+	@Payment Borrower: pay()[h] (h == cost + deposit) {
+		h -o wallet 
+		code -> Borrower
+		now + rentingTime >> @Using {
+			EndReached -> Borrower
+		} => @Return 
+	} => @Using
+
+	@Using Borrower: end()[] { 
+		now -> Lender
+	} => @Return
+
+	@Return Lender: rental_Ok()[] { 
+		cost -o wallet, Lender
+		deposit -o wallet, Borrower
+	} => @End
+
+	@Return Lender: rental_Late_or_Damage()[] { 
+		wallet -o Lender
+	} => @End
+
+	@Using Lender: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@Return Lender: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@End Lender: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@Using Borrower: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@Return Borrower: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@End Borrower: dispute(x)[] { 
+		x -> Authority
+	} => @Dispute
+
+	@Dispute Authority: verdict(x, y)[] (y >= 0 && y <= 1) {
+		x -> Lender
+		x -> Borrower 
+		(y * wallet) -o wallet, Lender
+		wallet -o Borrower
+	} => @End
+}
