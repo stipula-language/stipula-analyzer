@@ -174,42 +174,44 @@ class VisitorOutput:
         #Il valore è già calcolato
         if visitor_entry in self.T:
             return
-        if isinstance(visitor_entry, FunctionVisitorEntry):
-            # Prima regola: funzione che parte dallo stato iniziale
-            if visitor_entry.start_state == self.Q0:
-                self.T[visitor_entry] = {
-                    ValueDependency(timedelta(seconds=0), ())
+        
+        match type(visitor_entry).__name__:
+            case FunctionVisitorEntry.__name__:
+                # Prima regola: funzione che parte dallo stato iniziale
+                if visitor_entry.start_state == self.Q0:
+                    self.T[visitor_entry] = {
+                        ValueDependency(timedelta(seconds=0), ())
+                    }
+                    return
+                # Seconda regola: funzione che fa parte del suo stesso loop
+                if visitor_entry in loop_visitor_entry_set:
+                    raise LoopException(visitor_entry)
+                # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
+                previous_visitor_entry_set = set()
+                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                    try:
+                        self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
+                        previous_visitor_entry_set.add(previous_visitor_entry)
+                    except LoopException:
+                        pass
+                # Se tutte i visitor entry sono loop propago l'eccezione
+                if not previous_visitor_entry_set:
+                    raise LoopException(visitor_entry)
+                # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
+                self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set), set())
+            case EventVisitorEntry.__name__:
+                # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
+                self.compute_stipula_time(self.Gamma[visitor_entry], set())
+                value_dependency = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
+                value_dependency_set = {
+                    value_dependency
                 }
-                return
-            # Seconda regola: funzione che fa parte del suo stesso loop
-            if visitor_entry in loop_visitor_entry_set:
-                raise LoopException(visitor_entry)
-            # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
-            previous_visitor_entry_set = set()
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                try:
-                    self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
-                    previous_visitor_entry_set.add(previous_visitor_entry)
-                except LoopException:
-                    pass
-            # Se tutte i visitor entry sono loop propago l'eccezione
-            if not previous_visitor_entry_set:
-                raise LoopException(visitor_entry)
-            # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
-            self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set), set())
-            return
-        # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
-        self.compute_stipula_time(self.Gamma[visitor_entry], set())
-        value_dependency = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
-        value_dependency_set = {
-            value_dependency
-        }
-        if NOW in self.dependency_t_map.get(visitor_entry, ()):
-            value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, tuple(sorted([
-                *value_dependency.dependency_tuple,
-                *function_value_dependency.dependency_tuple
-            ]))) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
-        self.T[visitor_entry] = value_dependency_set
+                if NOW in self.dependency_t_map.get(visitor_entry, ()):
+                    value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, tuple(sorted([
+                        *value_dependency.dependency_tuple,
+                        *function_value_dependency.dependency_tuple
+                    ]))) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
+                self.T[visitor_entry] = value_dependency_set
 
 
 
