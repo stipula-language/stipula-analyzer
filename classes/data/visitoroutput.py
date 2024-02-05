@@ -197,7 +197,12 @@ class VisitorOutput:
                 if not previous_visitor_entry_set:
                     raise LoopException(visitor_entry)
                 # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
-                self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), (self.T[previous_visitor_entry] for previous_visitor_entry in previous_visitor_entry_set), set())
+                self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), ({ValueDependency(value_dependency.value, tuple(sorted([
+                    *value_dependency.dependency_tuple,
+                    *((
+                        f"_{visitor_entry.handler}.{visitor_entry.code_id}",
+                    ) if visitor_entry.start_state != self.Q0 else ())
+                ]))) for value_dependency in self.T[previous_visitor_entry]} for previous_visitor_entry in previous_visitor_entry_set), set())
             case EventVisitorEntry.__name__:
                 # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
                 self.compute_stipula_time(self.Gamma[visitor_entry], set())
@@ -294,10 +299,13 @@ class VisitorOutput:
                                 previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
                                 continue
                             index += 1
-                        if previous_field_id_diff_list:
-                            min_value = min(previous_value_dependency.value, value_dependency.value)
-                            previous_value = previous_value_dependency.value - min_value
-                            value = value_dependency.value - min_value
+                        min_value = min(previous_value_dependency.value, value_dependency.value)
+                        previous_value = previous_value_dependency.value - min_value
+                        value = value_dependency.value - min_value
+                        # Presenza di vincoli da considerare
+                        if previous_field_id_diff_list or (field_id_diff_list and previous_value):
+                            # TODO DSE bisogna stabilire quando i vincoli non sono soddisfacibili
+                            # TODO DSE la non soddisfacibilità può generare warning code se almeno uno è soddisfacibile oppure unreachable code quando sono tutti non soddisfacibili
                             self.reachability_constraint.add((
                                 (
                                     *previous_field_id_diff_list,
