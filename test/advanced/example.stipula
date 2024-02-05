@@ -33,20 +33,20 @@ stipula Sample2 {
 }
 */
 
-/*
+
 stipula Sample2 {
-	field x = 2, y = 1
+	fields x = 2, y = 1
 	init Init
 
-	@Init A:f()[] {
+	@Init A: f()[] {
 		now + 2 >> @Go {} => @Cont
 	} => @Run
 
-	@Run B:g()[] {
+	@Run B: g()[] {
 		now + 1 >> @Cont {} => @End
 	} => @Go
 }
-*/
+
 
 /*
 stipula Sample3 { 
@@ -128,7 +128,7 @@ stipula Sample7 {
 }
 */
 
-
+/*
 stipula Sample8 {
 	fields x,y,z
 	init Q0
@@ -149,6 +149,7 @@ stipula Sample8 {
 		now + x + 1 >> @Q5 {} => @Q6  // ev.3 : T = y + x + 1, z + x + 1
 	} => @Q5
 }
+*/
 
 /*
 stipula Sample9 {
