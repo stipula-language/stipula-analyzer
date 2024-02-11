@@ -268,6 +268,7 @@ class VisitorOutput:
 
 
 
+    # TODO DSE c'è la possibilità che non sia corretto filtrare i dependency t per minore e poi per maggiore
     def compute_reachability_constraint(self):
         for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
             # ValueDependency filtrati per dipendenze compatibili e valore minore
@@ -278,6 +279,7 @@ class VisitorOutput:
                     continue
                 if value_dependency.value < value_dependency_map[value_dependency.dependency_tuple].value:
                     value_dependency_map[value_dependency.dependency_tuple] = value_dependency
+            # TODO DSE ci deve essere almeno un previous utilizzabile altrimenti unreachable-code
             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
                 # ValueDependency filtrati per dipendenze compatibili e valore maggiore
                 previous_value_dependency_map = {}
@@ -288,6 +290,11 @@ class VisitorOutput:
                     if previous_value_dependency.value > previous_value_dependency_map[previous_value_dependency.dependency_tuple].value:
                         previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
                 # Controllo dei ValueDependency
+
+                # TODO DSE ci deve essere almeno un vincolo soddisfacibile altrimenti warning code
+                is_reachability_constraint = False
+                add_reachability_constraint_set = set()
+
                 for previous_value_dependency in previous_value_dependency_map.values():
                     for value_dependency in value_dependency_map.values():
                         previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
@@ -304,9 +311,13 @@ class VisitorOutput:
                         value = value_dependency.value - min_value
                         # Presenza di vincoli da considerare
                         if previous_field_id_diff_list or (field_id_diff_list and previous_value):
+
                             # TODO DSE bisogna stabilire quando i vincoli non sono soddisfacibili
-                            # TODO DSE la non soddisfacibilità può generare warning code se almeno uno è soddisfacibile oppure unreachable code quando sono tutti non soddisfacibili
-                            self.reachability_constraint.add((
+                            is_reachability_constraint = True
+                            if not field_id_diff_list and previous_value > value:
+                                continue
+
+                            add_reachability_constraint_set.add((
                                 (
                                     *previous_field_id_diff_list,
                                     *((
@@ -320,6 +331,29 @@ class VisitorOutput:
                                     ) if value else ()),
                                 )
                             ))
+
+                if is_reachability_constraint:
+                    if not add_reachability_constraint_set:
+                        self.warning_code.add((
+                            previous_visitor_entry,
+                            visitor_entry,
+                        ))
+                        continue
+
+                    self.reachability_constraint.add((
+                        (
+                            *previous_field_id_diff_list,
+                            *((
+                                previous_value,
+                            ) if previous_value else ()),
+                        ),
+                        (
+                            *field_id_diff_list,
+                            *((
+                                value,
+                            ) if value else ()),
+                        )
+                    ))
 
 
 
