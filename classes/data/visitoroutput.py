@@ -220,12 +220,14 @@ class VisitorOutput:
 
 
     def compute_T(self):
+        self.T = {}
         for visitor_entry in self.R:
             self.compute_stipula_time(visitor_entry, set())
 
 
 
     def clear_time(self):
+        self.compute_T()
         is_change = True
         while is_change:
             remove_visitor_entry_set = set()
@@ -268,92 +270,92 @@ class VisitorOutput:
 
 
 
-    # TODO DSE c'è la possibilità che non sia corretto filtrare i dependency t per minore e poi per maggiore
     def compute_reachability_constraint(self):
-        for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
-            # ValueDependency filtrati per dipendenze compatibili e valore minore
-            value_dependency_map = {}
-            for value_dependency in self.T[visitor_entry]:
-                if value_dependency.dependency_tuple not in value_dependency_map:
-                    value_dependency_map[value_dependency.dependency_tuple] = value_dependency
-                    continue
-                if value_dependency.value < value_dependency_map[value_dependency.dependency_tuple].value:
-                    value_dependency_map[value_dependency.dependency_tuple] = value_dependency
-            # TODO DSE ci deve essere almeno un previous utilizzabile altrimenti unreachable-code
-            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                # ValueDependency filtrati per dipendenze compatibili e valore maggiore
-                previous_value_dependency_map = {}
-                for previous_value_dependency in self.T[previous_visitor_entry]:
-                    if previous_value_dependency.dependency_tuple not in previous_value_dependency_map:
-                        previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
+        is_change = True
+        while is_change:
+            is_change = False
+            remove_visitor_entry_set = set()
+            for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
+                # ValueDependency filtrati per dipendenze compatibili e valore minore
+                value_dependency_map = {}
+                for value_dependency in self.T[visitor_entry]:
+                    if value_dependency.dependency_tuple not in value_dependency_map:
+                        value_dependency_map[value_dependency.dependency_tuple] = value_dependency
                         continue
-                    if previous_value_dependency.value > previous_value_dependency_map[previous_value_dependency.dependency_tuple].value:
-                        previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
-                # Controllo dei ValueDependency
-
-                # TODO DSE ci deve essere almeno un vincolo soddisfacibile altrimenti warning code
-                is_reachability_constraint = False
-                add_reachability_constraint_set = set()
-
-                for previous_value_dependency in previous_value_dependency_map.values():
-                    for value_dependency in value_dependency_map.values():
-                        previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
-                        field_id_diff_list = list(value_dependency.dependency_tuple)
-                        index = 0
-                        while index < len(previous_field_id_diff_list):
-                            if previous_field_id_diff_list[index] in field_id_diff_list:
-                                field_id_diff_list.remove(previous_field_id_diff_list[index])
-                                previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
-                                continue
-                            index += 1
-                        min_value = min(previous_value_dependency.value, value_dependency.value)
-                        previous_value = previous_value_dependency.value - min_value
-                        value = value_dependency.value - min_value
-                        # Presenza di vincoli da considerare
-                        if previous_field_id_diff_list or (field_id_diff_list and previous_value):
-
-                            # TODO DSE bisogna stabilire quando i vincoli non sono soddisfacibili
-                            is_reachability_constraint = True
-                            if not field_id_diff_list and previous_value > value:
-                                continue
-
-                            add_reachability_constraint_set.add((
-                                (
-                                    *previous_field_id_diff_list,
-                                    *((
-                                        previous_value,
-                                    ) if previous_value else ()),
-                                ),
-                                (
-                                    *field_id_diff_list,
-                                    *((
-                                        value,
-                                    ) if value else ()),
-                                )
+                    if value_dependency.value < value_dependency_map[value_dependency.dependency_tuple].value:
+                        value_dependency_map[value_dependency.dependency_tuple] = value_dependency
+                is_executable = False
+                add_warning_code_set = set()
+                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                    # ValueDependency filtrati per dipendenze compatibili e valore maggiore
+                    previous_value_dependency_map = {}
+                    for previous_value_dependency in self.T[previous_visitor_entry]:
+                        if previous_value_dependency.dependency_tuple not in previous_value_dependency_map:
+                            previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
+                            continue
+                        if previous_value_dependency.value > previous_value_dependency_map[previous_value_dependency.dependency_tuple].value:
+                            previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
+                    # Controllo dei ValueDependency
+                    is_reachability_constraint = False
+                    add_reachability_constraint_set = set()
+                    for previous_value_dependency in previous_value_dependency_map.values():
+                        for value_dependency in value_dependency_map.values():
+                            previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
+                            field_id_diff_list = list(value_dependency.dependency_tuple)
+                            index = 0
+                            while index < len(previous_field_id_diff_list):
+                                if previous_field_id_diff_list[index] in field_id_diff_list:
+                                    field_id_diff_list.remove(previous_field_id_diff_list[index])
+                                    previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
+                                    continue
+                                index += 1
+                            min_value = min(previous_value_dependency.value, value_dependency.value)
+                            previous_value = previous_value_dependency.value - min_value
+                            value = value_dependency.value - min_value
+                            # Presenza di vincoli da considerare
+                            if previous_field_id_diff_list or (field_id_diff_list and previous_value):
+                                is_reachability_constraint = True
+                                # Analisi dei vincoli non soddisfacibili
+                                if not field_id_diff_list and previous_value > value:
+                                    continue
+                                # Vincoli che possono essere soddisfatti
+                                add_reachability_constraint_set.add((
+                                    (
+                                        *previous_field_id_diff_list,
+                                        *((
+                                            previous_value,
+                                        ) if previous_value else ()),
+                                    ),
+                                    (
+                                        *field_id_diff_list,
+                                        *((
+                                            value,
+                                        ) if value else ()),
+                                    )
+                                ))
+                    is_executable = is_executable or not is_reachability_constraint
+                    if is_reachability_constraint:
+                        # Reachability constraint non soddisfacibili generano warning-code
+                        if not add_reachability_constraint_set:
+                            add_warning_code_set.add((
+                                previous_visitor_entry,
+                                visitor_entry,
                             ))
-
-                if is_reachability_constraint:
-                    if not add_reachability_constraint_set:
-                        self.warning_code.add((
-                            previous_visitor_entry,
-                            visitor_entry,
-                        ))
-                        continue
-
-                    self.reachability_constraint.add((
-                        (
-                            *previous_field_id_diff_list,
-                            *((
-                                previous_value,
-                            ) if previous_value else ()),
-                        ),
-                        (
-                            *field_id_diff_list,
-                            *((
-                                value,
-                            ) if value else ()),
-                        )
-                    ))
+                            continue
+                        # Reachability constraint soddisfacibili generano reachability constraint
+                        is_executable = True
+                        self.reachability_constraint.update(add_reachability_constraint_set)
+                # Presenza di warning-code
+                if is_executable:
+                    self.warning_code.update(add_warning_code_set)
+                    continue
+                # Presenza di unreachable-code
+                remove_visitor_entry_set.add(visitor_entry)
+            # Ricalcolo le raggiungibilità
+            if remove_visitor_entry_set:
+                is_change = True
+                self.R = self.R.difference(remove_visitor_entry_set)
+                self.clear_time()
 
 
 
