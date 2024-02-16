@@ -21,7 +21,7 @@ class VisitorOutput:
 
 
     def __init__(self):
-        self.__loop_event_set = set()
+        self.loop_event_visitor_entry_set = set()
         self.field_id_map = {}
         self.Q0 = None
         self.C = set()
@@ -171,6 +171,23 @@ class VisitorOutput:
 
 
 
+    def is_loop(self, visitor_entry, loop_visitor_entry_set):
+        if visitor_entry in loop_visitor_entry_set:
+            return True
+        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state}
+        if previous_visitor_entry_set:
+            return functools.reduce(lambda a, b: a or b, (self.is_loop(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry})) for previous_visitor_entry in previous_visitor_entry_set), False)
+        return False
+
+
+
+    def compute_loop_event_visitor_entry_set(self):
+        for visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, FunctionVisitorEntry)):
+            if self.is_loop(visitor_entry, set()):
+                self.loop_event_visitor_entry_set.update(event_visitor_entry for event_visitor_entry, function_visitor_entry in self.Gamma.items() if function_visitor_entry == visitor_entry)
+
+
+
     def compute_stipula_time(self, visitor_entry, loop_visitor_entry_set):
         #Il valore è già calcolato
         if visitor_entry in self.T:
@@ -231,6 +248,7 @@ class VisitorOutput:
         is_change_T = True
         while is_change_T:
             is_change_T = False
+            self.compute_loop_event_visitor_entry_set()
             self.compute_T()
             is_change = True
             while is_change:
@@ -264,7 +282,9 @@ class VisitorOutput:
                                     break
                             if is_executable:
                                 continue
-                            remove_visitor_entry_set.add(visitor_entry)
+                            # Controllo che l'evento non sia generabile ciclicamente
+                            if visitor_entry not in self.loop_event_visitor_entry_set:
+                                remove_visitor_entry_set.add(visitor_entry)
                         case FunctionVisitorEntry.__name__:
                             # Terza regola: rimuovo la funzione se non c'è niente che la precede
                             if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
