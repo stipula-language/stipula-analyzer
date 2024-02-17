@@ -385,9 +385,9 @@ class VisitorOutput:
 
 
 
-    # TODO DSE il warning code continua a essere calcolato in maniera errata
     def compute_warning_code(self):
-        for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry)):
+        # Non devono essere considerati gli eventi che possono essere generati ciclicamente
+        for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry) and visitor_entry not in self.loop_event_visitor_entry_set):
             for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
                 is_executable = False
                 for previous_value_dependency in self.T[previous_visitor_entry]:
