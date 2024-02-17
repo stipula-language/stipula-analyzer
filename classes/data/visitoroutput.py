@@ -300,7 +300,8 @@ class VisitorOutput:
         while is_change:
             is_change = False
             remove_visitor_entry_set = set()
-            for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0):
+            # Non devono essere considerati gli eventi che possono essere generati ciclicamente
+            for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0 and visitor_entry not in self.loop_event_visitor_entry_set):
                 # ValueDependency filtrati per dipendenze compatibili e valore minore
                 value_dependency_map = {}
                 for value_dependency in self.T[visitor_entry]:
@@ -384,6 +385,7 @@ class VisitorOutput:
 
 
 
+    # TODO DSE il warning code continua a essere calcolato in maniera errata
     def compute_warning_code(self):
         for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry)):
             for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
