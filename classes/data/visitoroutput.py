@@ -21,7 +21,6 @@ class VisitorOutput:
 
 
     def __init__(self):
-        self.loop_event_visitor_entry_set = set()
         self.field_id_map = {}
         self.Q0 = None
         self.C = set()
@@ -30,6 +29,7 @@ class VisitorOutput:
         self.t = {}
         self.T = {}
         self.R = set()
+        self.loop_event_visitor_entry_set = set()
         self.reachability_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
@@ -52,6 +52,7 @@ class VisitorOutput:
                 } for value_dependency in value_dependency_set
             ] for visitor_entry, value_dependency_set in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
+            'loop_event_visitor_entry_set': [str(event_visitor_entry) for event_visitor_entry in self.loop_event_visitor_entry_set],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
