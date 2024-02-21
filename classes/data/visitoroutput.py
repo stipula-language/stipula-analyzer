@@ -44,7 +44,7 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
-            'RC': {str(visitor_entry): [list(visitor_entry_set) for visitor_entry_set in visitor_entry_set_set] for visitor_entry, visitor_entry_set_set in self.RC.items()},
+            'RC': {str(visitor_entry): [[str(visitor_entry) for visitor_entry in visitor_entry_tuple] for visitor_entry_tuple in visitor_entry_tuple_set] for visitor_entry, visitor_entry_tuple_set in self.RC.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
@@ -143,12 +143,29 @@ class VisitorOutput:
 
 
     def compute_RC(self):
-        # TODO DSE da implementare
         # Precalcolo per il passo zero
-        self.RC = {visitor_entry: ({{visitor_entry}} if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else {}) for visitor_entry in self.R}
+        self.RC = {visitor_entry: ({
+            (
+                visitor_entry,
+            )
+        } if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else set()) for visitor_entry in self.R}
         is_change = True
         while is_change:
             is_change = False
+            for visitor_entry in self.R:
+                add_visitor_entry_tuple_set = set()
+                # Considero tutte le transizioni precedenti a quella attuale
+                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
+                    # Inserisco le tuple necessarie senza ripetizioni all'interno, per gli eventi deve essere presente anche la funzione che li definisce
+                    add_visitor_entry_tuple_set.update({(
+                        *visitor_entry_tuple,
+                        *((
+                            visitor_entry,
+                        ) if visitor_entry not in visitor_entry_tuple else ())
+                    ) for visitor_entry_tuple in self.RC[previous_visitor_entry] if isinstance(visitor_entry, FunctionVisitorEntry) or self.Gamma[visitor_entry] in visitor_entry_tuple})
+                is_change = is_change or bool(add_visitor_entry_tuple_set.difference(self.RC[visitor_entry]))
+                self.RC[visitor_entry].update(add_visitor_entry_tuple_set)
+                
 
 
 
