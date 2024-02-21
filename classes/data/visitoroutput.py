@@ -27,7 +27,7 @@ class VisitorOutput:
         self.Gamma = {}
         self.dependency_t_map = {}
         self.t = {}
-        self.T = {}
+        self.RC = {}
         self.R = set()
         self.reachability_constraint = set()
         self.warning_code = set()
@@ -44,12 +44,7 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
-            'T': {str(visitor_entry): [
-                {
-                    'value': str(value_dependency.value),
-                    'dependency_tuple': list(value_dependency.dependency_tuple)
-                } for value_dependency in value_dependency_set
-            ] for visitor_entry, value_dependency_set in self.T.items()},
+            'RC': {str(visitor_entry): [list(visitor_entry_set) for visitor_entry_set in visitor_entry_set_set] for visitor_entry, visitor_entry_set_set in self.RC.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
@@ -147,21 +142,19 @@ class VisitorOutput:
 
 
 
-    def compute_stipula_time(self, visitor_entry, loop_visitor_entry_set):
+    def compute_RC(self):
         # TODO DSE da implementare
-        pass
-
-
-
-    def compute_T(self):
-        # TODO DSE da implementare
-        pass
+        # Precalcolo per il passo zero
+        self.RC = {visitor_entry: ({{visitor_entry}} if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else {}) for visitor_entry in self.R}
+        is_change = True
+        while is_change:
+            is_change = False
 
 
 
     def clear_time(self):
         # TODO DSE da implementare
-        pass
+        self.compute_RC()
 
 
 

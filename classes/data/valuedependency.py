@@ -17,4 +17,4 @@ class ValueDependency:
 
 
     def __hash__(self):
-        return hash(self.value) + hash(self.dependency_tuple)
+        return hash((self.value, self.dependency_tuple, ))

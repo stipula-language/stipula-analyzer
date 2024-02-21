@@ -116,10 +116,6 @@ def _main(is_readable, is_compact, file_path):
                 continue
             _print_code(line_list, visitor_entry, is_readable)
         print(']')
-    if visitor_output.loop_event_visitor_entry_set and not is_compact:
-        print('WARNING: the following events can be generated ciclically')
-        for event_visitor_entry in visitor_output.loop_event_visitor_entry_set:
-            _print_code(line_list, event_visitor_entry, is_readable)
 
 
 
