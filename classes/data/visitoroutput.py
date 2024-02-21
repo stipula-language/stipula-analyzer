@@ -29,7 +29,6 @@ class VisitorOutput:
         self.t = {}
         self.T = {}
         self.R = set()
-        self.loop_event_visitor_entry_set = set()
         self.reachability_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
@@ -52,7 +51,6 @@ class VisitorOutput:
                 } for value_dependency in value_dependency_set
             ] for visitor_entry, value_dependency_set in self.T.items()},
             'R': [str(visitor_entry) for visitor_entry in self.R],
-            'loop_event_visitor_entry_set': [str(event_visitor_entry) for event_visitor_entry in self.loop_event_visitor_entry_set],
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
@@ -88,29 +86,6 @@ class VisitorOutput:
 
     def set_t(self, event_visitor_entry, time_delta):
         self.t[event_visitor_entry] = time_delta
-
-
-
-    def compute_expired_code(self):
-        # Identifico gli eventi già scaduti
-        remove_event_visitor_entry_set = set()
-        for event_visitor_entry in (visitor_entry for visitor_entry in self.C if isinstance(visitor_entry, EventVisitorEntry)):
-            is_executable = False
-            value = self.t[event_visitor_entry]
-            for field_id in self.dependency_t_map[event_visitor_entry]:
-                if field_id == NOW:
-                    is_executable = True
-                    break
-                if self.field_id_map[field_id] is None:
-                    is_executable = True
-                    break
-                value += self.field_id_map[field_id]
-            if is_executable:
-                continue
-            if value < timedelta(seconds=0):
-                remove_event_visitor_entry_set.add(event_visitor_entry)
-                self.expired_code[event_visitor_entry] = value
-        self.C = self.C.difference(remove_event_visitor_entry_set)
 
 
 
@@ -172,238 +147,56 @@ class VisitorOutput:
 
 
 
-    def is_loop(self, visitor_entry, loop_visitor_entry_set):
-        if visitor_entry in loop_visitor_entry_set:
-            return True
-        previous_visitor_entry_set = {previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state}
-        if previous_visitor_entry_set:
-            return functools.reduce(lambda a, b: a or b, (self.is_loop(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry})) for previous_visitor_entry in previous_visitor_entry_set), False)
-        return False
-
-
-
-    def compute_loop_event_visitor_entry_set(self):
-        for visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, FunctionVisitorEntry)):
-            if self.is_loop(visitor_entry, set()):
-                self.loop_event_visitor_entry_set.update(event_visitor_entry for event_visitor_entry, function_visitor_entry in self.Gamma.items() if function_visitor_entry == visitor_entry)
-
-
-
     def compute_stipula_time(self, visitor_entry, loop_visitor_entry_set):
-        #Il valore è già calcolato
-        if visitor_entry in self.T:
-            return
-        match type(visitor_entry).__name__:
-            case FunctionVisitorEntry.__name__:
-                # Prima regola: funzione che parte dallo stato iniziale
-                if visitor_entry.start_state == self.Q0:
-                    self.T[visitor_entry] = {
-                        ValueDependency(timedelta(seconds=0), ())
-                    }
-                    return
-                # Seconda regola: funzione che fa parte del suo stesso loop
-                if visitor_entry in loop_visitor_entry_set:
-                    raise LoopException(visitor_entry)
-                # Controllo che tutte le dipendenze abbiano lo stipula time calcolato
-                previous_visitor_entry_set = set()
-                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                    try:
-                        self.compute_stipula_time(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry}))
-                        previous_visitor_entry_set.add(previous_visitor_entry)
-                    except LoopException:
-                        pass
-                # Se tutte i visitor entry sono loop propago l'eccezione
-                if not previous_visitor_entry_set:
-                    raise LoopException(visitor_entry)
-                # Terza regola: il tempo stipula dipende dai tempi stipula dei visitor entry entranti
-                self.T[visitor_entry] = functools.reduce(lambda a, b: a.union(b), ({ValueDependency(value_dependency.value, tuple(sorted([
-                    *value_dependency.dependency_tuple,
-                    *((
-                        f"_{visitor_entry.handler}.{visitor_entry.code_id}",
-                    ) if visitor_entry.start_state != self.Q0 else ())
-                ]))) for value_dependency in self.T[previous_visitor_entry]} for previous_visitor_entry in previous_visitor_entry_set), set())
-            case EventVisitorEntry.__name__:
-                # Quarta regola: per gli eventi bisogna considerare la dipendenza dalla funzione che li definisce
-                self.compute_stipula_time(self.Gamma[visitor_entry], set())
-                value_dependency = ValueDependency(self.t[visitor_entry], tuple(field_id for field_id in self.dependency_t_map.get(visitor_entry, ()) if field_id != NOW))
-                value_dependency_set = {
-                    value_dependency
-                }
-                if NOW in self.dependency_t_map.get(visitor_entry, ()):
-                    value_dependency_set = {ValueDependency(value_dependency.value + function_value_dependency.value, tuple(sorted([
-                        *value_dependency.dependency_tuple,
-                        *function_value_dependency.dependency_tuple
-                    ]))) for function_value_dependency in self.T[self.Gamma[visitor_entry]]}
-                self.T[visitor_entry] = value_dependency_set
+        # TODO DSE da implementare
+        pass
 
 
 
     def compute_T(self):
-        self.T = {}
-        for visitor_entry in self.R:
-            self.compute_stipula_time(visitor_entry, set())
+        # TODO DSE da implementare
+        pass
 
 
 
     def clear_time(self):
-        is_change_T = True
-        while is_change_T:
-            is_change_T = False
-            self.compute_loop_event_visitor_entry_set()
-            self.compute_T()
-            is_change = True
-            while is_change:
-                remove_visitor_entry_set = set()
-                for visitor_entry in self.R:
-                    match type(visitor_entry).__name__:
-                        case EventVisitorEntry.__name__:
-                            # Se la funzione che definisce l'evento non è presente rimuovo subito
-                            if self.Gamma[visitor_entry] not in self.R:
-                                remove_visitor_entry_set.add(visitor_entry)
-                                continue
-                            # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                            if not self.is_path_from_function(visitor_entry, self.Gamma[visitor_entry], set()):
-                                remove_visitor_entry_set.add(visitor_entry)
-                                continue
-                            # Seconda regola: rimuovo quando non c'è nessun visitor entry entrante con stipula time minore
-                            is_executable = False
-                            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                                for previous_value_dependency in self.T[previous_visitor_entry]:
-                                    for value_dependency in self.T[visitor_entry]:
-                                        # La certezza di unreachable-code è solo se tutte le dipendenze sono confrontabili
-                                        is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple})
-                                        if is_executable:
-                                            break
-                                        if previous_value_dependency.value <= value_dependency.value:
-                                            is_executable = True
-                                            break
-                                    if is_executable:
-                                        break
-                                if is_executable:
-                                    break
-                            if is_executable:
-                                continue
-                            # Controllo che l'evento non sia generabile ciclicamente
-                            if visitor_entry not in self.loop_event_visitor_entry_set:
-                                remove_visitor_entry_set.add(visitor_entry)
-                        case FunctionVisitorEntry.__name__:
-                            # Terza regola: rimuovo la funzione se non c'è niente che la precede
-                            if visitor_entry.start_state != self.Q0 and visitor_entry.start_state not in {visitor_entry.end_state for visitor_entry in self.R}:
-                                remove_visitor_entry_set.add(visitor_entry)
-                is_change = bool(remove_visitor_entry_set)
-                is_change_T = is_change_T or is_change
-                self.R = self.R.difference(remove_visitor_entry_set)
+        # TODO DSE da implementare
+        pass
 
 
 
     def compute_reachability_constraint(self):
-        is_change = True
-        while is_change:
-            is_change = False
-            remove_visitor_entry_set = set()
-            # Non devono essere considerati gli eventi che possono essere generati ciclicamente
-            for visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.start_state != self.Q0 and visitor_entry not in self.loop_event_visitor_entry_set):
-                # ValueDependency filtrati per dipendenze compatibili e valore minore
-                value_dependency_map = {}
-                for value_dependency in self.T[visitor_entry]:
-                    if value_dependency.dependency_tuple not in value_dependency_map:
-                        value_dependency_map[value_dependency.dependency_tuple] = value_dependency
-                        continue
-                    if value_dependency.value < value_dependency_map[value_dependency.dependency_tuple].value:
-                        value_dependency_map[value_dependency.dependency_tuple] = value_dependency
-                is_executable = False
-                add_warning_code_set = set()
-                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                    # ValueDependency filtrati per dipendenze compatibili e valore maggiore
-                    previous_value_dependency_map = {}
-                    for previous_value_dependency in self.T[previous_visitor_entry]:
-                        if previous_value_dependency.dependency_tuple not in previous_value_dependency_map:
-                            previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
-                            continue
-                        if previous_value_dependency.value > previous_value_dependency_map[previous_value_dependency.dependency_tuple].value:
-                            previous_value_dependency_map[previous_value_dependency.dependency_tuple] = previous_value_dependency
-                    # Controllo dei ValueDependency
-                    is_reachability_constraint = False
-                    add_reachability_constraint_set = set()
-                    for previous_value_dependency in previous_value_dependency_map.values():
-                        for value_dependency in value_dependency_map.values():
-                            previous_field_id_diff_list = list(previous_value_dependency.dependency_tuple)
-                            field_id_diff_list = list(value_dependency.dependency_tuple)
-                            index = 0
-                            while index < len(previous_field_id_diff_list):
-                                if previous_field_id_diff_list[index] in field_id_diff_list:
-                                    field_id_diff_list.remove(previous_field_id_diff_list[index])
-                                    previous_field_id_diff_list.remove(previous_field_id_diff_list[index])
-                                    continue
-                                index += 1
-                            min_value = min(previous_value_dependency.value, value_dependency.value)
-                            previous_value = previous_value_dependency.value - min_value
-                            value = value_dependency.value - min_value
-                            # Presenza di vincoli da considerare
-                            if previous_field_id_diff_list or (field_id_diff_list and previous_value):
-                                is_reachability_constraint = True
-                                # Analisi dei vincoli non soddisfacibili
-                                if not field_id_diff_list and previous_value > value:
-                                    continue
-                                # Vincoli che possono essere soddisfatti
-                                add_reachability_constraint_set.add((
-                                    (
-                                        *previous_field_id_diff_list,
-                                        *((
-                                            previous_value,
-                                        ) if previous_value else ()),
-                                    ),
-                                    (
-                                        *field_id_diff_list,
-                                        *((
-                                            value,
-                                        ) if value else ()),
-                                    )
-                                ))
-                    is_executable = is_executable or not is_reachability_constraint
-                    if is_reachability_constraint:
-                        # Reachability constraint non soddisfacibili generano warning-code
-                        if not add_reachability_constraint_set:
-                            add_warning_code_set.add((
-                                previous_visitor_entry,
-                                visitor_entry,
-                            ))
-                            continue
-                        # Reachability constraint soddisfacibili generano reachability constraint
-                        is_executable = True
-                        self.reachability_constraint.update(add_reachability_constraint_set)
-                # Presenza di warning-code
-                if is_executable:
-                    self.warning_code.update(add_warning_code_set)
-                    continue
-                # Presenza di unreachable-code
-                remove_visitor_entry_set.add(visitor_entry)
-            # Ricalcolo le raggiungibilità
-            if remove_visitor_entry_set:
-                is_change = True
-                self.R = self.R.difference(remove_visitor_entry_set)
-                self.clear_time()
+        # TODO DSE da implementare
+        pass
 
 
 
     def compute_warning_code(self):
-        # Non devono essere considerati gli eventi che possono essere generati ciclicamente
-        for event_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, EventVisitorEntry) and visitor_entry not in self.loop_event_visitor_entry_set):
-            for previous_visitor_entry in (visitor_entry for visitor_entry in self.R if visitor_entry.end_state == event_visitor_entry.start_state):
-                is_executable = False
-                for previous_value_dependency in self.T[previous_visitor_entry]:
-                    for value_dependency in self.T[event_visitor_entry]:
-                        is_executable = bool({field_id for field_id in previous_value_dependency.dependency_tuple if field_id not in value_dependency.dependency_tuple}) or bool({field_id for field_id in value_dependency.dependency_tuple if field_id not in previous_value_dependency.dependency_tuple}) or previous_value_dependency.value <= value_dependency.value
-                        if is_executable:
-                            break
-                    if is_executable:
-                        break
-                if is_executable:
-                    continue
-                self.warning_code.add((
-                    previous_visitor_entry,
-                    event_visitor_entry,
-                ))
+        # TODO DSE da implementare
+        pass
+
+
+
+    def compute_expired_code(self):
+        # Identifico gli eventi già scaduti
+        remove_event_visitor_entry_set = set()
+        for event_visitor_entry in (visitor_entry for visitor_entry in self.C if isinstance(visitor_entry, EventVisitorEntry)):
+            is_executable = False
+            value = self.t[event_visitor_entry]
+            for field_id in self.dependency_t_map[event_visitor_entry]:
+                if field_id == NOW:
+                    is_executable = True
+                    break
+                if self.field_id_map[field_id] is None:
+                    is_executable = True
+                    break
+                value += self.field_id_map[field_id]
+            if is_executable:
+                continue
+            if value < timedelta(seconds=0):
+                remove_event_visitor_entry_set.add(event_visitor_entry)
+                self.expired_code[event_visitor_entry] = value
+        self.C = self.C.difference(remove_event_visitor_entry_set)
 
 
 
