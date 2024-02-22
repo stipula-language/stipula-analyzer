@@ -165,13 +165,44 @@ class VisitorOutput:
                     ) for visitor_entry_tuple in self.RC[previous_visitor_entry] if isinstance(visitor_entry, FunctionVisitorEntry) or self.Gamma[visitor_entry] in visitor_entry_tuple})
                 is_change = is_change or bool(add_visitor_entry_tuple_set.difference(self.RC[visitor_entry]))
                 self.RC[visitor_entry].update(add_visitor_entry_tuple_set)
-                
+
+
+
+    def Theta(self, visitor_entry_tuple):
+        t_value_dependency = ValueDependency(0, ())
+        for function_visitor_entry in (visitor_entry for visitor_entry in visitor_entry_tuple if isinstance(visitor_entry, FunctionVisitorEntry)):
+            for event_visitor_entry in (event_visitor_entry for event_visitor_entry, event_function_visitor_entry in self.Gamma.items() if event_function_visitor_entry == function_visitor_entry and event_visitor_entry in visitor_entry_tuple):
+                t_value_dependency.value += self.t[event_visitor_entry]
+                for field_id in (field_id for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW):
+                    if self.field_id_map[field_id] is None:
+                        t_value_dependency.dependency_tuple = tuple(sorted([
+                            *t_value_dependency.dependency_tuple,
+                            field_id
+                        ]))
+                        continue
+                    t_value_dependency.value += self.field_id_map[field_id]
+        value_dependency = ValueDependency(0, ())
+        for function_visitor_entry in (visitor_entry for visitor_entry in visitor_entry_tuple if isinstance(visitor_entry, FunctionVisitorEntry)):
+            value_dependency.value += t_value_dependency.value
+            value_dependency.dependency_tuple = tuple(sorted([
+                *value_dependency.dependency_tuple,
+                f"{function_visitor_entry.start_state}:{function_visitor_entry.handler}.{function_visitor_entry.code_id}:{function_visitor_entry.end_state}",
+                *t_value_dependency.dependency_tuple
+            ]))
+        return value_dependency
+    
+
+
+    def compute_T(self):
+        # TODO DSE aggiungere questo passaggio
+        pass
 
 
 
     def clear_time(self):
         # TODO DSE da implementare
         self.compute_RC()
+        self.compute_T()
 
 
 
