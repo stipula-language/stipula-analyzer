@@ -24,6 +24,7 @@ def str_visitor_entry(visitor_entry):
 
 
 
+# TODO DSE bisogna rivedere anche questo tipo di output
 def print_visitor_output(visitor_output, is_compact):
     print(json.dumps({
         'field_id_map': {field_id: str(value) for field_id, value in visitor_output.field_id_map.items()},

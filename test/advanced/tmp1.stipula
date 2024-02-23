@@ -1,3 +1,7 @@
+/*
+Deve mostrare correttamente i reachability constraint
+*/
+
 stipula Tmp {
 	fields x, y
 	init Q0

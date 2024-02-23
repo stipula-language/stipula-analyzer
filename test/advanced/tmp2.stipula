@@ -1,3 +1,7 @@
+/*
+Deveo mostrare l'expired code
+*/
+
 stipula Sample5 {
     fields x = "2024-01-01"
     init Init

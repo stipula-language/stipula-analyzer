@@ -1,3 +1,7 @@
+/*
+Il codice e' tutto eseguibile a causa dei loop
+*/
+
 stipula Sample10 {
     fields x = 1 
     init Q0

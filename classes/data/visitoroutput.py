@@ -27,6 +27,7 @@ class VisitorOutput:
         self.Gamma = {}
         self.dependency_t_map = {}
         self.t = {}
+        self.L = set()
         self.RC = {}
         self.T = {}
         self.R = set()
@@ -45,6 +46,7 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
+            'L': [str(event_visitor_entry) for event_visitor_entry in self.L],
             'RC': {str(visitor_entry): [[str(visitor_entry) for visitor_entry in visitor_entry_tuple] for visitor_entry_tuple in visitor_entry_tuple_set] for visitor_entry, visitor_entry_tuple_set in self.RC.items()},
             'T': {str(visitor_entry): [{
                 'value': str(value_dependency.value),
@@ -147,6 +149,20 @@ class VisitorOutput:
 
 
 
+    def is_loop(self, visitor_entry, loop_visitor_entry_set):
+        if visitor_entry in loop_visitor_entry_set:
+            return True
+        return functools.reduce(lambda a, b: a or b, (self.is_loop(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry})) for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state)), False)
+
+
+
+    def compute_L(self):
+        for function_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, FunctionVisitorEntry)):
+            if self.is_loop(function_visitor_entry, set()):
+                self.L.update(event_visitor_entry for event_visitor_entry, event_function_visitor_entry in self.Gamma.items() if event_function_visitor_entry == function_visitor_entry)
+
+
+
     def compute_RC(self):
         # Precalcolo per il passo zero
         self.RC = {visitor_entry: ({
@@ -187,7 +203,7 @@ class VisitorOutput:
             # Controllo tutti gli eventi definiti dalla funzione presenti nella tupla
             for event_visitor_entry in (event_visitor_entry for event_visitor_entry, function_event_visitor_entry in self.Gamma.items() if function_event_visitor_entry == function_visitor_entry and event_visitor_entry in visitor_entry_tuple):
                 # Aggiungo la time expression dell'evento
-                value_dependency.value += self.t[event_visitor_entry] + functools.reduce(lambda a, b: a + b, (self.field_id_map[field_id] for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[event_visitor_entry] is not None), timedelta(seconds=0))
+                value_dependency.value += self.t[event_visitor_entry] + functools.reduce(lambda a, b: a + b, (self.field_id_map[field_id] for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None), timedelta(seconds=0))
                 value_dependency.dependency_tuple = tuple(sorted([
                     *value_dependency.dependency_tuple,
                     *(field_id for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is None)
@@ -198,7 +214,11 @@ class VisitorOutput:
 
     def compute_T(self):
         for visitor_entry in self.R:
-            self.T[visitor_entry] = {self.Theta(visitor_entry_tuple) for visitor_entry_tuple in self.RC[visitor_entry]}
+            visitor_entry_tuple_set = self.RC[visitor_entry]
+            # Se è un evento che non è generabile ciclicamente allora considero il path semplificato
+            if isinstance(visitor_entry, EventVisitorEntry) and visitor_entry not in self.L:
+                visitor_entry_tuple_set = {tuple(computation_visitor_entry for computation_visitor_entry in visitor_entry_tuple if computation_visitor_entry == visitor_entry or isinstance(computation_visitor_entry, FunctionVisitorEntry) or (self.Gamma[computation_visitor_entry] != self.Gamma[visitor_entry] if computation_visitor_entry in self.Gamma else False)) for visitor_entry_tuple in self.RC[visitor_entry]}
+            self.T[visitor_entry] = {self.Theta(visitor_entry_tuple) for visitor_entry_tuple in visitor_entry_tuple_set}
 
 
 
@@ -223,6 +243,7 @@ class VisitorOutput:
 
     def clear_time(self):
         # TODO DSE forse questi insiemi vanno ricalcolati ogni volta, attenzione perché T dovrà essere sbiancato a ogni ricalcolo
+        self.compute_L()
         self.compute_RC()
         self.compute_T()
         is_change = True
