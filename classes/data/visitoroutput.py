@@ -173,6 +173,7 @@ class VisitorOutput:
 
 
 
+    # TODO DSE questa funzione, in assenza di cicli, non deve fare la sommatoria in tempi di tutti gli eventi dell'abstract computation ma solamente dell'evento in esame
     def Theta(self, visitor_entry_tuple):
         # Questo valore funge da accumulatore
         value_dependency = ValueDependency(timedelta(seconds=0), ())
