@@ -7,7 +7,7 @@ stipula Sample10 {
     init Q0
 
     @Q0 A: f()[] {
-        now + 1  >> @Q4 {} => @Q5  // ev.1 
+        now + 1  >> @Q4 {} => @Q5  // ev.1
         now + 2  >> @Q3 {} => @Q4  // ev.2
     } => @Q1
 

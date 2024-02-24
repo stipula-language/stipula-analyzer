@@ -40,12 +40,8 @@ class Visitor(StipulaVisitor):
             self.visitFunctionDecl(function_decl_context)
         # Rimuovo tutti gli eventi già scaduti
         self.visitor_output.compute_expired_code()
-        # Costruzione di R a partire da C
+        # Calcolo RC
         self.visitor_output.compute_R()
-        # Rimozione di eventi non raggiungibili e pulizia degli stati
-        self.visitor_output.clear_events()
-        # Controllo della sequenza temporale
-        self.visitor_output.clear_time()
         # Calcolo dei reachability-constraint
         self.visitor_output.compute_reachability_constraint()
         # Calcolo del warning-code

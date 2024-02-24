@@ -5,7 +5,6 @@ from datetime import timedelta
 import functools
 import json
 
-from classes.exceptions.loopexception import LoopException
 from classes.data.functionvisitorentry import FunctionVisitorEntry
 from classes.data.eventvisitorentry import EventVisitorEntry
 from classes.data.valuedependency import ValueDependency
@@ -27,10 +26,7 @@ class VisitorOutput:
         self.Gamma = {}
         self.dependency_t_map = {}
         self.t = {}
-        self.L = set()
-        self.RC = {}
-        self.T = {}
-        self.R = set()
+        self.R = {}
         self.reachability_constraint = set()
         self.warning_code = set()
         self.expired_code = {}
@@ -46,13 +42,7 @@ class VisitorOutput:
             'Gamma': {str(event_visitor_entry): str(function_visitor_entry) for event_visitor_entry, function_visitor_entry in self.Gamma.items()},
             'dependency_t_map': {str(visitor_entry): list(field_id_tuple) for visitor_entry, field_id_tuple in self.dependency_t_map.items()},
             't': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.t.items()},
-            'L': [str(event_visitor_entry) for event_visitor_entry in self.L],
-            'RC': {str(visitor_entry): [[str(visitor_entry) for visitor_entry in visitor_entry_tuple] for visitor_entry_tuple in visitor_entry_tuple_set] for visitor_entry, visitor_entry_tuple_set in self.RC.items()},
-            'T': {str(visitor_entry): [{
-                'value': str(value_dependency.value),
-                'dependency_tuple': list(value_dependency.dependency_tuple)
-            } for value_dependency in value_dependency_set] for visitor_entry, value_dependency_set in self.T.items()},
-            'R': [str(visitor_entry) for visitor_entry in self.R],
+            'R': {str(visitor_entry): [[str(visitor_entry) for visitor_entry in visitor_entry_tuple] for visitor_entry_tuple in visitor_entry_tuple_set] for visitor_entry, visitor_entry_tuple_set in self.R.items()},
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in self.reachability_constraint],
             'warning_code': [[str(visitor_entry_1), str(visitor_entry_2)] for visitor_entry_1, visitor_entry_2 in self.warning_code],
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
@@ -91,105 +81,12 @@ class VisitorOutput:
 
 
 
-    def compute_R(self):
-        is_change = True
-        while is_change:
-            is_change = False
-            add_visitor_entry_set = set()
-            for visitor_entry in self.C:
-                # Prima regola: funzioni che partono dallo stato iniziale
-                if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0:
-                    add_visitor_entry_set.add(visitor_entry)
-                    continue
-                # Seconda regola: visitor entry raggiungibili da visitor entry già inseriti
-                if visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in self.R}:
-                    add_visitor_entry_set.add(visitor_entry)
-            is_change = bool(add_visitor_entry_set.difference(self.R))
-            self.R.update(add_visitor_entry_set)
+    def is_cyclic(self, function_visitor_entry):
+        return function_visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in functools.reduce(lambda a, b: a.union(set(b)), self.R[function_visitor_entry], set())}
 
 
 
-    def reach(self, visitor_entry, state_id, loop_visitor_entry_set):
-        # Stato di partenza trovato
-        if visitor_entry.start_state == state_id:
-            return True
-        # Se trovo un loop interrompo
-        if visitor_entry in loop_visitor_entry_set:
-            return False
-        # Calcolo tutti i visitor entry che lo raggiungono
-        for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-            if self.reach(previous_visitor_entry, state_id, loop_visitor_entry_set.union({
-                visitor_entry
-            })):
-                return True
-        return False
-
-
-
-    def clear_events(self):
-        is_change = True
-        while is_change:
-            remove_visitor_entry_set = set()
-            for visitor_entry in self.R:
-                match type(visitor_entry).__name__:
-                    case EventVisitorEntry.__name__:
-                        # Se la funzione che definisce l'evento non è presente rimuovo subito
-                        if self.Gamma[visitor_entry] not in self.R:
-                            remove_visitor_entry_set.add(visitor_entry)
-                            continue
-                        # Prima regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                        if not self.reach(visitor_entry, self.Gamma[visitor_entry].end_state, set()):
-                            remove_visitor_entry_set.add(visitor_entry)
-                    case FunctionVisitorEntry.__name__:
-                        # Seconda regola: rimuovo quando non c'è niente che precede la funzione
-                        if not self.reach(visitor_entry, self.Q0, set()):
-                            remove_visitor_entry_set.add(visitor_entry)
-            is_change = bool(remove_visitor_entry_set)
-            self.R = self.R.difference(remove_visitor_entry_set)
-
-
-
-    def is_loop(self, visitor_entry, loop_visitor_entry_set):
-        if visitor_entry in loop_visitor_entry_set:
-            return True
-        return functools.reduce(lambda a, b: a or b, (self.is_loop(previous_visitor_entry, loop_visitor_entry_set.union({visitor_entry})) for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state)), False)
-
-
-
-    def compute_L(self):
-        for function_visitor_entry in (visitor_entry for visitor_entry in self.R if isinstance(visitor_entry, FunctionVisitorEntry)):
-            if self.is_loop(function_visitor_entry, set()):
-                self.L.update(event_visitor_entry for event_visitor_entry, event_function_visitor_entry in self.Gamma.items() if event_function_visitor_entry == function_visitor_entry)
-
-
-
-    def compute_RC(self):
-        # Precalcolo per il passo zero
-        self.RC = {visitor_entry: ({
-            (
-                visitor_entry,
-            )
-        } if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else set()) for visitor_entry in self.R}
-        is_change = True
-        while is_change:
-            is_change = False
-            for visitor_entry in self.R:
-                add_visitor_entry_tuple_set = set()
-                # Considero tutte le transizioni precedenti a quella attuale
-                for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                    # Inserisco le tuple necessarie senza ripetizioni all'interno, per gli eventi deve essere presente anche la funzione che li definisce
-                    add_visitor_entry_tuple_set.update({(
-                        *visitor_entry_tuple,
-                        *((
-                            visitor_entry,
-                        ) if visitor_entry not in visitor_entry_tuple else ())
-                    ) for visitor_entry_tuple in self.RC[previous_visitor_entry] if isinstance(visitor_entry, FunctionVisitorEntry) or self.Gamma[visitor_entry] in visitor_entry_tuple})
-                is_change = is_change or bool(add_visitor_entry_tuple_set.difference(self.RC[visitor_entry]))
-                self.RC[visitor_entry].update(add_visitor_entry_tuple_set)
-
-
-
-    # TODO DSE questa funzione, in assenza di cicli, non deve fare la sommatoria in tempi di tutti gli eventi dell'abstract computation ma solamente dell'evento in esame
+    # TODO DSE questa funzione potrebbe essere migliorata, per gli eventi bisogna anche considerare il costrutto now, perché altrimenti l'evento ha una data fissa
     def Theta(self, visitor_entry_tuple):
         # Questo valore funge da accumulatore
         value_dependency = ValueDependency(timedelta(seconds=0), ())
@@ -212,13 +109,8 @@ class VisitorOutput:
 
 
 
-    def compute_T(self):
-        for visitor_entry in self.R:
-            visitor_entry_tuple_set = self.RC[visitor_entry]
-            # Se è un evento che non è generabile ciclicamente allora considero il path semplificato
-            if isinstance(visitor_entry, EventVisitorEntry) and visitor_entry not in self.L:
-                visitor_entry_tuple_set = {tuple(computation_visitor_entry for computation_visitor_entry in visitor_entry_tuple if computation_visitor_entry == visitor_entry or isinstance(computation_visitor_entry, FunctionVisitorEntry) or (self.Gamma[computation_visitor_entry] != self.Gamma[visitor_entry] if computation_visitor_entry in self.Gamma else False)) for visitor_entry_tuple in self.RC[visitor_entry]}
-            self.T[visitor_entry] = {self.Theta(visitor_entry_tuple) for visitor_entry_tuple in visitor_entry_tuple_set}
+    def T(self, visitor_entry_tuple_set):
+        return {self.Theta(visitor_entry_tuple) for visitor_entry_tuple in visitor_entry_tuple_set}
 
 
 
@@ -241,47 +133,58 @@ class VisitorOutput:
 
 
 
-    def clear_time(self):
-        # TODO DSE forse questi insiemi vanno ricalcolati ogni volta, attenzione perché T dovrà essere sbiancato a ogni ricalcolo
-        self.compute_L()
-        self.compute_RC()
-        self.compute_T()
-        is_change = True
-        while is_change:
-            is_change = False
-            remove_visitor_entry_set = set()
-            for visitor_entry in self.R:
-                match type(visitor_entry).__name__:
-                    case EventVisitorEntry.__name__:
-                        # Se la funzione che definisce l'evento non è presente rimuovo subito
-                        if self.Gamma[visitor_entry] not in self.R:
-                            remove_visitor_entry_set.add(visitor_entry)
-                            continue
-                        # TODO DSE X regola: rimuovo quando l'evento non è raggiungibile dalla funzione che lo definisce
-                        if not self.reach(visitor_entry, self.Gamma[visitor_entry].end_state, set()):
-                            remove_visitor_entry_set.add(visitor_entry)
-                            continue
-                        # TODO DSE X regola: controllo la solvability dei tempi
-                        is_executable = False
-                        for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.R if previous_visitor_entry.end_state == visitor_entry.start_state):
-                            for previous_value_dependency in self.T[previous_visitor_entry]:
-                                for value_dependency in self.T[visitor_entry]:
-                                    if self.is_solvable(previous_value_dependency, value_dependency):
-                                        is_executable = True
-                                        break
-                                if is_executable:
-                                    break
-                            if is_executable:
-                                break
-                        if is_executable:
-                            continue
-                        remove_visitor_entry_set.add(visitor_entry)
-                    case FunctionVisitorEntry.__name__:
-                        # TODO DSE X regola: rimuovo quando non c'è niente che precede la funzione
-                        if not self.reach(visitor_entry, self.Q0, set()):
-                            remove_visitor_entry_set.add(visitor_entry)
-            is_change = bool(remove_visitor_entry_set)
-            self.R = self.R.difference(remove_visitor_entry_set)
+    def compute_R(self):
+        is_step_0 = True
+        is_loop = is_step_0
+        while is_loop:
+            is_loop = is_step_0
+            # Prima regola: precalcolo il valore iniziale
+            self.R = {visitor_entry: ({
+                (
+                    visitor_entry,
+                )
+            } if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else set()) for visitor_entry in self.C}
+            is_change = True
+            while is_change:
+                is_change = False
+                for visitor_entry in self.C:
+                    add_visitor_entry_tuple_set = set()
+                    match type(visitor_entry).__name__:
+                        # Seconda regola: calcolo per le funioni
+                        case FunctionVisitorEntry.__name__:
+                            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.C if previous_visitor_entry.end_state == visitor_entry.start_state):
+                                add_visitor_entry_tuple_set.update({(
+                                    *visitor_entry_tuple,
+                                    *((
+                                        visitor_entry,
+                                    ) if visitor_entry not in visitor_entry_tuple else ())
+                                ) for visitor_entry_tuple in self.R[previous_visitor_entry]})
+                        # Terza regola: calcolo per gli eventi
+                        case EventVisitorEntry.__name__:
+                            for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.C if previous_visitor_entry.end_state == visitor_entry.start_state):
+                                for previous_visitor_entry_tuple in (previous_visitor_entry_tuple for previous_visitor_entry_tuple in self.R[previous_visitor_entry] if self.Gamma[visitor_entry] in previous_visitor_entry_tuple):
+                                    # Funzione che definisce non ciclica, calcolo anche i tempi
+                                    for previous_value_dependency in self.T({
+                                        previous_visitor_entry_tuple
+                                    }):
+                                        for value_dependency in self.T({(
+                                            *visitor_entry_tuple,
+                                            *((
+                                                visitor_entry,
+                                            ) if visitor_entry not in visitor_entry_tuple else ())
+                                        ) for visitor_entry_tuple in self.R[self.Gamma[visitor_entry]]}):
+                                            if (not self.is_cyclic(self.Gamma[visitor_entry]) and not self.is_solvable(previous_value_dependency, value_dependency)) and not is_step_0:
+                                                continue
+                                            add_visitor_entry_tuple_set.add((
+                                                *previous_visitor_entry_tuple,
+                                                *((
+                                                    visitor_entry,
+                                                ) if visitor_entry not in previous_visitor_entry_tuple else ()),
+                                            ))
+                    is_change = is_change or bool(add_visitor_entry_tuple_set.difference(self.R[visitor_entry]))
+                    self.R[visitor_entry].update(add_visitor_entry_tuple_set)
+            is_step_0 = False
+
 
 
     def compute_reachability_constraint(self):
@@ -319,6 +222,12 @@ class VisitorOutput:
 
 
 
+    # TODO DSE si potrebbe riscrivere un po' meglio
     def compute_unreachable_code(self):
         # Calcolo l'unreachable-code
-        self.unreachable_code = self.C.difference(self.R)
+        reachable_visitor_entry_set = set()
+        for visitor_entry_tuple_set in self.R.values():
+            for visitor_entry_tuple in visitor_entry_tuple_set:
+                for visitor_entry in visitor_entry_tuple:
+                    reachable_visitor_entry_set.add(visitor_entry)
+        self.unreachable_code = self.C.difference(reachable_visitor_entry_set)
