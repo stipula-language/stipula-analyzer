@@ -24,7 +24,6 @@ def str_visitor_entry(visitor_entry):
 
 
 
-# TODO DSE bisogna rivedere anche questo tipo di output
 def print_visitor_output(visitor_output, is_compact):
     print(json.dumps({
         'field_id_map': {field_id: str(value) for field_id, value in visitor_output.field_id_map.items()},
@@ -39,13 +38,7 @@ def print_visitor_output(visitor_output, is_compact):
         **({
             't': {str_visitor_entry(visitor_entry): str(time_delta) for visitor_entry, time_delta in visitor_output.t.items()}
         } if not is_compact else {}),
-        'T': {str_visitor_entry(visitor_entry): [
-            ({
-                'value': str(value_dependency.value),
-                'dependency_tuple': list(value_dependency.dependency_tuple)
-            } if not is_compact else str(value_dependency.value)) for value_dependency in value_dependency_set
-        ] for visitor_entry, value_dependency_set in visitor_output.T.items()},
-        'R': [str_visitor_entry(visitor_entry) for visitor_entry in visitor_output.R],
+        'R': {str_visitor_entry(visitor_entry): [[str_visitor_entry(visitor_entry) for visitor_entry in visitor_entry_tuple] for visitor_entry_tuple in visitor_entry_tuple_set] for visitor_entry, visitor_entry_tuple_set in visitor_output.R.items()},
         **({
             'reachability_constraint': [[[str(dependency) for dependency in dependency_tuple_1], [str(dependency) for dependency in dependency_tuple_2]] for dependency_tuple_1, dependency_tuple_2 in visitor_output.reachability_constraint]
         } if not is_compact else {}),

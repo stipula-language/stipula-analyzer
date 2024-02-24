@@ -42,8 +42,6 @@ class Visitor(StipulaVisitor):
         self.visitor_output.compute_expired_code()
         # Calcolo RC
         self.visitor_output.compute_R()
-        # Calcolo dei reachability-constraint
-        self.visitor_output.compute_reachability_constraint()
         # Calcolo del warning-code
         self.visitor_output.compute_warning_code()
         # Calcolo l'unreachable-code

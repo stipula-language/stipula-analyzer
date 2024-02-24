@@ -48,7 +48,7 @@ class VisitorOutput:
             'expired_code': {str(visitor_entry): str(time_delta) for visitor_entry, time_delta in self.expired_code.items()},
             'unreachable_code': [str(visitor_entry) for visitor_entry in self.unreachable_code]
         }, indent=2)
-    
+
 
 
     def set_field_id_value(self, field_id, value):
@@ -86,7 +86,6 @@ class VisitorOutput:
 
 
 
-    # TODO DSE questa funzione potrebbe essere migliorata, per gli eventi bisogna anche considerare il costrutto now, perché altrimenti l'evento ha una data fissa
     def Theta(self, visitor_entry_tuple):
         # Questo valore funge da accumulatore
         value_dependency = ValueDependency(timedelta(seconds=0), ())
@@ -114,7 +113,7 @@ class VisitorOutput:
 
 
 
-    def is_solvable(self, previous_value_dependency, value_dependency):
+    def reduce_reachability_constraint(self, previous_value_dependency, value_dependency):
         min_value = min(previous_value_dependency.value, value_dependency.value)
         previous_value = previous_value_dependency.value - min_value
         value = value_dependency.value - min_value
@@ -127,7 +126,15 @@ class VisitorOutput:
                 previous_field_id_list.pop(index)
                 continue
             index += 1
-        if not field_id_list and previous_value > value:
+        return (
+            ValueDependency(previous_value, tuple(previous_field_id_list)),
+            ValueDependency(value, tuple(field_id_list)),
+        )
+
+
+
+    def is_solvable(self, previous_value_dependency, value_dependency):
+        if not value_dependency.dependency_tuple and previous_value_dependency.value > value_dependency.value:
             return False
         return True
 
@@ -163,7 +170,6 @@ class VisitorOutput:
                         case EventVisitorEntry.__name__:
                             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.C if previous_visitor_entry.end_state == visitor_entry.start_state):
                                 for previous_visitor_entry_tuple in (previous_visitor_entry_tuple for previous_visitor_entry_tuple in self.R[previous_visitor_entry] if self.Gamma[visitor_entry] in previous_visitor_entry_tuple):
-                                    # Funzione che definisce non ciclica, calcolo anche i tempi
                                     for previous_value_dependency in self.T({
                                         previous_visitor_entry_tuple
                                     }):
@@ -173,8 +179,27 @@ class VisitorOutput:
                                                 visitor_entry,
                                             ) if visitor_entry not in visitor_entry_tuple else ())
                                         ) for visitor_entry_tuple in self.R[self.Gamma[visitor_entry]]}):
-                                            if (not self.is_cyclic(self.Gamma[visitor_entry]) and not self.is_solvable(previous_value_dependency, value_dependency)) and not is_step_0:
-                                                continue
+                                            # Funzione che definisce non ciclica, valuto i tempi
+                                            if not self.is_cyclic(self.Gamma[visitor_entry]) and not is_step_0:
+                                                # Clausola non soddisfacibile, abstract-computation non aggiungibile
+                                                previous_reduced_value_dependency, reduced_value_dependency = self.reduce_reachability_constraint(previous_value_dependency, value_dependency)
+                                                if not self.is_solvable(previous_reduced_value_dependency, reduced_value_dependency):
+                                                    continue
+                                                if previous_reduced_value_dependency.dependency_tuple or previous_reduced_value_dependency.value:
+                                                    self.reachability_constraint.add((
+                                                        (
+                                                            *previous_reduced_value_dependency.dependency_tuple,
+                                                            *((
+                                                                previous_reduced_value_dependency.value,
+                                                            ) if previous_reduced_value_dependency.value else ()),
+                                                        ),
+                                                        (
+                                                            *reduced_value_dependency.dependency_tuple,
+                                                            *((
+                                                                reduced_value_dependency.value,
+                                                            ) if reduced_value_dependency.value else ()),
+                                                        ),
+                                                    ))
                                             add_visitor_entry_tuple_set.add((
                                                 *previous_visitor_entry_tuple,
                                                 *((
@@ -184,12 +209,6 @@ class VisitorOutput:
                     is_change = is_change or bool(add_visitor_entry_tuple_set.difference(self.R[visitor_entry]))
                     self.R[visitor_entry].update(add_visitor_entry_tuple_set)
             is_step_0 = False
-
-
-
-    def compute_reachability_constraint(self):
-        # TODO DSE da implementare
-        pass
 
 
 
@@ -222,12 +241,6 @@ class VisitorOutput:
 
 
 
-    # TODO DSE si potrebbe riscrivere un po' meglio
     def compute_unreachable_code(self):
         # Calcolo l'unreachable-code
-        reachable_visitor_entry_set = set()
-        for visitor_entry_tuple_set in self.R.values():
-            for visitor_entry_tuple in visitor_entry_tuple_set:
-                for visitor_entry in visitor_entry_tuple:
-                    reachable_visitor_entry_set.add(visitor_entry)
-        self.unreachable_code = self.C.difference(reachable_visitor_entry_set)
+        self.unreachable_code = self.C.difference(functools.reduce(lambda a, b: a.union(set(b)), functools.reduce(lambda a, b: a.union(b), self.R.values(), set()), set()))
