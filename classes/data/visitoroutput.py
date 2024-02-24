@@ -213,8 +213,14 @@ class VisitorOutput:
 
 
     def compute_warning_code(self):
-        # TODO DSE da implementare
-        pass
+        visitor_entry_set = functools.reduce(lambda a, b: a.union(set(b)), functools.reduce(lambda a, b: a.union(b), self.R.values(), set()), set())
+        for event_visitor_entry in (visitor_entry for visitor_entry in visitor_entry_set if isinstance(visitor_entry, EventVisitorEntry)):
+            for previous_visitor_entry in (visitor_entry for visitor_entry in visitor_entry_set if visitor_entry.end_state == event_visitor_entry.start_state):
+                if previous_visitor_entry not in functools.reduce(lambda a, b: a.union(set(b)), self.R[event_visitor_entry], set()):
+                    self.warning_code.add((
+                        previous_visitor_entry,
+                        event_visitor_entry,
+                    ))
 
 
 
