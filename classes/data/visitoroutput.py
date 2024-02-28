@@ -81,8 +81,16 @@ class VisitorOutput:
 
 
 
-    def is_cyclic(self, function_visitor_entry):
-        return function_visitor_entry.start_state in {visitor_entry.end_state for visitor_entry in functools.reduce(lambda a, b: a.union(set(b)), self.R[function_visitor_entry], set())}
+    def is_cyclic(self, visitor_entry, loop_visitor_entry_set, visitor_entry_set):
+        if visitor_entry in loop_visitor_entry_set:
+            return True
+        visitor_entry_set = visitor_entry_set or functools.reduce(lambda a, b: a.union(set(b)), functools.reduce(lambda a, b: a.union(b), self.R.values(), set()), set())
+        for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in visitor_entry_set if previous_visitor_entry.end_state == visitor_entry.start_state):
+            if self.is_cyclic(previous_visitor_entry, loop_visitor_entry_set.union({
+                visitor_entry
+            }), visitor_entry_set):
+                return True
+        return False
 
 
 
@@ -180,7 +188,7 @@ class VisitorOutput:
                                             ) if visitor_entry not in visitor_entry_tuple else ())
                                         ) for visitor_entry_tuple in self.R[self.Gamma[visitor_entry]]}):
                                             # Funzione che definisce non ciclica, valuto i tempi
-                                            if not self.is_cyclic(self.Gamma[visitor_entry]) and not is_step_0:
+                                            if not self.is_cyclic(self.Gamma[visitor_entry], set(), None) and not is_step_0:
                                                 # Clausola non soddisfacibile, abstract-computation non aggiungibile
                                                 previous_reduced_value_dependency, reduced_value_dependency = self.reduce_reachability_constraint(previous_value_dependency, value_dependency)
                                                 if not self.is_solvable(previous_reduced_value_dependency, reduced_value_dependency):
