@@ -1,5 +1,4 @@
-=== TESI ===
-- Riscrivere le formule presente nella tesi in maniera corretta
-
-=== PARTI DA AGGIUNGERE ===
-- Cercare di implementare il controllo sul tempo logico dell'esecuzioni
+=== POSSIBILI BUG ===
+- Il controllo del cambio di valore di un field deve essere inserito anche nell'agreement
+- Nel caso dei tempi relativi alle date fisse, il calcolo dei tempi logici non è corretto.
+  > È necessario utilizzare sequenze in quanto dopo l'esecuzione di qualcosa a data fissa allora diventa necessario utilizzare quel tempo logico
