@@ -95,36 +95,46 @@ class VisitorOutput:
 
 
     def Theta(self, visitor_entry_tuple):
-        # Se è presente un evento con data fissa lo considero come tempo di inizio della computazione
-        filter_visitor_entry_tuple = visitor_entry_tuple
-        for i in range(len(visitor_entry_tuple) - 1, -1, -1):
-            if isinstance(visitor_entry_tuple[i], EventVisitorEntry) and NOW not in self.dependency_t_map[visitor_entry_tuple[i]]:
-                filter_visitor_entry_tuple = visitor_entry_tuple[i:]
-                break
         # Questo valore funge da accumulatore
-        value_dependency = ValueDependency(timedelta(seconds=0), ())
-        # La tuple è tutta ciclabile per costruzione
-        for visitor_entry in filter_visitor_entry_tuple:
-            match type(visitor_entry).__name__:
+        value_dependency_set = {
+            ValueDependency(timedelta(seconds=0), ())
+        }
+        index = len(visitor_entry_tuple) - 1
+        while index > -1:
+            match type(visitor_entry_tuple[index]).__name__:
                 case FunctionVisitorEntry.__name__:
-                    # Aggiungo il simbolo della funzione
-                    value_dependency.dependency_tuple = tuple(sorted([
+                    # Aggiungo il simbolo della funzione a tutti i value dependency
+                    value_dependency_set = {ValueDependency(value_dependency.value, tuple(sorted([
                         *value_dependency.dependency_tuple,
-                        f"{visitor_entry.start_state}:{visitor_entry.handler}.{visitor_entry.code_id}:{visitor_entry.end_state}"
-                    ]))
+                        f"{visitor_entry_tuple[index].start_state}:{visitor_entry_tuple[index].handler}.{visitor_entry_tuple[index].code_id}:{visitor_entry_tuple[index].end_state}"
+                    ]))) for value_dependency in value_dependency_set}
                 case EventVisitorEntry.__name__:
-                    # Aggiungo la time expression dell'evento
-                    value_dependency.value += self.t[visitor_entry] + functools.reduce(lambda a, b: a + b, (self.field_id_map[field_id] for field_id in self.dependency_t_map[visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None), timedelta(seconds=0))
-                    value_dependency.dependency_tuple = tuple(sorted([
-                        *value_dependency.dependency_tuple,
-                        *(field_id for field_id in self.dependency_t_map[visitor_entry] if field_id != NOW and self.field_id_map[field_id] is None)
-                    ]))
-        return value_dependency
+                    # Se l'evento ha data fissa, aggiungo il tempo e fermo la computazione
+                    if NOW not in self.dependency_t_map[visitor_entry_tuple[index]]:
+                        value_dependency_set = {ValueDependency(value_dependency.value + self.t[visitor_entry_tuple[index]], value_dependency.dependency_tuple) for value_dependency in value_dependency_set}
+                        break
+                    # Se l'evento non ha data fissa prendo come riferimento fino alla funzione che lo definisce
+                    function_index = visitor_entry_tuple.index(self.Gamma[visitor_entry_tuple[index]])
+                    event_visitor_entry_set = {event_visitor_entry for event_visitor_entry in {visitor_entry for visitor_entry in visitor_entry_tuple[function_index + 1:index + 1] if isinstance(visitor_entry, EventVisitorEntry)} if self.Gamma[event_visitor_entry] == self.Gamma[visitor_entry_tuple[index]]}
+                    new_value_dependency_set = set()
+                    for value_dependency in value_dependency_set:
+                        for event_visitor_entry in event_visitor_entry_set:
+                            value = self.t[event_visitor_entry] + functools.reduce(lambda a, b: a + b, (self.field_id_map[field_id] for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None), timedelta(seconds=0))
+                            dependency_tuple = tuple(field_id for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None)
+                            new_value_dependency_set.add(ValueDependency(value_dependency.value + value, tuple(sorted([
+                                *value_dependency.dependency_tuple,
+                                f"{visitor_entry_tuple[function_index].start_state}:{visitor_entry_tuple[function_index].handler}.{visitor_entry_tuple[function_index].code_id}:{visitor_entry_tuple[function_index].end_state}",
+                                *dependency_tuple
+                            ]))))
+                    value_dependency_set = new_value_dependency_set
+                    index = function_index
+            index -= 1
+        return value_dependency_set
 
 
 
     def T(self, visitor_entry_tuple_set):
-        return {self.Theta(visitor_entry_tuple) for visitor_entry_tuple in visitor_entry_tuple_set}
+        return functools.reduce(lambda a, b: a.union(b), (self.Theta(visitor_entry_tuple) for visitor_entry_tuple in visitor_entry_tuple_set), set())
 
 
 
