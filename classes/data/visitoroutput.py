@@ -169,6 +169,9 @@ class VisitorOutput:
         is_step_0 = True
         is_loop = is_step_0
         while is_loop:
+            # TODO DSE
+            print('is_loop loop')
+            ##########
             is_loop = is_step_0
             # Prima regola: precalcolo il valore iniziale
             self.R = {visitor_entry: ({
@@ -178,6 +181,9 @@ class VisitorOutput:
             } if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else set()) for visitor_entry in self.C}
             is_change = True
             while is_change:
+                # TODO DSE
+                print('is_change loop')
+                ##########
                 is_change = False
                 for visitor_entry in self.C:
                     add_visitor_entry_tuple_set = set()
@@ -193,7 +199,13 @@ class VisitorOutput:
                                 ) for visitor_entry_tuple in self.R[previous_visitor_entry]})
                         # Terza regola: calcolo per gli eventi
                         case EventVisitorEntry.__name__:
+                            # TODO DSE
+                            print(f"Analyzing visitor entry: {visitor_entry}")
+                            ##########
                             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.C if previous_visitor_entry.end_state == visitor_entry.start_state):
+                                # TODO DSE
+                                print(f"    Previous visitor entry: {previous_visitor_entry}")
+                                ##########
                                 for previous_visitor_entry_tuple in (previous_visitor_entry_tuple for previous_visitor_entry_tuple in self.R[previous_visitor_entry] if self.Gamma[visitor_entry] in previous_visitor_entry_tuple):
                                     for previous_value_dependency in self.T({
                                         previous_visitor_entry_tuple
