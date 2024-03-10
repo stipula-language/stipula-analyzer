@@ -2,19 +2,15 @@ stipula EsempioWCod {
 	fields x
 	init Q0
 
-	agreement(A)(x) {
-		A: x
-	} => @Q0
-
-	@Q0 A: f(y)[k] (true) {
-		now + 2 >> @Q3 {} => @Q4
+	@Q0 A: f()[] {
+		now + 2 >> @Q3 {} => @Q4 // ev.6
 	} => @Q1
 
-	@Q1 B: g(y)[k] (true) {
-		now + 1 >> @Q2 {} => @Q3
+	@Q1 B: g()[] {
+		now + 1 >> @Q2 {} => @Q3 // ev.10
 	} => @Q2
 
-	@Q1 C: d(y)[k] (true) {
-		now + 3 >> @Q2 {} => @Q3
+	@Q1 C: d()[] {
+		now + 3 >> @Q2 {} => @Q3 // ev.14
 	} => @Q2
 }

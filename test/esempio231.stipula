@@ -1,14 +1,10 @@
-stipula Esempio331 {
-	fields x
-	init Q0
+stipula Esempio231 {
+  fields x
+  init Q0
 
-	agreement(A)(x) {
-		A: x
-	} => @Q0
+  @Q0 A: f()[] {
+    now + 1D >> @Q1 {} => @Q2 // ev.6
 
-	@Q0 A: f(y)[k] (true) {
-		now + 1D >> @Q1 {} => @Q2
-
-		now >> @Q2 {} => @Q3
-	} => @Q1
+    now >> @Q2 {} => @Q3 // ev.8
+  } => @Q1
 }

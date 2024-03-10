@@ -2,13 +2,9 @@ stipula EsempioWCon {
 	fields t1, t2
 	init Q0
 
-	agreement(A)(t1, t2) {
-		A: t1, t2
-	} => @Q0
+	@Q0 A: f(y)[k] {
+		now + t1 >> @Q1 {} => @Q2 // ev.6
 
-	@Q0 A: f(y)[k] (true) {
-		now + t1 >> @Q1 {} => @Q2
-
-		now + t2 >> @Q2 {} => @Q3
+		now + t2 >> @Q2 {} => @Q3 // ev.8
 	} => @Q1
 }
