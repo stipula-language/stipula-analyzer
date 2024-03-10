@@ -120,7 +120,7 @@ class VisitorOutput:
                     for value_dependency in value_dependency_set:
                         for event_visitor_entry in event_visitor_entry_set:
                             value = self.t[event_visitor_entry] + functools.reduce(lambda a, b: a + b, (self.field_id_map[field_id] for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None), timedelta(seconds=0))
-                            dependency_tuple = tuple(field_id for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is not None)
+                            dependency_tuple = tuple(field_id for field_id in self.dependency_t_map[event_visitor_entry] if field_id != NOW and self.field_id_map[field_id] is None)
                             new_value_dependency_set.add(ValueDependency(value_dependency.value + value, tuple(sorted([
                                 *value_dependency.dependency_tuple,
                                 f"{visitor_entry_tuple[function_index].start_state}:{visitor_entry_tuple[function_index].handler}.{visitor_entry_tuple[function_index].code_id}:{visitor_entry_tuple[function_index].end_state}",
@@ -169,9 +169,6 @@ class VisitorOutput:
         is_step_0 = True
         is_loop = is_step_0
         while is_loop:
-            # TODO DSE
-            print('is_loop loop')
-            ##########
             is_loop = is_step_0
             # Prima regola: precalcolo il valore iniziale
             self.R = {visitor_entry: ({
@@ -181,9 +178,6 @@ class VisitorOutput:
             } if isinstance(visitor_entry, FunctionVisitorEntry) and visitor_entry.start_state == self.Q0 else set()) for visitor_entry in self.C}
             is_change = True
             while is_change:
-                # TODO DSE
-                print('is_change loop')
-                ##########
                 is_change = False
                 for visitor_entry in self.C:
                     add_visitor_entry_tuple_set = set()
@@ -199,13 +193,7 @@ class VisitorOutput:
                                 ) for visitor_entry_tuple in self.R[previous_visitor_entry]})
                         # Terza regola: calcolo per gli eventi
                         case EventVisitorEntry.__name__:
-                            # TODO DSE
-                            print(f"Analyzing visitor entry: {visitor_entry}")
-                            ##########
                             for previous_visitor_entry in (previous_visitor_entry for previous_visitor_entry in self.C if previous_visitor_entry.end_state == visitor_entry.start_state):
-                                # TODO DSE
-                                print(f"    Previous visitor entry: {previous_visitor_entry}")
-                                ##########
                                 for previous_visitor_entry_tuple in (previous_visitor_entry_tuple for previous_visitor_entry_tuple in self.R[previous_visitor_entry] if self.Gamma[visitor_entry] in previous_visitor_entry_tuple):
                                     for previous_value_dependency in self.T({
                                         previous_visitor_entry_tuple
