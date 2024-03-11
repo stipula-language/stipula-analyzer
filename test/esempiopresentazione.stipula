@@ -1,0 +1,15 @@
+stipula Sample {
+  fields x
+  init Start
+
+  @Start A: f()[] {
+    now + 60 >> @Check {} => @Fail // ev.17
+    now + 30 >> @Fail {} => @Recover // ev.28
+  } => @Check
+
+  @Check B: g()[] {
+    now + 10 >> @End {} => @Fail // ev.53
+  } => @End
+
+  @End A: h()[] {} => @Closed
+}
