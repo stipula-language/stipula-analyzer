@@ -3,7 +3,7 @@
 ## Requirements
 
 - Python >= 3.11.6
-- Antlr4 == 4.13.1
+- Antlr4 >= 4.13.1
 
 ## Installation
 
