@@ -1,4 +1,4 @@
-# Generated from Stipula.g4 by ANTLR 4.13.1
+# Generated from Stipula.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .StipulaParser import StipulaParser
@@ -26,11 +26,6 @@ class StipulaVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by StipulaParser#fieldInit.
     def visitFieldInit(self, ctx:StipulaParser.FieldInitContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by StipulaParser#initStateDecl.
-    def visitInitStateDecl(self, ctx:StipulaParser.InitStateDeclContext):
         return self.visitChildren(ctx)
 
 
