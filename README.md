@@ -1,5 +1,10 @@
 # stipula-analyzer
 
+## The Author
+The code has been developed by Samuele Evangelisti in his Undergraduate Thesis using the 
+theory developed by Cosimo Laneve in "Reachability Analysis in Micro-Stipula. PPDP 2024". 
+For any consern about the code, please contact Samuele: samueleevangelisti@yahoo.it.
+
 ## Requirements
 
 - Python >= 3.11.6
