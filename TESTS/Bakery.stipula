@@ -1,0 +1,66 @@
+stipula SPA {
+	assets wallet, property
+	fields price, prop, pretzelMissed
+
+	agreement(Chris, Eva)(price) {
+		Chris, Eva: price, prop
+	} => @Sign1
+
+	@Sign1 Eva: sign(x)[] (true) {
+		x -> Chris
+	} => @Sign2
+
+	@Sign2 Chris: sign(x)[] (true) {
+		x -> Eva
+
+		now + 28D >> @Init {
+			wallet -o Chris
+			property -o Eva
+		} => @Fail
+	} => @Init
+
+	@Init Chris : pay()[w] (property < prop && w == price) {
+		m -o wallet
+	} => @Init
+
+	@Init Eva : transfer()[p] (wallet < price && p == property) {
+		p -o property
+	} => @Init
+
+	@Init Chris : pay()[w] (property == prop && w == price) {
+		m -o wallet
+		property -o Chris
+		wallet -o Eva
+
+		now + 14D >> @Closing {} => @End
+
+		now + 42D >> @Refund {} => @End
+	} => @Closing
+
+	@Init Eva : transfer()[p] (wallet == price && p == property) {
+		p -o property
+		property -o Chris
+		wallet -o Eva
+
+		now + 14D >> @Closing {} => @End
+
+		now + 42D >> @Refund {} => @End
+	} => @Closing
+
+	@Closing Chris: pretzel_warranty_breach(x)[] (true) {
+		"Assert_Breach!" -> Eva
+		x -> pretzelMissed
+
+		now + 28D >> @Breach {} => @Refund
+
+		now + 42D >> @Refund {} => @PROBLEM
+	} => @Breach
+
+	@Breach Eva: repair(x)[] (true) {
+		x -> Chris
+	} => @End
+
+	@Refund Eva: refund(x)[w] (w == 10) {
+		w -o Chris
+	} => @End
+}

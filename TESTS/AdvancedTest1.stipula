@@ -1,0 +1,19 @@
+/*
+it must show the reachability constraints
+*/
+
+stipula Tmp {
+	fields x, y
+
+	agreement(A, B)(x, y) {
+		A, B: x, y
+	} => @Q0
+
+	@Q0 A: f()[] {
+		now + x + 2 >> @Q2 {} => @Q3  // ev.1
+	} => @Q1
+
+	@Q1 B: g()[] {
+		now + y + 1 >> @Q3 {} => @Q4  // ev.2
+	} => @Q2
+}

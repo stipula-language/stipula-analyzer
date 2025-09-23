@@ -1,0 +1,11 @@
+stipula ExampleTimeExp {
+    fields x
+
+    agreement(A)(x){ 
+	A : x
+    } => @Q0
+
+    @Q0 A: f()[] {
+        "1970-01-01" >> @Q1 {} => @Q2 // ev.6
+    } => @Q1
+}

@@ -1,0 +1,18 @@
+/*
+The first event is unreachable 
+*/
+
+stipula Wrong {
+	fields x
+	agreement(A)(x){
+		A: x
+	} => @Init
+
+	@Init A:f()[] {
+		now >> @Run {} => @End
+	} => @Cont
+			
+	@Init B:g()[] {
+		now >> @Cont {} => @Run
+	} => @Cont
+}

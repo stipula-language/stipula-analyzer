@@ -1,0 +1,9 @@
+stipula Esempio231 {
+  fields x
+
+  @Q0 A: f()[] {
+    now + 1D >> @Q1 {} => @Q2 // ev.6
+
+    now >> @Q2 {} => @Q3 // ev.8
+  } => @Q1
+}

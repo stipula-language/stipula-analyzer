@@ -1,0 +1,13 @@
+stipula Esempio222 {
+	fields x
+
+	agreement(A, A1)(x) {
+		A, A1: x
+	} => @Q0
+
+	@Q0 A: f(y)[k] (true) {
+		now >> @Q2 {} => @Q3
+	} => @Q1
+
+	@Q0 A1: f1(y)[k] (true) {} => @Q2
+}
