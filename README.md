@@ -34,4 +34,10 @@ On MacOS you probably need to specify the python version, so you need to use `py
 
 ## Run
 
-To run an example, open a terminal in the repository directory and run `python analyzer.py TESTS/bet.stipula`.
+To run an example, open a terminal in the repository directory and run 
+
+`python analyzer.py [OPTIONS] TESTS/bet.stipula`  // python3.11 ... on MacOS
+
+where OPTIONS are
+   * -r, --readable to have a different (more readable) representation of clauses
+   * -c, --compact to have a less verbose output (only the relevant infos are shown)
