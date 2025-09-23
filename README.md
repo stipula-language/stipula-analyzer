@@ -30,8 +30,8 @@ For any consern about the code, please contact Samuele: samueleevangelisti@yahoo
    2. Open a terminal and run `brew install python@3.11`
 2. Install Antlr4, open a terminal in the repository directory and run `python3.11 -m pip install -r requirements.txt`
 
-On Mac os you probably need to specify the python version, so you need to use `python3.11` instead of `python`.
+On MacOS you probably need to specify the python version, so you need to use `python3.11` instead of `python`.
 
 ## Run
 
-To run an example, open a terminal in the repository directory and run `python analyzer.py test/bet.stipula`.
+To run an example, open a terminal in the repository directory and run `python analyzer.py TESTS/bet.stipula`.
