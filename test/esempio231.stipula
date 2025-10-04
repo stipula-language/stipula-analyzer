@@ -1,6 +1,5 @@
 stipula Esempio231 {
   fields x
-  init Q0
 
   @Q0 A: f()[] {
     now + 1D >> @Q1 {} => @Q2 // ev.6

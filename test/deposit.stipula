@@ -1,9 +1,8 @@
 stipula Deposit {
 	assets flour
 	fields cost_flour
-	init Start
 
-	agreement(Client, Farm)(cost_flour) {
+	agreement(Client, Farm) {
 		Client, Farm: cost_flour
 	} => @Start
 

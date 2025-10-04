@@ -10,7 +10,7 @@ fieldsDecl : 'fields' fieldInit (',' fieldInit)* ;
 
 fieldInit : fieldId=ID ('=' value=(BOOL | TIMEDELTA | NUMBER | DATESTRING | STRING))? ;
 
-agreement : 'agreement' '(' partyId+=ID (',' partyId+=ID)* ')' '(' fieldId+=ID (',' fieldId+=ID)* ')' '{' agree+ '}' '=>' '@' stateId=ID ;
+agreement : 'agreement' '(' partyId+=ID (',' partyId+=ID)* ')' '{' agree+ '}' '=>' '@' stateId=ID ;
 
 agree : partyId+=ID (',' partyId+=ID)* ':' fieldId+=ID (',' fieldId+=ID)* ;
 

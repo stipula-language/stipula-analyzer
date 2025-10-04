@@ -1,9 +1,8 @@
 stipula Free_Rent {
 	assets token
 	fields numBox, t_start, t_limit
-	init Inactive
 
-	agreement(Lender, Borrower)(t_start, t_limit) { 
+	agreement(Lender, Borrower) { 
 		Lender, Borrower: t_start, t_limit
 	} => @Inactive
 

@@ -2,7 +2,6 @@
 stipula Sample1 {
 	
 	field x = 5
-	init Init
 
 	@Init A: f()[] {
 		now + x >> @Run { } => @Go
@@ -18,7 +17,6 @@ stipula Sample1 {
 stipula Sample2 {
 	
 	field x = 5
-	init Init
 
 	@Init A:f()[] {
 		now + x >> @Go { } => @End
@@ -36,7 +34,6 @@ stipula Sample2 {
 
 stipula Sample2 {
 	fields x = 2, y = 1
-	init Init
 
 	@Init A: f()[] {
 		now + 2 >> @Go {} => @Cont
@@ -51,7 +48,6 @@ stipula Sample2 {
 /*
 stipula Sample3 { 
         field x = 1, y = 2 
-        init Init
 
         @Init A:f()[] {
                  now + 1 >> @Cont { } => @Run
@@ -67,9 +63,8 @@ stipula Sample3 {
 /*
 stipula Sample5 {
 	field x,y
-	init Q0
 
-	agreement(A,B)(x,y) {
+	agreement(A,B) {
 		A,B : x,y
 	} => @Q0
 
@@ -86,7 +81,6 @@ stipula Sample5 {
 /*
 stipula Sample6 { 
         field x= "2024-01-01" 
-        init Init
 
         @Init A:f()[] {
                  "2024-01-01" >> @Cont { } => @End
@@ -97,7 +91,6 @@ stipula Sample6 {
 /*
 stipula Wrong { 
         field x  
-        init Init
 
         @Init A:f()[] {
                  now >> @Run { } => @End
@@ -112,7 +105,6 @@ stipula Wrong {
 /*
 stipula Sample7 {
 	field x 
-	init Init
 
 	@Init A: f()[] {
 		now >> @Comp {} => @End
@@ -131,7 +123,6 @@ stipula Sample7 {
 /*
 stipula Sample8 {
 	fields x,y,z
-	init Q0
 
 	@Q0 A: f()[] {			  // T = 0	
 		now + x >> @Q2 {} => @Q3  // ev.1: T = x,z
@@ -154,7 +145,6 @@ stipula Sample8 {
 /*
 stipula Sample9 {
 	fields x = "2024-02-02", y = "2024-02-03"
-	init Q0
 
 	@Q0 A: f()[] {
 		x >> @Q2 {} => @Q3  // ev.1 

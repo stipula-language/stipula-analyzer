@@ -4,7 +4,6 @@ Il codice e' tutto eseguibile a causa dei loop
 
 stipula Sample10 {
     fields x = 1 
-    init Q0
 
     @Q0 A: f()[] {
         now + 1  >> @Q4 {} => @Q5  // ev.1

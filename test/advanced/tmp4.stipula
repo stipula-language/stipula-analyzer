@@ -4,7 +4,6 @@ Deve mostrare unreachable code sul primo evento
 
 stipula Wrong {
 	fields x
-	init Init
 
 	@Init A:f()[] {
 		now >> @Run {} => @End

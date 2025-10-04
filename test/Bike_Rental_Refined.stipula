@@ -5,9 +5,8 @@ This contract corresponds to the real bike rental contract available in http://w
 stipula Bike_Rental_Refined {
 	assets wallet
 	fields cost, rentingTime, code, deposit
-	init Inactive
 
-	agreement(Lender, Borrower, Authority)(rentingTime, cost, deposit) { 
+	agreement(Lender, Borrower, Authority) { 
 		Lender, Borrower: rentingTime, cost, deposit
 	} => @Inactive
 

@@ -4,9 +4,8 @@ Deve mostrare correttamente i reachability constraint
 
 stipula Tmp {
 	fields x, y
-	init Q0
 
-	agreement(A, B)(x, y) {
+	agreement(A, B) {
 		A, B: x, y
 	} => @Q0
 

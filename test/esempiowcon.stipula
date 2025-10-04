@@ -1,6 +1,5 @@
 stipula EsempioWCon {
 	fields t1, t2
-	init Q0
 
 	@Q0 A: f(y)[k] {
 		now + t1 >> @Q1 {} => @Q2 // ev.6

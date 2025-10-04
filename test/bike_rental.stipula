@@ -1,9 +1,8 @@
 stipula BikeRental {
 	assets wallet
 	fields cost, rentingTime, code
-	init Inactive
 
-	agreement(Lender, Borrower, Authority)(rentingTime, cost) { 
+	agreement(Lender, Borrower, Authority) { 
 		Lender, Borrower: rentingTime, cost
 	} => @Inactive
 

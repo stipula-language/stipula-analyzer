@@ -1,9 +1,8 @@
 stipula SPA {
 	assets wallet, property
 	fields price, prop, pretzelMissed
-	init Init
 
-	agreement(Chris, Eva)(price) {
+	agreement(Chris, Eva) {
 		Chris, Eva: price, property
 	} => @Init
 

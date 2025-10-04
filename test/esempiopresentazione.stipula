@@ -1,6 +1,5 @@
 stipula Sample {
   fields x
-  init Start
 
   @Start A: f()[] {
     now + 60 >> @Check {} => @Fail // ev.17

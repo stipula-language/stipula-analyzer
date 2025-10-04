@@ -1,6 +1,5 @@
 stipula EsempioWCod {
 	fields x
-	init Q0
 
 	@Q0 A: f()[] {
 		now + 2 >> @Q3 {} => @Q4 // ev.6

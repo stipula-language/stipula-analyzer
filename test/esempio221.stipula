@@ -1,8 +1,7 @@
 stipula Esempio221 {
 	fields x
-	init Q0
 
-	agreement(A)(x) {
+	agreement(A) {
 		A: x
 	} => @Q0
 
