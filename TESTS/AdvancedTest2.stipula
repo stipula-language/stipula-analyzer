@@ -1,9 +1,13 @@
 /*
-Deveo mostrare l'expired code
+It must show the expired code
 */
 
 stipula Sample5 {
     fields x = "2024-01-01"
+    
+	agreement(A){
+		A: x
+	} => @Init
 
     @Init A: f()[] {
         x >> @Cont {} => @End

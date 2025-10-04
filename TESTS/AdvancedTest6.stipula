@@ -1,5 +1,8 @@
 stipula WrongWrongTime {
     fields x
+    agreement(A){
+		A: x
+    } => @Q0
 
     @Q0 A: f()[] {} => @Q1
 

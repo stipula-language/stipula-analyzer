@@ -1,5 +1,9 @@
 stipula Sample {
   fields x
+  
+  agreement(A){ 
+	A : x
+  } => @Start
 
   @Start A: f()[] {
     now + 60 >> @Check {} => @Fail // ev.17

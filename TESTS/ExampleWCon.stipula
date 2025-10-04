@@ -1,5 +1,9 @@
-stipula EsempioWCon {
+stipula ExampleWCon {
 	fields t1, t2
+	
+	agreement(A){ 
+		A : t1, t2
+    	} => @Q0
 
 	@Q0 A: f(y)[k] {
 		now + t1 >> @Q1 {} => @Q2 // ev.6

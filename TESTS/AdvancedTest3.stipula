@@ -1,9 +1,12 @@
 /*
-Il codice e' tutto eseguibile a causa dei loop
+Everything is reachable because of the loops
 */
 
 stipula Sample10 {
     fields x = 1 
+    agreement(A){
+		A: x
+	} => @Q0
 
     @Q0 A: f()[] {
         now + 1  >> @Q4 {} => @Q5  // ev.1

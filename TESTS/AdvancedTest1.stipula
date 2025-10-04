@@ -1,5 +1,5 @@
 /*
-Deve mostrare correttamente i reachability constraint
+it must show the reachability constraints
 */
 
 stipula Tmp {

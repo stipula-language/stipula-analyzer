@@ -1,9 +1,12 @@
 /*
-Deve mostrare unreachable code sul primo evento
+The first event is unreachable 
 */
 
 stipula Wrong {
 	fields x
+	agreement(A){
+		A: x
+	} => @Init
 
 	@Init A:f()[] {
 		now >> @Run {} => @End

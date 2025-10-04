@@ -1,4 +1,4 @@
-stipula Esempio221 {
+stipula Example221 {
 	fields x
 
 	agreement(A) {
